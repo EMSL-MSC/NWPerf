@@ -230,70 +230,29 @@ enyo.kind({
 				if(this.queryValue.length < 5) {
 					this.queryValue = [this.queryValue[0], "<", "Jan", 1, 2012];
 				}
-				if(this.queryValue[1] == "<") {
-					this.$.startDateBeforeAfter.setSelected(this.$.startDateBefore);
-				} else {
-					this.$.startDateBeforeAfter.setSelected(this.$.startDateAfter);
-				}
-				components = this.$.startMonth.getControls();
-				for(i = 0; i < components.length; i++) {
-					if(components[i].content == this.queryValue[2]) {
-						this.$.startMonth.setSelected(components[i]);
-					}
-				}
-				components = this.$.startDay.getControls();
-				for(i = 0; i < components.length; i++) {
-					if(components[i].content == this.queryValue[3]) {
-						this.$.startDay.setSelected(components[i]);
-					}
-				}
-				components = this.$.startYear.getControls();
-				for(i = 0; i < components.length; i++) {
-					if(components[i].content == this.queryValue[4]) {
-						this.$.startYear.setSelected(components[i]);
-					}
-				}
+				console.log(this.queryValue[2], {"<": "Before", ">": "After"}[this.queryValue[1]]);
+				this.setPickerWithText(this.$.startDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
+				this.setPickerWithText(this.$.startMonth, this.queryValue[2]);
+				this.setPickerWithText(this.$.startDay, this.queryValue[3]);
+				this.setPickerWithText(this.$.startYear, this.queryValue[4]);
 				break;
 			case "End Date":
 				this.activeControl = this.$.endDateItems;
 				if(this.queryValue.length < 5) {
 					this.queryValue = [this.queryValue[0], "<", "Jan", 1, 2013];
 				}
-				if(this.queryValue[1] == "<") {
-					this.$.endDateBeforeAfter.setSelected(this.$.endDateBefore);
-				} else {
-					this.$.endDateBeforeAfter.setSelected(this.$.endDateAfter);
-				}
-				components = this.$.endMonth.getControls();
-				for(i = 0; i < components.length; i++) {
-					if(components[i].content == this.queryValue[2]) {
-						this.$.endMonth.setSelected(components[i]);
-					}
-				}
-				components = this.$.endDay.getControls();
-				for(i = 0; i < components.length; i++) {
-					if(components[i].content == this.queryValue[3]) {
-						this.$.endDay.setSelected(components[i]);
-					}
-				}
-				components = this.$.endYear.getControls();
-				for(i = 0; i < components.length; i++) {
-					if(components[i].content == this.queryValue[4]) {
-						this.$.endYear.setSelected(components[i]);
-					}
-				}
+				console.log(this.queryValue[2], {"<": "Before", ">": "After"}[this.queryValue[1]]);
+				this.setPickerWithText(this.$.endDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
+				this.setPickerWithText(this.$.endMonth, this.queryValue[2]);
+				this.setPickerWithText(this.$.endDay, this.queryValue[3]);
+				this.setPickerWithText(this.$.endYear, this.queryValue[4]);
 				break;
 			case "Node Count":
 				this.activeControl = this.$.nodeCountItems;
 				if(this.queryValue.length < 3) {
 					this.queryValue = [this.queryValue[0], "<"];
 				}
-				components = this.$.nodeCountComparison.getControls();
-				for(i = 0; i < components.length; i++) {
-					if(components[i].content = this.queryValue[1]) {
-						this.$.nodeCountComparison.setSelected(components[i]);
-					}
-				}
+				this.setPickerWithText(this.$.nodeCountComparison, this.queryValue[1]);
 				this.$.nodeCountNumber.setValue(this.queryValue[2]);
 				break;
 			case "Job Name":
@@ -305,7 +264,14 @@ enyo.kind({
 				break;
 		}
 		this.activeControl.setShowing(true);
-		//this.$.queryDetails.render();
 		this.disableQueryValue = false;
 	},
+	setPickerWithText: function(component, selectText) {
+		components = component.getControls();
+		for(i = 0; i < components.length; i++) {
+			if(components[i].content == selectText) {
+				component.setSelected(components[i]);
+			}
+		}
+	}
 });
