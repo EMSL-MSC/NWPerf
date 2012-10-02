@@ -10,18 +10,12 @@ enyo.kind({
 		{kind: "FittableColumns", components: [
 			{kind: "onyx.Button", content: "Add Row", ontap: "addQueryRow"},
 			{kind: "onyx.Button", content: "Remove Row", ontap: "removeQueryRow"},
-			{kind: "onyx.Button", content: "log Query", ontap: "logQuery"},
 		]}
 	],
-
-	logQuery: function(inSender, inEvent) {
-		console.log(this.queryItems);
-	},
 
 	queryItems: [],
 
 	newQueryRow: function(inSender, inEvent) {
-		//console.log("QueryBuilder.newQueryRow",arguments, this.queryItems);
 		item = inEvent.item.$.queryItem;
 		item.setRowNumber(inEvent.index);
 		if(inEvent.index >= this.queryItems.length) {
@@ -33,18 +27,15 @@ enyo.kind({
 	},
 
 	addQueryRow: function(inSender, inEvent) {
-		//console.log("QueryBuilder.addQueryRow",arguments);
 		this.$.queryList.setCount(this.$.queryList.count + 1);
 	},
 
 	removeQueryRow: function(inSender, inEvent) {
-		//console.log("QueryBuilder.removeQueryRow",arguments);
 		this.queryItems.pop();
 		this.$.queryList.setCount(this.$.queryList.count - 1);
 	},
 	
 	updateQuery: function(inSender, inEvent) {
-		//console.log("QueryBuilder.updateQuery",arguments);
 		this.queryItems[inSender.getRowNumber()] = inSender.getQueryValue();
 	},
 
@@ -158,13 +149,11 @@ enyo.kind({
 		this.setQueryValue(["Start Date"]);
 	},
 	queryTypeSelected: function(inSender, inEvent) {
-		console.log("queryItem.queryTypeSelected", arguments, this.$.queryType, this.queryValue);
 		if (this.$.queryType.selected.content != this.queryValue[0]) {
 			this.setQueryValue([this.$.queryType.selected.content]);
 		}
 	},
 	startDateChanged: function(inSender, inEvent) {
-		//console.log("QueryItem.startDateChanged",arguments);
 		if(!this.disableQueryValue) {
 			beforeAfter = {"After": ">", "Before": "<"}[this.$.startDateBeforeAfter.selected.content]
 			this.queryValue = [	this.$.queryType.selected.content,
@@ -176,7 +165,6 @@ enyo.kind({
 		}
 	},
 	endDateChanged: function(inSender, inEvent) {
-		//console.log("QueryItem.endDateChanged",arguments);
 		if(!this.disableQueryValue) {
 			beforeAfter = {"After": ">", "Before": "<"}[this.$.endDateBeforeAfter.selected.content]
 			this.queryValue = [	this.$.queryType.selected.content,
@@ -188,7 +176,6 @@ enyo.kind({
 		}
 	},
 	nodeCountChanged: function(inSender, inEvent) {
-		//console.log("QueryItem.nodeCountChanged",arguments);
 		if(!this.disableQueryValue) {
 			this.queryValue = [	this.$.queryType.selected.content,
 						this.$.nodeCountComparison.selected.content,
@@ -197,7 +184,6 @@ enyo.kind({
 		}
 	},
 	jobNameChanged: function(inSender, inEvent) {
-		//console.log("QueryItem.nodeNameChanged",arguments);
 		if(!this.disableQueryValue) {
 			this.queryValue = [	this.$.queryType.selected.content,
 						this.$.jobName.getValue()];
@@ -205,7 +191,6 @@ enyo.kind({
 		}
 	},
 	queryValueChanged: function(oldValue) {
-		//console.log("QueryItem.queryValueChanged", arguments, this.queryValue);
 		this.disableQueryValue = true
 		components = this.$.queryType.getControls();
 		for(i=0;i<components.length;i++) {
@@ -222,7 +207,6 @@ enyo.kind({
 				if(this.queryValue.length < 5) {
 					this.queryValue = [this.queryValue[0], "<", "Jan", 1, 2012];
 				}
-				console.log(this.queryValue[2], {"<": "Before", ">": "After"}[this.queryValue[1]]);
 				this.setPickerWithText(this.$.startDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
 				this.setPickerWithText(this.$.startMonth, this.queryValue[2]);
 				this.setPickerWithText(this.$.startDay, this.queryValue[3]);
@@ -233,7 +217,6 @@ enyo.kind({
 				if(this.queryValue.length < 5) {
 					this.queryValue = [this.queryValue[0], "<", "Jan", 1, 2013];
 				}
-				console.log(this.queryValue[2], {"<": "Before", ">": "After"}[this.queryValue[1]]);
 				this.setPickerWithText(this.$.endDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
 				this.setPickerWithText(this.$.endMonth, this.queryValue[2]);
 				this.setPickerWithText(this.$.endDay, this.queryValue[3]);
@@ -250,7 +233,6 @@ enyo.kind({
 			case "Job Name":
 				this.activeControl = this.$.jobNameItems;
 				if(this.queryValue.length > 1) {
-					console.log("Setting ", this.$.jobName, "to", this.queryValue[1]);
 					this.$.jobName.setValue(this.queryValue[1]);
 				}
 				break;
