@@ -47,6 +47,7 @@ enyo.kind({
 
 	removeQueryRow: function(inSender, inEvent) {
 		//console.log("QueryBuilder.removeQueryRow",arguments);
+		this.queryItems.pop();
 		this.$.queryList.setCount(this.$.queryList.count - 1);
 	},
 	
@@ -79,17 +80,89 @@ enyo.kind({
 				{content: "Job Name"}
 			]}
 		]},
-		{kind: "FittableColumns", name: "queryDetails"},
-		{kind: "FittableColumns", showing: false, name: "JobNameItems", components: [
+		//{kind: "FittableColumns", name: "queryDetails"},
+		{kind: "FittableColumns", name: "startDateItems", showing: false, components: [
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", name: "startDateBeforeAfter", onChange: "startDateChanged", components: [
+					{content:"Before", name: "startDateBefore"},
+					{content:"After", name: "startDateAfter"}
+				]}
+			]},
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", onChange: "startDateChanged", name: "startMonth"}
+			]},
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", onChange: "startDateChanged", name: "startDay"}
+			]},
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", onChange: "startDateChanged", name: "startYear"}
+			]},
+		]},
+		{kind: "FittableColumns", name: "endDateItems", showing: false, components: [
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", name: "endDateBeforeAfter", onChange: "endDateChanged", components: [
+					{content:"Before", name: "endDateBefore"},
+					{content:"After", name: "endDateAfter"}
+				]}
+			]},
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endMonth"}
+			]},
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endDay"}
+			]},
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endYear"}
+			]},
+		]},
+		{kind: "FittableColumns", name: "nodeCountItems", showing: false, components: [
+			{kind: "onyx.PickerDecorator", onChange: "nodeCountChanged", components: [
+					{},
+					{kind: "onyx.Picker", name: "nodeCountComparison", components: [
+						{content: "<"},
+						{content: ">"},
+						{content: "=="},
+						{content: "<="},
+						{content: ">="}
+					]}
+				]},
+				{kind: "onyx.InputDecorator", components: [
+					{kind: "onyx.Input", name: "nodeCountNumber", oninput: "nodeCountChanged", placeholder: "Number of Nodes", type: "number"}
+				]},
+		]},
+		{kind: "FittableColumns", showing: false, name: "jobNameItems", components: [
 			{kind: "onyx.InputDecorator", components: [
-				{kind: "onyx.Input", oninput: "nodeCountChanged", placeholder: "Job Name"}
+				{kind: "onyx.Input", name: "jobName", oninput: "jobNameChanged"}
 			]}
 		]},
 		
 	],
-	disableQueryValueEvent: false,
+	updatingQueryValue: false,
+	activeControl: false,
 	create: function() {
 		this.inherited(arguments);
+		months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		for(i = 0; i < months.length; i++) {
+			this.$.startMonth.createComponent({content: months[i]});
+			this.$.endMonth.createComponent({content: months[i]});
+		}
+		for(i = 1; i <= 31; i++) {
+			this.$.startDay.createComponent({content: i});
+			this.$.endDay.createComponent({content: i});
+		}
+		for(i = 2005; i <= 2030; i++) {
+			this.$.startYear.createComponent({content: i});
+			this.$.endYear.createComponent({content: i});
+		}
+		this.render();
 		this.setQueryValue(["Start Date"]);
 	},
 	queryTypeSelected: function(inSender, inEvent) {
@@ -100,43 +173,42 @@ enyo.kind({
 	},
 	startDateChanged: function(inSender, inEvent) {
 		//console.log("QueryItem.startDateChanged",arguments);
-		components = [this.$.beforeAfter, this.$.startMonth, this.$.startDay, this.$.startYear];
-		for(i = 0;i < components.length;i++) {
-			if(! components[i] || ! components[i].selected) {
-				return;
-			}
-		}
-		beforeAfter = {"After": ">", "Before": "<"}[this.$.beforeAfter.selected.content]
-		this.queryValue = ["Start Date", beforeAfter, this.$.startMonth.selected.content, this.$.startDay.selected.content, this.$.startYear.selected.content];
-		if(!this.disableQueryValueEvent) {
+		if(!this.disableQueryValue) {
+			beforeAfter = {"After": ">", "Before": "<"}[this.$.startDateBeforeAfter.selected.content]
+			this.queryValue = [	this.$.queryType.selected.content,
+						beforeAfter,
+						this.$.startMonth.selected.content,
+						this.$.startDay.selected.content,
+						this.$.startYear.selected.content];
 			this.doQueryValueChanged();
 		}
 	},
 	endDateChanged: function(inSender, inEvent) {
 		//console.log("QueryItem.endDateChanged",arguments);
-		components = [this.$.beforeAfter, this.$.endMonth, this.$.endDay, this.$.endYear];
-		for(i = 0;i < components.length;i++) {
-			if(! components[i] || ! components[i].selected) {
-				return;
-			}
-		}
-		beforeAfter = {"After": ">", "Before": "<"}[this.$.beforeAfter.selected.content]
-		this.queryValue = ["End Date", beforeAfter, this.$.endMonth.selected.content, this.$.endDay.selected.content, this.$.endYear.selected.content];
-		if(!this.disableQueryValueEvent) {
+		if(!this.disableQueryValue) {
+			beforeAfter = {"After": ">", "Before": "<"}[this.$.endDateBeforeAfter.selected.content]
+			this.queryValue = [	this.$.queryType.selected.content,
+						beforeAfter,
+						this.$.endMonth.selected.content,
+						this.$.endDay.selected.content,
+						this.$.endYear.selected.content];
 			this.doQueryValueChanged();
 		}
 	},
 	nodeCountChanged: function(inSender, inEvent) {
 		//console.log("QueryItem.nodeCountChanged",arguments);
-		if(! this.$.comparison || ! this.$.comparison.selected) {
-			return;
+		if(!this.disableQueryValue) {
+			this.queryValue = [	this.$.queryType.selected.content,
+						this.$.nodeCountComparison.selected.content,
+						this.$.nodeCountNumber.getValue()];
+			this.doQueryValueChanged();
 		}
-		if(! this.$.nodeCount ) {
-			return;
-		}
-		this.queryValue = ["Node Count", this.$.comparison.selected.content, this.$.nodeCount.getValue()];
-		//console.log("nodecount:", this.$.nodeCount);
-		if(!this.disableQueryValueEvent) {
+	},
+	jobNameChanged: function(inSender, inEvent) {
+		//console.log("QueryItem.nodeNameChanged",arguments);
+		if(!this.disableQueryValue) {
+			this.queryValue = [	this.$.queryType.selected.content,
+						this.$.jobName.getValue()];
 			this.doQueryValueChanged();
 		}
 	},
@@ -149,78 +221,91 @@ enyo.kind({
 				this.$.queryType.setSelected(components[i]);
 			}
 		}
-		this.$.queryDetails.destroyClientControls();
+		if(this.activeControl != false) {
+			this.activeControl.setShowing(false);
+		}
 		switch(this.queryValue[0]) {
 			case "Start Date":
+				this.activeControl = this.$.startDateItems;
 				if(this.queryValue.length < 5) {
-					this.queryValue = [this.queryValue[0], "<", "Jan", "1", "2012"];
+					this.queryValue = [this.queryValue[0], "<", "Jan", 1, 2012];
 				}
-				this.$.queryDetails.createComponent({	kind: "onyx.PickerDecorator", 
-									components: [
-										{},
-										{ kind: "onyx.Picker", name: "beforeAfter", onChange: "startDateChanged", components: [
-											{content:"Before", active: this.queryValue[1] == "<"},
-											{content:"After", active: this.queryValue[1] == ">"}
-										]}
-				]}, {owner: this});
-				startMonth = this.$.queryDetails.createComponent({kind: "onyx.PickerDecorator", components: [{},{kind: "onyx.Picker", onChange: "startDateChanged", name: "startMonth"}]}, {owner: this}).getClientControls()[1];
-				months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-				for(i = 0; i < months.length; i++) {
-					startMonth.createComponent({content: months[i], active: months[i] == this.queryValue[2]});
+				if(this.queryValue[1] == "<") {
+					this.$.startDateBeforeAfter.setSelected(this.$.startDateBefore);
+				} else {
+					this.$.startDateBeforeAfter.setSelected(this.$.startDateAfter);
 				}
-				startDay = this.$.queryDetails.createComponent({kind: "onyx.PickerDecorator", components: [{},{kind: "onyx.Picker", onChange: "startDateChanged", name: "startDay"}]}, {owner: this}).getClientControls()[1];;
-				for(i = 1; i <= 31; i++) {
-					startDay.createComponent({content: i, active: i == this.queryValue[3]});
+				components = this.$.startMonth.getControls();
+				for(i = 0; i < components.length; i++) {
+					if(components[i].content == this.queryValue[2]) {
+						this.$.startMonth.setSelected(components[i]);
+					}
 				}
-				startYear = this.$.queryDetails.createComponent({kind: "onyx.PickerDecorator", components: [{},{kind: "onyx.Picker", onChange: "startDateChanged", name: "startYear"}]}, {owner: this}).getClientControls()[1];;
-				for(i = 2005; i <= 2030; i++) {
-					startYear.createComponent({content: i, active: i == this.queryValue[4]});
+				components = this.$.startDay.getControls();
+				for(i = 0; i < components.length; i++) {
+					if(components[i].content == this.queryValue[3]) {
+						this.$.startDay.setSelected(components[i]);
+					}
+				}
+				components = this.$.startYear.getControls();
+				for(i = 0; i < components.length; i++) {
+					if(components[i].content == this.queryValue[4]) {
+						this.$.startYear.setSelected(components[i]);
+					}
 				}
 				break;
 			case "End Date":
+				this.activeControl = this.$.endDateItems;
 				if(this.queryValue.length < 5) {
-					this.queryValue = [this.queryValue[0], "<", "Jan", "1", "2013"];
+					this.queryValue = [this.queryValue[0], "<", "Jan", 1, 2013];
 				}
-				this.$.queryDetails.createComponent({	kind: "onyx.PickerDecorator", 
-									components: [
-										{},
-										{ kind: "onyx.Picker", name: "beforeAfter", onChange: "endDateChanged", components: [
-											{content:"Before", active: this.queryValue[1] == "<"},
-											{content:"After", active: this.queryValue[1] == ">"}
-										]}
-				]}, {owner: this});
-				endMonth = this.$.queryDetails.createComponent({kind: "onyx.PickerDecorator", components: [{},{kind: "onyx.Picker", onChange: "endDateChanged", name: "endMonth"}]}, {owner: this}).getClientControls()[1];
-				months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-				for(i = 0; i < months.length; i++) {
-					endMonth.createComponent({content: months[i], active: months[i] == this.queryValue[2]});
+				if(this.queryValue[1] == "<") {
+					this.$.endDateBeforeAfter.setSelected(this.$.endDateBefore);
+				} else {
+					this.$.endDateBeforeAfter.setSelected(this.$.endDateAfter);
 				}
-				endDay = this.$.queryDetails.createComponent({kind: "onyx.PickerDecorator", components: [{},{kind: "onyx.Picker", onChange: "endDateChanged", name: "endDay"}]}, {owner: this}).getClientControls()[1];;
-				for(i = 1; i <= 31; i++) {
-					endDay.createComponent({content: i, active: i == this.queryValue[3]});
+				components = this.$.endMonth.getControls();
+				for(i = 0; i < components.length; i++) {
+					if(components[i].content == this.queryValue[2]) {
+						this.$.endMonth.setSelected(components[i]);
+					}
 				}
-				endYear = this.$.queryDetails.createComponent({kind: "onyx.PickerDecorator", components: [{},{kind: "onyx.Picker", onChange: "endDateChanged", name: "endYear"}]}, {owner: this}).getClientControls()[1];;
-				for(i = 2005; i <= 2030; i++) {
-					endYear.createComponent({content: i, active: i == this.queryValue[4]});
+				components = this.$.endDay.getControls();
+				for(i = 0; i < components.length; i++) {
+					if(components[i].content == this.queryValue[3]) {
+						this.$.endDay.setSelected(components[i]);
+					}
+				}
+				components = this.$.endYear.getControls();
+				for(i = 0; i < components.length; i++) {
+					if(components[i].content == this.queryValue[4]) {
+						this.$.endYear.setSelected(components[i]);
+					}
 				}
 				break;
 			case "Node Count":
+				this.activeControl = this.$.nodeCountItems;
 				if(this.queryValue.length < 3) {
 					this.queryValue = [this.queryValue[0], "<"];
 				}
-				this.$.queryDetails.createComponent({kind: "onyx.PickerDecorator", onChange: "nodeCountChanged", components: [
-					{},
-					{kind: "onyx.Picker", name: "comparison", components: [
-						{content: "<", active: this.queryValue[1] == "<"},
-						{content: ">", active: this.queryValue[1] == ">"},
-						{content: "==", active: this.queryValue[1] == "=="},
-						{content: "<=", active: this.queryValue[1] == "<="},
-						{content: ">=", active: this.queryValue[1] == ">="}
-					]}
-				]}, {owner: this});
-				this.$.queryDetails.createComponent({kind: "onyx.InputDecorator", components: [{kind: "onyx.Input", name: "nodeCount", oninput: "nodeCountChanged", content: this.queryValue[2], placeholder: "Number of Nodes"}]}, {owner: this});
+				components = this.$.nodeCountComparison.getControls();
+				for(i = 0; i < components.length; i++) {
+					if(components[i].content = this.queryValue[1]) {
+						this.$.nodeCountComparison.setSelected(components[i]);
+					}
+				}
+				this.$.nodeCountNumber.setValue(this.queryValue[2]);
+				break;
+			case "Job Name":
+				this.activeControl = this.$.jobNameItems;
+				if(this.queryValue.length > 1) {
+					console.log("Setting ", this.$.jobName, "to", this.queryValue[1]);
+					this.$.jobName.setValue(this.queryValue[1]);
+				}
 				break;
 		}
-		this.$.queryDetails.render();
+		this.activeControl.setShowing(true);
+		//this.$.queryDetails.render();
 		this.disableQueryValue = false;
 	},
 });
