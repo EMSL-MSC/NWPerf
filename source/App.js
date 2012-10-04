@@ -1,8 +1,12 @@
 enyo.kind({
 	name: "App",
 	fit: true,
-	kind: "Panels",
+	kind: "FittableRows",
 	components:[
-		{kind: "QueryBuilder"}
+		{kind: "QueryBuilder", style: "height: 30%"},
+		{kind: "Panels", components: [
+			{kind: "JobTable"},
+			{kind: "JobView"},
+		]},
 	],
 });
