@@ -3,5 +3,6 @@ enyo.depends(
 	"$lib/onyx",
 	"App.css",
 	"QueryBuilder.js",
+	"JobManager.js",
 	"App.js"
 );
