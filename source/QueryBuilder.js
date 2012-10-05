@@ -1,6 +1,9 @@
 enyo.kind({
 	name: "QueryBuilder",
 	kind: "FittableRows",
+	events: {
+		onQueryChanged: ""
+	},
 	components: [
 		{kind: "Scroller", fit: true, components: [
 			{name: "queryList", onSetupItem: "newQueryRow", kind: "Repeater", count: 1, components: [
@@ -37,6 +40,7 @@ enyo.kind({
 	
 	updateQuery: function(inSender, inEvent) {
 		this.queryItems[inSender.getRowNumber()] = inSender.getQueryValue();
+		this.doQueryChanged(this.queryItems);
 	},
 
 	queries: {}
