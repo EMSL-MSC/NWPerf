@@ -7,18 +7,20 @@ enyo.kind({
 	},
 	jobListReq: false,
 	getJobList: function(query) {
-		this.jobListReq = new enyo.Ajax({url: "job/"});
-		this.jobListReq.response(function(inSender, inResponse) {
+		this.jobListReq = new enyo.Ajax({url: "jobs/"})
+		.response(this, function(inSender, inResponse) {
 			this.doNewJobList(inResponse);
-		});
-		this.jobListReq.go({q: query});
+		})
+		.go({q: JSON.stringify(query)});
+		return this.jobListReq;
 	},
 	jobReq: false,
 	getJob: function(jobId) {
-		this.jobReq = new enyo.Ajax({url: "job/"+jobId});
-		this.jobReq.response(function(inSender, inResponse) {
+		this.jobReq = new enyo.Ajax({url: "jobs/"+jobId})
+		.response(this, function(inSender, inResponse) {
 			this.doNewJob(inResponse);
-		});
-		this.jobReq.go();
+		})
+		.go();
+		return this.jobReq;
 	},
 });
