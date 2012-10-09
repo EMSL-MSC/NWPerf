@@ -1,7 +1,6 @@
 enyo.kind({
         name: "JobTable",
-        fit: true,
-	tag: "table",
+	kind: "FittableRows",
 	published: {
 		jobs: [],
 	},
@@ -9,41 +8,42 @@ enyo.kind({
 		onJobSelected: "",
 	},
         components:[
-		{tag: "tr", components: [
-			{tag: "th", content: "Job ID"},
-			{tag: "th", content: "Account"},
-			{tag: "th", content: "Nodes"},
-			{tag: "th", content: "Submit Time"},
-			{tag: "th", content: "Start Time"},
-			{tag: "th", content: "End Time"},
-			{tag: "th", content: "Run Time"},
+		{kind: "FittableColumns", components: [
+			{style: "width: 10%; font-weight: bold;", content: "Job ID"},
+			{style: "width: 10%; font-weight: bold;", content: "Account"},
+			{style: "width: 18%; font-weight: bold;", content: "Submit Time"},
+			{style: "width: 18%; font-weight: bold;", content: "Start Time"},
+			{style: "width: 18%; font-weight: bold;", content: "End Time"},
+			{style: "width: 12%; font-weight: bold;", content: "Run Time"},
+			{style: "width: 14%; font-weight: bold;", content: "Number of Nodes"},
 		]},
-		{kind: "List", name: "jobList", onSetupItem: "addJob", components: [
-			{tag: "tr", ontap: "jobTap", components: [
-				{tag: "td", name: "jobId"},
-				{tag: "td", name: "account"},
-				{tag: "td", name: "nodes"},
-				{tag: "td", name: "submitTime"},
-				{tag: "td", name: "startTime"},
-				{tag: "td", name: "endTime"},
-				{tag: "td", name: "runTime"}
+		{kind: "List", fit: true, name: "jobList", onSetupItem: "addJob", components: [
+			{kind: "FittableColumns", ontap: "jobTap", components: [
+				{style: "width: 10%;", name: "jobId"},
+				{style: "width: 10%;", name: "account"},
+				{style: "width: 18%;", name: "submitTime"},
+				{style: "width: 18%;", name: "startTime"},
+				{style: "width: 18%;", name: "endTime"},
+				{style: "width: 12%; text-align: right;", name: "runTime"},
+				{style: "width: 14%; text-align: right;", name: "nodes"},
 			]},
-		]},
+		]}
         ],
 
 	jobsChanged: function(oldValue) {
 		this.$.jobList.setCount(this.jobs.length);
+		this.$.jobList.refresh();
 	},
 
 	addJob: function(inSender, inEvent) {
 		job = this.jobs[inEvent.index];
-		this.$.jobId.setContent(job["jobId"])
-		this.$.account.setContent(job["account"])
-		this.$.nodes.setContent(job["nodes"])
-		this.$.submitTime.setContent(job["submitTime"])
-		this.$.startTime.setContent(job["startTime"])
-		this.$.endTime.setContent(job["endTime"])
-		this.$.runTime.setContent(job["runTime"])
+		this.$.jobId.setContent(job.id);
+		this.$.account.setContent(job.account);
+		this.$.nodes.setContent(job.numnodes);
+		this.$.submitTime.setContent(job.submittime);
+		this.$.startTime.setContent(job.starttime);
+		this.$.endTime.setContent(job.endtime);
+		this.$.runTime.setContent(job.runtime);
 	},
 
 	jobTap: function(inSender, inEvent) {
