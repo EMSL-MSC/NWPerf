@@ -8,3 +8,20 @@
 	background: url(../assets/bg.png);
 	padding: 16px;
 }
+
+.shadow {
+	box-shadow: -6px 0px 6px rgba(0,0,0,0.3);
+	-moz-box-shadow: -6px 0px 6px rgba(0,0,0,0.3);
+	-webkit-box-shadow: -6px 0px 6px rgba(0,0,0,0.3);
+}
+.onyx-button {
+	padding: 2px;
+}
+
+.onyx-picker-decorator .onyx-button {
+	padding: 3px;
+}
+
+.onyx-menu-item {
+	padding: 3px;
+}
