@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "QueryBuilder",
 	kind: "FittableRows",
+	classes: "dark",
 	events: {
 		onQueryChanged: ""
 	},
