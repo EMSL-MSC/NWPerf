@@ -1,0 +1,25 @@
+.group-header {
+	font-size: x-large;
+	background-color: black;
+	border: solid;
+	background-color: black;
+	color: grey;
+}
+
+.image-header {
+	font-size: small;
+	padding: 2px;
+	margin: 2px;
+}
+
+.thumbnail {
+	max-width: 480px;
+	max-height: 360px;
+}
+
+.job-error {
+	font-size: xx-large;
+	text-align: center;
+	border: solid;
+	background-color:red;
+}
