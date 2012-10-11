@@ -47,7 +47,6 @@ enyo.kind({
 	},
 
 	jobTap: function(inSender, inEvent) {
-		inSender.setClass("SelectedJob");
 		this.doJobSelected(this.jobs[inEvent.index]);
 	}
 });
