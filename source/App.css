@@ -33,3 +33,8 @@
 .onyx-menu-item {
 	padding: 3px;
 }
+
+.onyx-input-decorator {
+	padding: 0px 8px 0px 8px;
+	background-color: white;
+}

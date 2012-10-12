@@ -9,8 +9,10 @@ enyo.kind({
 		{kind: "Scroller", fit: true, components: [
 			{name: "queryList", onSetupItem: "newQueryRow", kind: "Repeater", count: 1, components: [
 				{kind: "FittableColumns", components: [
-					{kind: "onyx.Button", content: "+", ontap: "addQueryRow"},
-					{kind: "onyx.Button", content: "-", ontap: "removeQueryRow"},
+					{style: "padding-right: 10px;", components: [
+						{kind: "onyx.Button", style: "min-width: 30px;", content: "+", ontap: "addQueryRow"},
+						{kind: "onyx.Button", style: "min-width: 30px;", content: "-", ontap: "removeQueryRow"},
+					]},
 					{kind: "QueryItem", onQueryValueChanged: "updateQuery"}
 				]},
 			]}
@@ -74,23 +76,27 @@ enyo.kind({
 		onQueryValueChanged:""
 	},
 	components: [
-		{kind: "onyx.PickerDecorator", components: [
-			{},
-			{kind: "onyx.Picker", name: "queryType", onChange: "queryTypeSelected", components: [
-				{content: "Start Date"},
-				{content: "End Date"},
-				{content: "Node Count"},
-				{content: "Job Name"}
-			]}
+		{style: "min-width: 100px;", components: [
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", name: "queryType", onChange: "queryTypeSelected", components: [
+					{content: "Start Date"},
+					{content: "End Date"},
+					{content: "Node Count"},
+					{content: "User"}
+				]}
+			]},
 		]},
 		//{kind: "FittableColumns", name: "queryDetails"},
 		{kind: "FittableColumns", name: "startDateItems", showing: false, components: [
-			{kind: "onyx.PickerDecorator", components: [
-				{},
-				{kind: "onyx.Picker", name: "startDateBeforeAfter", onChange: "startDateChanged", components: [
-					{content:"Before", name: "startDateBefore"},
-					{content:"After", name: "startDateAfter"}
-				]}
+			{style: "min-width: 75px;", components: [
+				{kind: "onyx.PickerDecorator", components: [
+					{},
+					{kind: "onyx.Picker", name: "startDateBeforeAfter", onChange: "startDateChanged", components: [
+						{content:"Before", name: "startDateBefore"},
+						{content:"After", name: "startDateAfter"}
+					]}
+				]},
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
@@ -106,12 +112,14 @@ enyo.kind({
 			]},
 		]},
 		{kind: "FittableColumns", name: "endDateItems", showing: false, components: [
-			{kind: "onyx.PickerDecorator", components: [
-				{},
-				{kind: "onyx.Picker", name: "endDateBeforeAfter", onChange: "endDateChanged", components: [
-					{content:"Before", name: "endDateBefore"},
-					{content:"After", name: "endDateAfter"}
-				]}
+			{style: "min-width: 75px;", components: [
+				{kind: "onyx.PickerDecorator", components: [
+					{},
+					{kind: "onyx.Picker", name: "endDateBeforeAfter", onChange: "endDateChanged", components: [
+						{content:"Before", name: "endDateBefore"},
+						{content:"After", name: "endDateAfter"}
+					]}
+				]},
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
@@ -127,23 +135,25 @@ enyo.kind({
 			]},
 		]},
 		{kind: "FittableColumns", name: "nodeCountItems", showing: false, components: [
-			{kind: "onyx.PickerDecorator", onChange: "nodeCountChanged", components: [
+			{style: "min-width: 75px;", components: [
+				{kind: "onyx.PickerDecorator", onChange: "nodeCountChanged", components: [
 					{},
 					{kind: "onyx.Picker", name: "nodeCountComparison", components: [
-						{content: "<"},
-						{content: ">"},
-						{content: "=="},
 						{content: "<="},
-						{content: ">="}
+						{content: ">="},
+						{content: "=="},
+						{content: "<"},
+						{content: ">"}
 					]}
 				]},
+			]},
 				{kind: "onyx.InputDecorator", components: [
 					{kind: "onyx.Input", name: "nodeCountNumber", oninput: "nodeCountChanged", placeholder: "Number of Nodes", type: "number"}
 				]},
 		]},
-		{kind: "FittableColumns", showing: false, name: "jobNameItems", components: [
+		{kind: "FittableColumns", showing: false, name: "userItems", components: [
 			{kind: "onyx.InputDecorator", components: [
-				{kind: "onyx.Input", name: "jobName", oninput: "jobNameChanged"}
+				{kind: "onyx.Input", name: "user", oninput: "userChanged"}
 			]}
 		]},
 		
@@ -205,10 +215,10 @@ enyo.kind({
 			}
 		}
 	},
-	jobNameChanged: function(inSender, inEvent) {
+	userChanged: function(inSender, inEvent) {
 		if(!this.disableQueryValue) {
 			this.queryValue = [	this.$.queryType.selected.content,
-						this.$.jobName.getValue()];
+						this.$.user.getValue()];
 			this.doQueryValueChanged();
 		}
 	},
@@ -261,16 +271,16 @@ enyo.kind({
 			case "Node Count":
 				this.activeControl = this.$.nodeCountItems;
 				if(this.queryValue.length < 3) {
-					this.queryValue = [this.queryValue[0], "<"];
+					this.queryValue = [this.queryValue[0], ">="];
 					this.doQueryValueChanged();
 				}
 				this.setPickerWithText(this.$.nodeCountComparison, this.queryValue[1]);
 				this.$.nodeCountNumber.setValue(this.queryValue[2]);
 				break;
-			case "Job Name":
-				this.activeControl = this.$.jobNameItems;
+			case "User":
+				this.activeControl = this.$.userItems;
 				if(this.queryValue.length > 1) {
-					this.$.jobName.setValue(this.queryValue[1]);
+					this.$.user.setValue(this.queryValue[1]);
 				}
 				break;
 		}

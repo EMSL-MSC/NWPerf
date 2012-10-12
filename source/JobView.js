@@ -18,7 +18,9 @@ enyo.kind({
 	],
 	spin: function() {
 		this.$.jobGraphs.destroyClientControls();
-		this.$.jobGraphs.createComponent({kind: "onyx.Spinner"});
+		this.$.jobGraphs.createComponent({style:"background:black; border-radius:5px; padding:15px; width:65px;", components: [
+			{kind: "onyx.Spinner"}
+		]});
 		this.$.jobGraphs.render();
 	},
 	jobChanged: function(oldValue) {
