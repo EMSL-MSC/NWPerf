@@ -9,23 +9,26 @@ enyo.kind({
 			{kind: "JobView", name: "jobView", style: "width: 0%;", onJobViewClosed: "closeJobView"},
 		]},
 	],
+	ready: false,
+	create: function() {
+		this.inherited(arguments);
+		this.ready = true;
+	},
 	getJobList: function(inSender, inEvent) {
-		console.log("getJobList", arguments);
 		this.$.jobManager.getJobList(inEvent);
-		this.$.jobViews.setIndex(0);
+		if(this.ready) {
+			this.$.jobViews.setIndex(0);
+		}
 	},
 	updateJobTable: function(inSender, inEvent) {
-		console.log("updateJobTable", inSender, inEvent);
 		this.$.jobTable.setJobs(inEvent);
 	},
 	getJob: function(inSender, inEvent) {
-		console.log("getJob", inSender, inEvent);
 		this.$.jobManager.getJob(inEvent.jobid);
 		this.$.jobView.spin();
 		this.$.jobViews.setIndex(1);
 	},
 	displayJob: function(inSender, inEvent) {
-		console.log("displayJob", inSender, inEvent);
 		this.$.jobView.setJob(inEvent);
 	},
 	closeJobView: function(inSender, inEvent) {

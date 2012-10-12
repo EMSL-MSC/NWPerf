@@ -1,7 +1,7 @@
 enyo.kind({
 	name: "JobView",
 	kind: "FittableRows",
-	classes: "dark",
+	classes: "JobView",
 	published: {
 		job: false,
 	},
@@ -41,14 +41,12 @@ enyo.kind({
 				metricDrawer.createComponent({kind: "Image", src: this.job[group][metric]["src"], ontap: "toggleThumbnail", classes: "thumbnail", thumbnail: true}, {owner: this});
 			}
 		}
-		console.log("Length", length);
 		if(length == 0) {
 			this.$.jobGraphs.createComponent({content: "Sorry there is no data for this job", classes:"job-error"});
 		}
 		this.$.jobGraphs.render();
 	},
 	toggleDrawer: function(inSender, inEvent) {
-		console.log("Group tapped", inSender, inEvent);
 		inSender.drawer.setOpen(! inSender.drawer.getOpen());
 	},
 	toggleThumbnail: function(inSender, inEvent) {

@@ -8,16 +8,30 @@ enyo.kind({
 	components: [
 		{kind: "Scroller", fit: true, components: [
 			{name: "queryList", onSetupItem: "newQueryRow", kind: "Repeater", count: 1, components: [
-				{kind: "QueryItem", onQueryValueChanged: "updateQuery"}
-			]},
+				{kind: "FittableColumns", components: [
+					{kind: "onyx.Button", content: "+", ontap: "addQueryRow"},
+					{kind: "onyx.Button", content: "-", ontap: "removeQueryRow"},
+					{kind: "QueryItem", onQueryValueChanged: "updateQuery"}
+				]},
+			]}
 		]},
+/*
 		{kind: "FittableColumns", components: [
 			{kind: "onyx.Button", content: "Add Row", ontap: "addQueryRow"},
 			{kind: "onyx.Button", content: "Remove Row", ontap: "removeQueryRow"},
 		]}
+*/
 	],
 
-	queryItems: [],
+	initialized: false,
+	queryItems: [["Start Date"], ["End Date"]],
+
+	create: function() {
+		this.inherited(arguments);
+		this.$.queryList.setCount(this.queryItems.length);
+		this.initialized = true;
+		this.doQueryChanged(this.queryItems);
+	},
 
 	newQueryRow: function(inSender, inEvent) {
 		item = inEvent.item.$.queryItem;
@@ -31,21 +45,22 @@ enyo.kind({
 	},
 
 	addQueryRow: function(inSender, inEvent) {
-		this.$.queryList.setCount(this.$.queryList.count + 1);
+		this.queryItems.splice(inEvent.index+1, 0, []);
+		this.$.queryList.setCount(this.queryItems.length);
 	},
 
 	removeQueryRow: function(inSender, inEvent) {
-		this.queryItems.pop();
+		this.queryItems.splice(inEvent.index, 1);
 		this.$.queryList.setCount(this.$.queryList.count - 1);
 	},
 	
 	updateQuery: function(inSender, inEvent) {
 		this.queryItems[inSender.getRowNumber()] = inSender.getQueryValue();
-		this.doQueryChanged(this.queryItems);
+		if(this.initialized) {
+			this.doQueryChanged(this.queryItems);
+		}
 	},
 
-	queries: {}
-	
 });
 
 enyo.kind({
@@ -135,12 +150,12 @@ enyo.kind({
 	],
 	updatingQueryValue: false,
 	activeControl: false,
+	months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 	create: function() {
 		this.inherited(arguments);
-		months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		for(i = 0; i < months.length; i++) {
-			this.$.startMonth.createComponent({content: months[i]});
-			this.$.endMonth.createComponent({content: months[i]});
+		for(i = 0; i < this.months.length; i++) {
+			this.$.startMonth.createComponent({content: this.months[i]});
+			this.$.endMonth.createComponent({content: this.months[i]});
 		}
 		for(i = 1; i <= 31; i++) {
 			this.$.startDay.createComponent({content: i});
@@ -151,7 +166,7 @@ enyo.kind({
 			this.$.endYear.createComponent({content: i});
 		}
 		this.render();
-		this.setQueryValue(["Start Date"]);
+		this.setQueryValue([]);
 	},
 	queryTypeSelected: function(inSender, inEvent) {
 		if (this.$.queryType.selected.content != this.queryValue[0]) {
@@ -185,7 +200,9 @@ enyo.kind({
 			this.queryValue = [	this.$.queryType.selected.content,
 						this.$.nodeCountComparison.selected.content,
 						this.$.nodeCountNumber.getValue()];
-			this.doQueryValueChanged();
+			if(this.queryValue != "") {
+				this.doQueryValueChanged();
+			}
 		}
 	},
 	jobNameChanged: function(inSender, inEvent) {
@@ -197,6 +214,9 @@ enyo.kind({
 	},
 	queryValueChanged: function(oldValue) {
 		this.disableQueryValue = true
+		if(this.queryValue.length == 0) {
+			this.queryValue = ["Start Date" ];
+		}
 		components = this.$.queryType.getControls();
 		for(i=0;i<components.length;i++) {
 			if(components[i].content == this.queryValue[0]) {
@@ -206,11 +226,13 @@ enyo.kind({
 		if(this.activeControl != false) {
 			this.activeControl.setShowing(false);
 		}
+		d = new Date();
 		switch(this.queryValue[0]) {
 			case "Start Date":
 				this.activeControl = this.$.startDateItems;
 				if(this.queryValue.length < 5) {
-					this.queryValue = [this.queryValue[0], "<", "Jan", 1, 2012];
+					this.queryValue = [this.queryValue[0], ">", this.months[d.getMonth()], 1, 2012];
+					this.doQueryValueChanged();
 				}
 				this.setPickerWithText(this.$.startDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
 				this.setPickerWithText(this.$.startMonth, this.queryValue[2]);
@@ -220,7 +242,16 @@ enyo.kind({
 			case "End Date":
 				this.activeControl = this.$.endDateItems;
 				if(this.queryValue.length < 5) {
-					this.queryValue = [this.queryValue[0], "<", "Jan", 1, 2013];
+					month = d.getMonth();
+					if(month == 11) {
+						month = 0
+						year = d.getFullYear()+1;
+					} else {
+						month++;
+						year = d.getFullYear();
+					}
+					this.queryValue = [this.queryValue[0], "<", this.months[month], 1, year];
+					this.doQueryValueChanged();
 				}
 				this.setPickerWithText(this.$.endDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
 				this.setPickerWithText(this.$.endMonth, this.queryValue[2]);
@@ -231,6 +262,7 @@ enyo.kind({
 				this.activeControl = this.$.nodeCountItems;
 				if(this.queryValue.length < 3) {
 					this.queryValue = [this.queryValue[0], "<"];
+					this.doQueryValueChanged();
 				}
 				this.setPickerWithText(this.$.nodeCountComparison, this.queryValue[1]);
 				this.$.nodeCountNumber.setValue(this.queryValue[2]);
