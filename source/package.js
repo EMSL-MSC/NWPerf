@@ -2,6 +2,7 @@ enyo.depends(
 	"$lib/layout",
 	"$lib/onyx",
 	"QueryBuilder.js",
+	"UserManager.js",
 	"JobManager.js",
 	"JobTable.js",
 	"JobView.css",

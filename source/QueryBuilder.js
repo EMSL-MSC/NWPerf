@@ -2,6 +2,10 @@ enyo.kind({
 	name: "QueryBuilder",
 	kind: "FittableRows",
 	classes: "dark",
+	published: {
+		allowUserSelect: false,
+		userList: [],
+	},
 	events: {
 		onQueryChanged: ""
 	},
@@ -17,12 +21,6 @@ enyo.kind({
 				]},
 			]}
 		]},
-/*
-		{kind: "FittableColumns", components: [
-			{kind: "onyx.Button", content: "Add Row", ontap: "addQueryRow"},
-			{kind: "onyx.Button", content: "Remove Row", ontap: "removeQueryRow"},
-		]}
-*/
 	],
 
 	initialized: false,
@@ -38,6 +36,7 @@ enyo.kind({
 	newQueryRow: function(inSender, inEvent) {
 		item = inEvent.item.$.queryItem;
 		item.setRowNumber(inEvent.index);
+		item.setAllowUserSelect(this.allowUserSelect);
 		if(inEvent.index >= this.queryItems.length) {
 			this.queryItems[item.getRowNumber()] = item.getQueryValue();
 		} else { 
@@ -62,7 +61,9 @@ enyo.kind({
 			this.doQueryChanged(this.queryItems);
 		}
 	},
-
+	allowUserSelectChanged: function(oldValue) {
+		this.$.queryList.setCount(this.queryItems.length);
+	}
 });
 
 enyo.kind({
@@ -71,6 +72,7 @@ enyo.kind({
 	published: {
 		queryValue: [],
 		rowNumber: -1,
+		allowUserSelect: false,
 	},
 	events: {
 		onQueryValueChanged:""
@@ -83,11 +85,9 @@ enyo.kind({
 					{content: "Start Date"},
 					{content: "End Date"},
 					{content: "Node Count"},
-					{content: "User"}
 				]}
 			]},
 		]},
-		//{kind: "FittableColumns", name: "queryDetails"},
 		{kind: "FittableColumns", name: "startDateItems", showing: false, components: [
 			{style: "min-width: 75px;", components: [
 				{kind: "onyx.PickerDecorator", components: [
@@ -293,6 +293,11 @@ enyo.kind({
 			if(components[i].content == selectText) {
 				component.setSelected(components[i]);
 			}
+		}
+	},
+	allowUserSelectChanged: function(oldvalue) {
+		if(this.allowUserSelect) {
+			this.$.queryType.createComponent({content: "User"});
 		}
 	}
 });

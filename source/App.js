@@ -2,8 +2,9 @@ enyo.kind({
 	name: "App",
 	kind: "FittableRows",
 	components:[
+		{kind: "UserManager", name: "userManager", onGroupMembership: "updateUserGroup", onUserListRetrieved:"updateUserList"},
 		{kind: "JobManager", name: "jobManager", onNewJobList: "updateJobTable", onNewJob:"displayJob"},
-		{kind: "QueryBuilder", classes: "shadow", style: "height: 20%", onQueryChanged: "getJobList"},
+		{kind: "QueryBuilder", name: "queryBuilder", classes: "shadow", style: "height: 20%", onQueryChanged: "getJobList"},
 		{kind: "Panels", draggable: false, name: "jobViews", fit: true, arrangerKind: "CollapsingArranger", realtimeFit: true, components: [
 			{kind: "JobTable", name: "jobTable", onJobSelected: "getJob", style: "width: 100%;"},
 			{kind: "JobView", name: "jobView", style: "width: 0%;", onJobViewClosed: "closeJobView"},
@@ -12,7 +13,21 @@ enyo.kind({
 	ready: false,
 	create: function() {
 		this.inherited(arguments);
+		this.$.userManager.getGroupMembership();
 		this.ready = true;
+	},
+	updateUserGroup: function(inSender, inEvent) {
+		for(i = 0; i < inEvent.length; i++) {
+			if(inEvent[i] == "admin") {
+				//this.$.userManager.getUserList();
+				this.$.queryBuilder.setAllowUserSelect(true);
+				this.$.jobTable.setShowUsers(true);
+				break;
+			}
+		}
+	},
+	updateUserList: function(inSender, inEvent) {
+		this.$.queryBuilder.setUserList(inEvent);
 	},
 	getJobList: function(inSender, inEvent) {
 		this.$.jobManager.getJobList(inEvent);
