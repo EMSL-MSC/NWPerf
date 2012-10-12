@@ -84,7 +84,11 @@ enyo.kind({
 				{kind: "onyx.Picker", name: "queryType", onChange: "queryTypeSelected", components: [
 					{content: "Start Date"},
 					{content: "End Date"},
+					{content: "Submit Date"},
 					{content: "Node Count"},
+					{content: "Job Id"},
+					{content: "Account"},
+					//{content: "Run Time"},
 				]}
 			]},
 		]},
@@ -134,6 +138,29 @@ enyo.kind({
 				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endYear"}
 			]},
 		]},
+		{kind: "FittableColumns", name: "submitDateItems", showing: false, components: [
+			{style: "min-width: 75px;", components: [
+				{kind: "onyx.PickerDecorator", components: [
+					{},
+					{kind: "onyx.Picker", name: "submitDateBeforeAfter", onChange: "submitDateChanged", components: [
+						{content:"Before", name: "submitDateBefore"},
+						{content:"After", name: "submitDateAfter"}
+					]}
+				]},
+			]},
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", onChange: "submitDateChanged", name: "submitMonth"}
+			]},
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", onChange: "submitDateChanged", name: "submitDay"}
+			]},
+			{kind: "onyx.PickerDecorator", components: [
+				{},
+				{kind: "onyx.Picker", onChange: "submitDateChanged", name: "submitYear"}
+			]},
+		]},
 		{kind: "FittableColumns", name: "nodeCountItems", showing: false, components: [
 			{style: "min-width: 75px;", components: [
 				{kind: "onyx.PickerDecorator", onChange: "nodeCountChanged", components: [
@@ -150,6 +177,16 @@ enyo.kind({
 				{kind: "onyx.InputDecorator", components: [
 					{kind: "onyx.Input", name: "nodeCountNumber", oninput: "nodeCountChanged", placeholder: "Number of Nodes", type: "number"}
 				]},
+		]},
+		{kind: "FittableColumns", name: "jobIdItems", showing: false, components: [
+			{kind: "onyx.InputDecorator", components: [
+				{kind: "onyx.Input", name: "jobId", oninput: "jobIdChanged", placeholder: "Job ID", type: "number"}
+			]},
+		]},
+		{kind: "FittableColumns", showing: false, name: "accountItems", components: [
+			{kind: "onyx.InputDecorator", components: [
+				{kind: "onyx.Input", name: "account", oninput: "accountChanged"}
+			]}
 		]},
 		{kind: "FittableColumns", showing: false, name: "userItems", components: [
 			{kind: "onyx.InputDecorator", components: [
@@ -205,6 +242,17 @@ enyo.kind({
 			this.doQueryValueChanged();
 		}
 	},
+	submitDateChanged: function(inSender, inEvent) {
+		if(!this.disableQueryValue) {
+			beforeAfter = {"After": ">", "Before": "<"}[this.$.submitDateBeforeAfter.selected.content]
+			this.queryValue = [	this.$.queryType.selected.content,
+						beforeAfter,
+						this.$.submitMonth.selected.content,
+						this.$.submitDay.selected.content,
+						this.$.submitYear.selected.content];
+			this.doQueryValueChanged();
+		}
+	},
 	nodeCountChanged: function(inSender, inEvent) {
 		if(!this.disableQueryValue) {
 			this.queryValue = [	this.$.queryType.selected.content,
@@ -213,6 +261,20 @@ enyo.kind({
 			if(this.queryValue != "") {
 				this.doQueryValueChanged();
 			}
+		}
+	},
+	jobIdChanged: function(inSender, inEvent) {
+		if(!this.disableQueryValue) {
+			this.queryValue = [	this.$.queryType.selected.content,
+						this.$.jobId.getValue()];
+			this.doQueryValueChanged();
+		}
+	},
+	accountChanged: function(inSender, inEvent) {
+		if(!this.disableQueryValue) {
+			this.queryValue = [	this.$.queryType.selected.content,
+						this.$.account.getValue()];
+			this.doQueryValueChanged();
 		}
 	},
 	userChanged: function(inSender, inEvent) {
@@ -268,6 +330,25 @@ enyo.kind({
 				this.setPickerWithText(this.$.endDay, this.queryValue[3]);
 				this.setPickerWithText(this.$.endYear, this.queryValue[4]);
 				break;
+			case "Submit Date":
+				this.activeControl = this.$.submitDateItems;
+				if(this.queryValue.length < 5) {
+					month = d.getMonth();
+					if(month == 11) {
+						month = 0
+						year = d.getFullYear()+1;
+					} else {
+						month++;
+						year = d.getFullYear();
+					}
+					this.queryValue = [this.queryValue[0], "<", this.months[month], 1, year];
+					this.doQueryValueChanged();
+				}
+				this.setPickerWithText(this.$.submitDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
+				this.setPickerWithText(this.$.submitMonth, this.queryValue[2]);
+				this.setPickerWithText(this.$.submitDay, this.queryValue[3]);
+				this.setPickerWithText(this.$.submitYear, this.queryValue[4]);
+				break;
 			case "Node Count":
 				this.activeControl = this.$.nodeCountItems;
 				if(this.queryValue.length < 3) {
@@ -276,6 +357,18 @@ enyo.kind({
 				}
 				this.setPickerWithText(this.$.nodeCountComparison, this.queryValue[1]);
 				this.$.nodeCountNumber.setValue(this.queryValue[2]);
+				break;
+			case "Job Id":
+				this.activeControl = this.$.jobIdItems;
+				if(this.queryValue.length > 1) {
+					this.$.jobId.setValue(this.queryValue[1]);
+				}
+				break;
+			case "Account":
+				this.activeControl = this.$.accountItems;
+				if(this.queryValue.length > 1) {
+					this.$.account.setValue(this.queryValue[1]);
+				}
 				break;
 			case "User":
 				this.activeControl = this.$.userItems;

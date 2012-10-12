@@ -25,7 +25,7 @@
 				"Oct" => 10,
 				"Nov" => 11,
 				"Dec" => 12);
-		$fields = array("Start Date" => "start_time", "End Date" => "end_time", "Submit Date" => "submit_time", "Dispatch Date" => "dispatch_time", "Node Count" => "num_nodes_allocated", "User" => "moab_job_details.user");
+		$fields = array("Start Date" => "start_time", "End Date" => "end_time", "Submit Date" => "submit_time", "Dispatch Date" => "dispatch_time", "Node Count" => "num_nodes_allocated", "User" => "moab_job_details.user", "Job Id" => "id", "Account" => "account");
 		$sql = "select id, moab_job_details.user as user, jobs_id as jobId, account, num_nodes_allocated as numNodes, submit_time as submitTime, start_time as startTime, end_time as endTime, end_time-start_time as runTime from moab_job_details where ";
 		for($i=0;$i<count($query);$i++) {
 			if($i != 0) {
@@ -56,6 +56,8 @@
 					}
 					$sql .= "$queryItem[0] $queryItem[1] '$queryItem[2]' ";
 					break;
+				case "Job Id":
+				case "Account":
 				case "User":
 					$queryItem[0] = $fields[$queryItem[0]];
 					$queryItem[1] = $db->escapeSimple($queryItem[1]);
@@ -90,6 +92,6 @@
 									"description" => $description));
 			}
 		}
-		print(json_encode($ret));
+		print(json_encode(array("version" => 1, "graphs" => $ret)));
 	}
 ?>
