@@ -15,9 +15,9 @@ enyo.kind({
 				{kind: "FittableColumns", components: [
 					{style: "padding-right: 10px;", components: [
 						{kind: "onyx.Button", style: "min-width: 30px;", content: "+", ontap: "addQueryRow"},
-						{kind: "onyx.Button", style: "min-width: 30px;", content: "-", ontap: "removeQueryRow"},
+						{kind: "onyx.Button", style: "min-width: 30px;", content: "-", name: "minusButton", ontap: "removeQueryRow"},
 					]},
-					{kind: "QueryItem", onQueryValueChanged: "updateQuery"}
+					{kind: "QueryItem", onQueryValueChanged: "updateQuery", onQueryServer: "queryServer"}
 				]},
 			]}
 		]},
@@ -30,10 +30,13 @@ enyo.kind({
 		this.inherited(arguments);
 		this.$.queryList.setCount(this.queryItems.length);
 		this.initialized = true;
-		this.doQueryChanged(this.queryItems);
+		this.queryServer();
 	},
 
 	newQueryRow: function(inSender, inEvent) {
+		if(this.queryItems.length == 1 && inEvent.index == 0) {
+			inEvent.item.$.minusButton.setDisabled(true);
+		}
 		item = inEvent.item.$.queryItem;
 		item.setRowNumber(inEvent.index);
 		item.setAllowUserSelect(this.allowUserSelect);
@@ -48,21 +51,28 @@ enyo.kind({
 	addQueryRow: function(inSender, inEvent) {
 		this.queryItems.splice(inEvent.index+1, 0, []);
 		this.$.queryList.setCount(this.queryItems.length);
+		this.queryServer();
 	},
 
 	removeQueryRow: function(inSender, inEvent) {
 		this.queryItems.splice(inEvent.index, 1);
 		this.$.queryList.setCount(this.$.queryList.count - 1);
+		this.queryServer();
 	},
 	
 	updateQuery: function(inSender, inEvent) {
 		this.queryItems[inSender.getRowNumber()] = inSender.getQueryValue();
+		/*
 		if(this.initialized) {
 			this.doQueryChanged(this.queryItems);
 		}
+		*/
 	},
 	allowUserSelectChanged: function(oldValue) {
 		this.$.queryList.setCount(this.queryItems.length);
+	},
+	queryServer: function(inSender, inEvent) {
+		this.doQueryChanged(this.queryItems);
 	}
 });
 
@@ -71,11 +81,13 @@ enyo.kind({
 	kind: "FittableColumns",
 	published: {
 		queryValue: [],
+		queryValue: [],
 		rowNumber: -1,
 		allowUserSelect: false,
 	},
 	events: {
-		onQueryValueChanged:""
+		onQueryValueChanged:"",
+		onQueryServer:""
 	},
 	components: [
 		{style: "min-width: 100px;", components: [
@@ -203,14 +215,17 @@ enyo.kind({
 		for(i = 0; i < this.months.length; i++) {
 			this.$.startMonth.createComponent({content: this.months[i]});
 			this.$.endMonth.createComponent({content: this.months[i]});
+			this.$.submitMonth.createComponent({content: this.months[i]});
 		}
 		for(i = 1; i <= 31; i++) {
 			this.$.startDay.createComponent({content: i});
 			this.$.endDay.createComponent({content: i});
+			this.$.submitDay.createComponent({content: i});
 		}
 		for(i = 2005; i <= 2030; i++) {
 			this.$.startYear.createComponent({content: i});
 			this.$.endYear.createComponent({content: i});
+			this.$.submitYear.createComponent({content: i});
 		}
 		this.render();
 		this.setQueryValue([]);
@@ -218,6 +233,7 @@ enyo.kind({
 	queryTypeSelected: function(inSender, inEvent) {
 		if (this.$.queryType.selected.content != this.queryValue[0]) {
 			this.setQueryValue([this.$.queryType.selected.content]);
+			this.doQueryValueChanged();
 		}
 	},
 	startDateChanged: function(inSender, inEvent) {
@@ -229,6 +245,7 @@ enyo.kind({
 						this.$.startDay.selected.content,
 						this.$.startYear.selected.content];
 			this.doQueryValueChanged();
+			this.doQueryServer();
 		}
 	},
 	endDateChanged: function(inSender, inEvent) {
@@ -240,6 +257,7 @@ enyo.kind({
 						this.$.endDay.selected.content,
 						this.$.endYear.selected.content];
 			this.doQueryValueChanged();
+			this.doQueryServer();
 		}
 	},
 	submitDateChanged: function(inSender, inEvent) {
@@ -251,6 +269,7 @@ enyo.kind({
 						this.$.submitDay.selected.content,
 						this.$.submitYear.selected.content];
 			this.doQueryValueChanged();
+			this.doQueryServer();
 		}
 	},
 	nodeCountChanged: function(inSender, inEvent) {
@@ -258,8 +277,9 @@ enyo.kind({
 			this.queryValue = [	this.$.queryType.selected.content,
 						this.$.nodeCountComparison.selected.content,
 						this.$.nodeCountNumber.getValue()];
+			this.doQueryValueChanged();
 			if(this.queryValue != "") {
-				this.doQueryValueChanged();
+				this.doQueryServer();
 			}
 		}
 	},
@@ -268,6 +288,7 @@ enyo.kind({
 			this.queryValue = [	this.$.queryType.selected.content,
 						this.$.jobId.getValue()];
 			this.doQueryValueChanged();
+			this.doQueryServer();
 		}
 	},
 	accountChanged: function(inSender, inEvent) {
@@ -275,6 +296,7 @@ enyo.kind({
 			this.queryValue = [	this.$.queryType.selected.content,
 						this.$.account.getValue()];
 			this.doQueryValueChanged();
+			this.doQueryServer();
 		}
 	},
 	userChanged: function(inSender, inEvent) {
@@ -282,6 +304,7 @@ enyo.kind({
 			this.queryValue = [	this.$.queryType.selected.content,
 						this.$.user.getValue()];
 			this.doQueryValueChanged();
+			this.doQueryServer();
 		}
 	},
 	queryValueChanged: function(oldValue) {
