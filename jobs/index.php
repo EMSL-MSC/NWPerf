@@ -25,8 +25,8 @@
 				"Oct" => 10,
 				"Nov" => 11,
 				"Dec" => 12);
-		$fields = array("Start Date" => "start_time", "End Date" => "end_time", "Submit Date" => "submit_time", "Dispatch Date" => "dispatch_time", "Node Count" => "num_nodes_allocated", "User" => "moab_job_details.user", "Job Id" => "id", "Account" => "account");
-		$sql = "select id, moab_job_details.user as user, jobs_id as jobId, account, num_nodes_allocated as numNodes, submit_time as submitTime, start_time as startTime, end_time as endTime, end_time-start_time as runTime from moab_job_details where ";
+		$fields = array("Start Date" => "start_time", "End Date" => "end_time", "Submit Date" => "submit_time", "Dispatch Date" => "dispatch_time", "Node Count" => "num_nodes_allocated", "User" => "moab_job_details.user", "Job Id" => "jobs.job_id", "Account" => "account");
+		$sql = "select jobs.job_id as id, moab_job_details.user as user, jobs_id as jobId, account, num_nodes_allocated as numNodes, submit_time as submitTime, start_time as startTime, end_time as endTime, end_time-start_time as runTime from jobs, moab_job_details where jobs.id = moab_job_details.jobs_id and ";
 		for($i=0;$i<count($query);$i++) {
 			if($i != 0) {
 				$sql .= "and ";
