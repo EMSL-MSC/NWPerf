@@ -63,7 +63,6 @@ enyo.kind({
 						y = p1[1];
 					else
 						y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
-					//legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(2)));
 					values[series.label] = y.toPrecision(4);
 				}
 				owner.doValuesUpdate(values);
@@ -98,13 +97,10 @@ enyo.kind({
 					},
 					"yaxis": {
 						tickFormatter: this.siTicks,
-						//labelWidth: 30
 					},
 					"xaxis": {
 						mode: "time",
-						//min: this.graphData["startTime"],
-						//max: this.graphData["endTime"],
-						ticks: 10,
+						timezone: "browser",
 					}
 				});
 				jQuery(n).bind("plothover",{owner: this}, this.scheduleUpdateValues);
