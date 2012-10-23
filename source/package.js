@@ -10,6 +10,7 @@ enyo.depends(
 	"jquery.flot.js",
 	"jquery.flot.crosshair.js",
 	"jquery.flot.selection.js",
+	"jquery.flot.resize.js",
 	"jquery.flot.time.js",
 	"Flot.js",
 	"JobView.js",
