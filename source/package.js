@@ -8,8 +8,10 @@ enyo.depends(
 	"JobView.css",
 	"jquery.js",
 	"jquery.flot.js",
-	"jquery.crosshair.js",
-	"jquery.selection.js",
+	"jquery.flot.crosshair.js",
+	"jquery.flot.selection.js",
+	"jquery.flot.time.js",
+	"Flot.js",
 	"JobView.js",
 	"App.css",
 	"App.js"
