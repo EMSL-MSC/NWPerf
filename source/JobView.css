@@ -27,3 +27,21 @@
 	border: solid;
 	background-color:red;
 }
+
+.legend {
+	width: 200px;
+}
+
+.graph {
+	width: 1000px;
+	height: 300px;
+}
+.color-border {
+	border: 1px solid #ccc;
+	padding: 1px;
+}
+.legend-label {
+	padding-left: 2px;
+	font-size: smaller;
+	color: #545454;
+}
