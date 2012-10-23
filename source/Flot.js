@@ -18,6 +18,7 @@ enyo.kind({
 	updateValuesTimeout: null,
 	latestPosition: null,
 	previousPoint: null,
+	plotItem: null,
  	scheduleUpdateValues: function (event, pos, item) {
 		owner = event.data.owner;
 		owner.latestPosition = pos;
@@ -40,11 +41,12 @@ enyo.kind({
 
 				var pos = owner.latestPosition;
 
-				var axes = plot.getAxes();
-				if (pos.x < axes.xaxis.min && pos.x > axes.xaxis.max)
+				var axes = owner.plotItem.getAxes();
+				if (	pos.x < axes.xaxis.min && pos.x > axes.xaxis.max &&
+					pos.y < axes.yaxis.min && pos.y > axes.yaxis.max)
 					return;
 
-				var i, j, dataset = plot.getData();
+				var i, j, dataset = owner.plotItem.getData();
 				values = {};
 				for (i = 0; i < dataset.length; ++i) {
 					var series = dataset[i];
@@ -86,7 +88,7 @@ enyo.kind({
 						}
 					}
 				}
-				plot = $.plot(jQuery(n), data, {
+				this.plotItem = $.plot(jQuery(n), data, {
 					grid: {
 						hoverable: true,
 					},
@@ -102,7 +104,7 @@ enyo.kind({
 						mode: "time",
 						//min: this.graphData["startTime"],
 						//max: this.graphData["endTime"],
-						//labelHeight: 20
+						ticks: 10,
 					}
 				});
 				jQuery(n).bind("plothover",{owner: this}, this.scheduleUpdateValues);
