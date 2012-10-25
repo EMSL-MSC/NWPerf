@@ -1,7 +1,7 @@
 <?php
 	$jobs_id = $_GET["job"];
 	$pointArchiveDir = sys_get_temp_dir()."/flot/$jobs_id";
-	if(file_exists($pointsArchiveDir)) {
+	if(! file_exists($pointArchiveDir)) {
 		$pointsDir = "/var/www/nwperf-graphs/".($jobs_id%100)."/".($jobs_id/100%100)."/".$jobs_id;
 		$pointsDescFile = $pointsDir."/pointsDescriptions";
 		$file = fopen($pointsDescFile,'r');
