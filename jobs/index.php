@@ -8,6 +8,7 @@
 	}
 	$res = $db->query("select nwperf_group from usergroups where nwperf_user = ? and nwperf_group = 'admin'", $_SERVER["PHP_AUTH_USER"]);
 	$isAdmin = $res->numRows();
+	$tag = $_GET["tag"];
 	if(array_key_exists("q", $_GET)) {
 		$query = json_decode($_GET["q"],true);
 		if(! $isAdmin) {
@@ -69,7 +70,7 @@
 		if(PEAR::isError($ret)) {
 			die($ret->getMessage() . " sql: $sql for queryItems: ". var_export($query));
 		}
-		print(json_encode($ret));
+		print(json_encode(array("tag" => $tag, "jobs" => $ret)));
 	} else {
 		$jobs_id = $_GET["job"];
 		if(file_exists("/var/www/nwperf-graphs/cview/jobs/".($jobs_id%100)."/".($jobs_id/100%100)."/$jobs_id.tar.gz")) {
@@ -99,7 +100,7 @@
 										"description" => $description));
 				}
 			}
-			print(json_encode(array("version" => 1, "graphs" => $ret, "cview" => $cview)));
+			print(json_encode(array("version" => 1, "graphs" => $ret, "cview" => $cview, "tag" => $tag)));
 		} else {
 			$query = $db->prepare("select point_description as description, name as group, pd.units as units from point_descriptions pd, point_groups pg where pd.point_groups_id = pg.id and point_name = ?");
 			$ret = array();
@@ -124,7 +125,7 @@
 									"unit" => $row["units"],
 									"description" => $row["description"]));
 			}
-			print(json_encode(array("version" => 2, "graphs" => $ret, "hosts" => $metadata->hosts, "cview" => $cview)));
+			print(json_encode(array("version" => 2, "graphs" => $ret, "hosts" => $metadata->hosts, "cview" => $cview, "tag" => $tag)));
 		}
 	}
 ?>
