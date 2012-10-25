@@ -33,13 +33,26 @@ enyo.kind({
 				console.log(group);
 				length++;
 				groupHeader = this.$.jobGraphs.createComponent({content: group, ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
-				groupDrawer = this.$.jobGraphs.createComponent({kind: "onyx.Drawer", open: false});
-				groupHeader.drawer = groupDrawer;
-				for(metric in this.job["graphs"][group]) {
-					headerText = this.job["graphs"][group][metric]["name"]+" - "+ this.job["graphs"][group][metric]["description"];
-					metricHeader = groupDrawer.createComponent({content: headerText, ontap: "toggleDrawer", classes: "image-header"}, {owner:  this})
-					metricDrawer = groupDrawer.createComponent({kind: "onyx.Drawer", open: false});
-					metricHeader.drawer = metricDrawer;
+			}
+			groupDrawer = this.$.jobGraphs.createComponent({kind: "onyx.Drawer", open: false});
+			groupHeader.drawer = groupDrawer;
+			for(metric in this.job["graphs"][group]) {
+				if(this.job["graphs"][group][metric]["unit"] != null)
+					unit = " ("+this.job["graphs"][group][metric]["unit"]+")";
+				else
+					unit = "";
+				
+				if(this.job["graphs"][group][metric]["description"] != null)
+					description = " - " + this.job["graphs"][group][metric]["description"];
+				else
+					description = "";
+				headerText = 	this.job["graphs"][group][metric]["name"]
+						+ unit
+						+ description;
+				metricHeader = groupDrawer.createComponent({content: headerText, ontap: "toggleDrawer", classes: "image-header"}, {owner:  this})
+				metricDrawer = groupDrawer.createComponent({kind: "onyx.Drawer", open: false});
+				metricHeader.drawer = metricDrawer;
+				if(this.job["version"] == 1) {
 					metricDrawer.createComponent({kind: "Image", src: this.job["graphs"][group][metric]["src"], ontap: "toggleThumbnail", classes: "thumbnail", thumbnail: true}, {owner: this});
 				}
 			}
