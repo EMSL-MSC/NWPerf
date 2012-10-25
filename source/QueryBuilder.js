@@ -11,7 +11,7 @@ enyo.kind({
 	},
 	components: [
 		{kind: "Scroller", fit: true, components: [
-			{name: "queryList", onSetupItem: "newQueryRow", kind: "Repeater", count: 1, components: [
+			{name: "queryList", onSetupItem: "newQueryRow", kind: "Repeater", components: [
 				{kind: "FittableColumns", components: [
 					{style: "padding-right: 10px;", components: [
 						{kind: "onyx.Button", style: "min-width: 30px;", content: "+", ontap: "addQueryRow"},
@@ -273,7 +273,7 @@ enyo.kind({
 		}
 	},
 	nodeCountChanged: function(inSender, inEvent) {
-		if(!this.disableQueryValue) {
+		if(!this.disableQueryValue && this.$.nodeCountNumber.getValue().match(/^[0-9]+/)) {
 			this.queryValue = [	this.$.queryType.selected.content,
 						this.$.nodeCountComparison.selected.content,
 						this.$.nodeCountNumber.getValue()];
@@ -284,7 +284,7 @@ enyo.kind({
 		}
 	},
 	jobIdChanged: function(inSender, inEvent) {
-		if(!this.disableQueryValue) {
+		if(!this.disableQueryValue && this.$.jobId.getValue().match(/^[0-9]+/)) {
 			this.queryValue = [	this.$.queryType.selected.content,
 						this.$.jobId.getValue()];
 			this.doQueryValueChanged();
