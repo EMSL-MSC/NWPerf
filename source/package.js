@@ -6,6 +6,7 @@ enyo.depends(
 	"JobManager.js",
 	"JobTable.js",
 	"JobView.css",
+	"Flot",
 	"JobView.js",
 	"App.css",
 	"App.js"

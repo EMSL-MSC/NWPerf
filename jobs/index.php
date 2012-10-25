@@ -72,26 +72,54 @@
 		print(json_encode($ret));
 	} else {
 		$jobs_id = $_GET["job"];
-		$query = $db->prepare("select point_description from point_descriptions where id = ?");
-		$pointsDir = "/var/www/nwperf-graphs/".($jobs_id%100)."/".($jobs_id/100%100)."/".$jobs_id;
-		$pointsDescFile = $pointsDir."/pointsDescriptions";
-		$file = fopen($pointsDescFile,'r');
-		$fstat = fstat($file);
-		$jobData = unserialize(fread($file, $fstat["size"]));
-		$ret = array();
-		foreach($jobData as $graph) {
-			if(file_exists($pointsDir."/job.$jobs_id-point.".$graph["point_id"].".png")) {
-				if(! array_key_exists($graph["group"], $ret)) {
-					$ret[$graph["group"]] = array();
+		$pointsArchive = "/var/www/nwperf-graphs/flot-graphs/".($jobs_id%100)."/".($jobs_id/100%100)."/$jobs_id.tar.bz2";
+		if(! file_exists($pointsArchive)) {
+			$query = $db->prepare("select point_description from point_descriptions where id = ?");
+			$pointsDir = "/var/www/nwperf-graphs/".($jobs_id%100)."/".($jobs_id/100%100)."/".$jobs_id;
+			$pointsDescFile = $pointsDir."/pointsDescriptions";
+			$file = fopen($pointsDescFile,'r');
+			$fstat = fstat($file);
+			$jobData = unserialize(fread($file, $fstat["size"]));
+			$ret = array();
+			foreach($jobData as $graph) {
+				if(file_exists($pointsDir."/job.$jobs_id-point.".$graph["point_id"].".png")) {
+					if(! array_key_exists($graph["group"], $ret)) {
+						$ret[$graph["group"]] = array();
+					}
+					$res = $db->execute($query, $graph["point_id"]);
+					$row = $res->fetchRow();
+					$description = $row["point_description"];
+					array_push($ret[$graph["group"]], array("name" => $graph["name"],
+										"src" => "graphs/$jobs_id/".$graph["name"],
+										"description" => $description));
 				}
-				$res = $db->execute($query, $graph["point_id"]);
-				$row = $res->fetchRow();
-				$description = $row["point_description"];
-				array_push($ret[$graph["group"]], array("name" => $graph["name"],
-									"src" => "graphs/$jobs_id/".$graph["name"],
-									"description" => $description));
 			}
+			print(json_encode(array("version" => 1, "graphs" => $ret)));
+		} else {
+			$query = $db->prepare("select point_description as description, name as group, pd.units as units from point_descriptions pd, point_groups pg where pd.point_groups_id = pg.id and point_name = ?");
+			$ret = array();
+			$pointsDir = sys_get_temp_dir()."/flot";
+			if(!file_exists($pointsDir)) {
+				mkdir($pointsDir);
+			}
+			$pointsDir .= "/$jobs_id";
+			if(! file_exists($pointsDir)) {
+				$phar = new PharData($pointsArchive);
+				$phar->extractTo($pointsDir);
+			}
+			$metadata = json_decode(file_get_contents($pointsDir."/metadata"));
+			foreach($metadata->points as $point) {
+				$res = $db->execute($query, $point);
+				$row = $res->fetchRow();
+				if(! array_key_exists($row["group"], $ret)) {
+					$ret[$row["group"]] = array();
+				}
+				array_push($ret[$row["group"]], array(	"name" => $point,
+									"src" => "graphs/$jobs_id/$point",
+									"unit" => $row["units"],
+									"description" => $row["description"]));
+			}
+			print(json_encode(array("version" => 2, "graphs" => $ret, "hosts" => $metadata->hosts)));
 		}
-		print(json_encode(array("version" => 1, "graphs" => $ret)));
 	}
 ?>
