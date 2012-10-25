@@ -72,6 +72,11 @@
 		print(json_encode($ret));
 	} else {
 		$jobs_id = $_GET["job"];
+		if(file_exists("/var/www/nwperf-graphs/cview/jobs/".($jobs_id%100)."/".($jobs_id/100%100)."/$jobs_id.tar.gz")) {
+			$cview = "cview/$jobs_id";
+		} else {
+			$cview = false;
+		}
 		$pointsArchive = "/var/www/nwperf-graphs/flot-graphs/".($jobs_id%100)."/".($jobs_id/100%100)."/$jobs_id.tar.bz2";
 		if(! file_exists($pointsArchive)) {
 			$query = $db->prepare("select point_description from point_descriptions where id = ?");
@@ -94,7 +99,7 @@
 										"description" => $description));
 				}
 			}
-			print(json_encode(array("version" => 1, "graphs" => $ret)));
+			print(json_encode(array("version" => 1, "graphs" => $ret, "cview" => $cview)));
 		} else {
 			$query = $db->prepare("select point_description as description, name as group, pd.units as units from point_descriptions pd, point_groups pg where pd.point_groups_id = pg.id and point_name = ?");
 			$ret = array();
@@ -119,7 +124,7 @@
 									"unit" => $row["units"],
 									"description" => $row["description"]));
 			}
-			print(json_encode(array("version" => 2, "graphs" => $ret, "hosts" => $metadata->hosts)));
+			print(json_encode(array("version" => 2, "graphs" => $ret, "hosts" => $metadata->hosts, "cview" => $cview)));
 		}
 	}
 ?>

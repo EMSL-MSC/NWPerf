@@ -36,8 +36,12 @@ enyo.kind({
 		]},
 		{kind: "onyx.Toolbar", components: [
 			{kind: "onyx.Button", ontap: "doJobViewClosed", content: "Close"},
+			{kind: "onyx.Button", show: false, name: "cviewButton", ontap: "downloadCview", content: "Download Cview"},
 		]},
 	],
+	downloadCview: function(inSender, inEvent) {
+		window.location.href = this.job.cview;
+	},
 	toggleCheckboxes: function(inSender, inEvent) {
 		for(i=0;i<this.legend.length;i++) {
 			this.legend[i].enabled = inSender.checked;
@@ -89,8 +93,12 @@ enyo.kind({
 		this.$.jobGraphs.destroyClientControls();
 		this.graphs = [];
 		this.values = {};
-		this.$.legendScroller.setShowing(false);
 		this.$.jobGraphs.render();
+		if(this.job.cview) {
+			this.$.cviewButton.setShowing(true);
+		} else {
+			this.$.cviewButton.setShowing(false);
+		}
 		length = 0;
 		if(this.job["version"] == 2) {
 			this.legend = [];
@@ -104,6 +112,9 @@ enyo.kind({
 				this.legend[host] = {host: this.job["hosts"][host], color: [hue, 1, lightness], enabled: true};
 			}
 			this.$.legend.setCount(numHosts);
+			this.$.legendScroller.setShowing(true);
+		} else {
+			this.$.legendScroller.setShowing(false);
 		}
 		for(group in this.job["graphs"]) {
 			length++;
@@ -134,7 +145,6 @@ enyo.kind({
 					metricDrawer.createComponent({kind: "Image", src: this.job["graphs"][group][metric]["src"], ontap: "toggleThumbnail", classes: "thumbnail", thumbnail: true}, {owner: this});
 				} else {
 					this.graphs.push( metricDrawer.createComponent({kind: "Flot", legend: this.legend, src: this.job["graphs"][group][metric]["src"], classes: "graph", onValuesUpdate: "updateLegendValues"}, {owner: this}));
-					this.$.legendScroller.setShowing(true);
 				}
 			}
 		}
