@@ -28,6 +28,7 @@
 
 .onyx-picker-decorator .onyx-button {
 	padding: 3px;
+	min-width: 40px;
 }
 
 .onyx-menu-item {
