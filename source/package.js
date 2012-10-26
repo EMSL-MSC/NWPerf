@@ -4,6 +4,7 @@ enyo.depends(
 	"QueryBuilder.js",
 	"UserManager.js",
 	"JobManager.js",
+	"JobTable.css",
 	"JobTable.js",
 	"JobView.css",
 	"Flot",

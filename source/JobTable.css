@@ -1,0 +1,17 @@
+.JobTable-header {
+	font-weight: bold;
+}
+
+.JobTable-header-asc {
+	font-weight: bold;
+        background-image:url('../assets/asc.png?');
+        background-repeat:no-repeat;
+        background-position: 85%;
+}
+
+.JobTable-header-desc {
+	font-weight: bold;
+        background-image:url('../assets/desc.png?');
+        background-repeat:no-repeat;
+        background-position: 85%;
+}
