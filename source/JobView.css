@@ -8,6 +8,18 @@
 	border: solid;
 	border-color: white;
 	color: black;
+	background-image: url(../assets/tri.png);
+	background-position: left center;
+	padding-left: 18px;
+	background-repeat: no-repeat;
+}
+
+.group-header:hover {
+	background-color: #A3CC66;
+}
+
+.group-header-act {
+	background-image: url(../assets/downtri.png);
 }
 
 .image-header:hover {

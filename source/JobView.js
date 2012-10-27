@@ -119,7 +119,7 @@ enyo.kind({
 		for(group in this.job["graphs"]) {
 			length++;
 			if(group == "") {
-				groupHeader = this.$.jobGraphs.createComponent({content: "Other", ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
+				groupHeader = this.$.jobGraphs.createComponent({content: "other", ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
 			} else {
 				groupHeader = this.$.jobGraphs.createComponent({content: group, ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
 			}
@@ -157,6 +157,8 @@ enyo.kind({
 	toggleDrawer: function(inSender, inEvent) {
 		if(inSender.drawer.getOpen()) {
 			inSender.drawer.setOpen(0);
+			if(inSender.getClasses().indexOf("group-header") != -1)
+				inSender.setClasses("group-header");
 		} else {
 			components = inSender.drawer.getControls();
 			for(comp in components) {
@@ -164,6 +166,8 @@ enyo.kind({
 					components[comp].plot();
 				}
 			}
+			if(inSender.getClasses().indexOf("group-header") != -1)
+				inSender.setClasses("group-header group-header-act");
 			inSender.drawer.setOpen(1);
 		}
 	},
