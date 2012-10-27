@@ -7,21 +7,10 @@
 	margin: 16px;
 	border-radius: 4px;
 	padding: 16px;
-*/
 	background-color: #E0E0E0;
+*/
 }
 
-.dark {
-	background: url(../assets/bg.png);
-}
-
-.shadow {
-	margin-bottom: 10px;
-	border-radius: 4px;
-	box-shadow: 10px 10px 5px rgba(0,0,0,0.3);
-	-moz-box-shadow: 10px 10px 5px rgba(0,0,0,0.3);
-	-webkit-box-shadow: 10px 10px 5px rgba(0,0,0,0.3);
-}
 .onyx-button {
 	padding: 2px;
 }

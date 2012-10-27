@@ -1,7 +1,7 @@
 enyo.kind({
 	name: "QueryBuilder",
 	kind: "FittableRows",
-	classes: "dark",
+	classes: "QueryBuilder",
 	published: {
 		allowUserSelect: false,
 		userList: [],

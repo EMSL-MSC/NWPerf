@@ -9,7 +9,7 @@ enyo.kind({
 		onJobSelected: "",
 	},
         components:[
-		{kind: "FittableColumns", components: [
+		{kind: "FittableColumns", classes: "JobTable-header-container", components: [
 			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", content: "Job ID", name: "idHeader"},
 			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", content: "Account", name: "accountHeader"},
 			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", showing: false, content: "User", name: "userHeader"},
@@ -20,7 +20,7 @@ enyo.kind({
 			{classes: "JobTable-header", style: "width: 14%", ontap: "sortColumn", content: "Node Count", name: "numnodesHeader"},
 		]},
 		{kind: "List", fit: true, name: "jobList", onSetupItem: "addJob", toggleSelected: true, components: [
-			{kind: "FittableColumns", ontap: "jobTap", components: [
+			{kind: "FittableColumns", classes: "JobTable-row", ontap: "jobTap", components: [
 				{style: "width: 9%;", name: "jobId"},
 				{style: "width: 9%;", name: "account"},
 				{style: "width: 9%;", name: "user", showing: false},

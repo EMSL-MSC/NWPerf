@@ -1,17 +1,41 @@
+.JobTable-header-container {
+/*
+	background-color: white;
+	padding-top: 4px;
+	padding-bottom: 4px;
+*/
+	color: white;
+}
 .JobTable-header {
 	font-weight: bold;
+	background-color: #E9961A;
+	border-color: white;
+	position: relative;
+	top: 2px;
 }
 
 .JobTable-header-asc {
 	font-weight: bold;
+	text-decoration: underline;
         background-image:url('../assets/asc.png?');
         background-repeat:no-repeat;
         background-position: 85%;
+	background-color: #D37F08;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 
 .JobTable-header-desc {
 	font-weight: bold;
+	text-decoration: underline;
         background-image:url('../assets/desc.png?');
         background-repeat:no-repeat;
         background-position: 85%;
+	background-color: #D37F08;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.JobTable-row:hover {
+	background-color: #D6E6BC;
 }

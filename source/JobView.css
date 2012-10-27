@@ -4,16 +4,20 @@
 
 .group-header {
 	font-size: x-large;
-	background-color: black;
+	background-color: #D1D1D1;
 	border: solid;
-	background-color: black;
-	color: grey;
+	border-color: white;
+	color: black;
 }
 
+.image-header:hover {
+	background-color: #D6E6BC;
+}
 .image-header {
 	font-size: small;
 	padding: 2px;
 	margin: 2px;
+	background-color: #EAEAEA;
 }
 
 .thumbnail {

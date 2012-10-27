@@ -4,7 +4,7 @@ enyo.kind({
 	components:[
 		{kind: "UserManager", name: "userManager", onGroupMembership: "updateUserGroup", onUserListRetrieved:"updateUserList"},
 		{kind: "JobManager", name: "jobManager", onNewJobList: "updateJobTable", onNewJob:"displayJob"},
-		{kind: "QueryBuilder", name: "queryBuilder", classes: "shadow", style: "height: 20%", onQueryChanged: "getJobList"},
+		{kind: "QueryBuilder", name: "queryBuilder", onQueryChanged: "getJobList"},
 		{kind: "Panels", draggable: false, name: "jobViews", fit: true, arrangerKind: "CollapsingArranger", realtimeFit: true, components: [
 			{kind: "JobTable", name: "jobTable", onJobSelected: "getJob", style: "width: 100%;"},
 			{kind: "JobView", name: "jobView", style: "width: 0%;", onJobViewClosed: "closeJobView"},
