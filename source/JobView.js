@@ -11,6 +11,9 @@ enyo.kind({
 	components:[
 		{kind: "FittableColumns", fit: true, components: [
 			{kind: "Scroller", fit: true, components: [
+				{name: "spinnerPopup", kind: "onyx.Popup", centered: true, floating: true, components: [
+					{kind: "onyx.Spinner"}
+				]},
 				{name: "jobGraphs"},
 			]},
 			{kind: "Scroller", classes: "legend", name: "legendScroller", components: [
@@ -82,18 +85,15 @@ enyo.kind({
 	},
 	spin: function() {
 		this.$.jobGraphs.destroyClientControls();
-		this.$.jobGraphs.createComponent({style:"background:black; border-radius:5px; padding:15px; width:65px;", components: [
-			{kind: "onyx.Spinner"}
-		]});
-		this.$.jobGraphs.render();
+		this.$.spinnerPopup.show();
 	},
 	legend: [],
 	graphs: [],
 	jobChanged: function(oldValue) {
-		this.$.jobGraphs.destroyClientControls();
+		//this.$.jobGraphs.destroyClientControls();
 		this.graphs = [];
 		this.values = {};
-		this.$.jobGraphs.render();
+		//this.$.jobGraphs.render();
 		if(this.job.cview) {
 			this.$.cviewButton.setShowing(true);
 		} else {
@@ -151,6 +151,7 @@ enyo.kind({
 		if(length == 0) {
 			this.$.jobGraphs.createComponent({content: "Sorry there is no data for this job", classes:"job-error"});
 		}
+		this.$.spinnerPopup.hide();
 		this.$.jobGraphs.render();
 	},
 	toggleDrawer: function(inSender, inEvent) {

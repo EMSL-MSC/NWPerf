@@ -9,6 +9,9 @@ enyo.kind({
 		onJobSelected: "",
 	},
         components:[
+		{name: "spinnerPopup", kind: "onyx.Popup", centered: true, floating: true, components: [
+			{kind: "onyx.Spinner"}
+		]},
 		{kind: "FittableColumns", classes: "JobTable-header-container", components: [
 			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", content: "Job ID", name: "idHeader"},
 			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", content: "Account", name: "accountHeader"},
@@ -32,6 +35,9 @@ enyo.kind({
 			]},
 		]}
         ],
+	spin: function() {
+		this.$.spinnerPopup.show();
+	},
 	curSortedColumn: null,
 	curSortedOrder: null,
 	sortColumn: function(inSender, inEvent) {
@@ -66,10 +72,15 @@ enyo.kind({
 			}
 		}
 		this.jobs.sort(sortFunc);
+		this.$.spinnerPopup.hide();
 		this.$.jobList.setCount(this.jobs.length);
 		this.$.jobList.refresh();
 	},
 	jobsChanged: function(oldValue) {
+		if(this.curSortedColumn != null) 
+			this.curSortedColumn.setClasses("JobTable-header");
+		this.curSortedColumn = null;
+		this.curSortedOrdered = null;
 		this.sortColumn(this.$.idHeader);
 	},
 	showUsersChanged: function(oldValue) {

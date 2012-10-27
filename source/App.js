@@ -32,6 +32,7 @@ enyo.kind({
 	getJobList: function(inSender, inEvent) {
 		this.$.jobManager.getJobList(inEvent);
 		if(this.ready) {
+			this.$.jobTable.spin();
 			this.$.jobViews.setIndex(0);
 		}
 	},
