@@ -93,14 +93,14 @@ enyo.kind({
 		{style: "min-width: 100px;", components: [
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", name: "queryType", onChange: "queryTypeSelected", components: [
+				{kind: "onyx.Picker", name: "queryType", onChange: "queryTypeSelected", maxHeight: "500", components: [
 					{content: "Start Date"},
 					{content: "End Date"},
 					{content: "Submit Date"},
 					{content: "Node Count"},
 					{content: "Job Id"},
 					{content: "Account"},
-					//{content: "Run Time"},
+					{content: "Ran On Node"},
 				]}
 			]},
 		]},
@@ -116,15 +116,15 @@ enyo.kind({
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", onChange: "startDateChanged", name: "startMonth"}
+				{kind: "onyx.Picker", onChange: "startDateChanged", name: "startMonth", maxHeight: "500"}
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", onChange: "startDateChanged", name: "startDay"}
+				{kind: "onyx.Picker", onChange: "startDateChanged", name: "startDay", maxHeight: "500"}
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", onChange: "startDateChanged", name: "startYear"}
+				{kind: "onyx.Picker", onChange: "startDateChanged", name: "startYear", maxHeight: "500"}
 			]},
 		]},
 		{kind: "FittableColumns", name: "endDateItems", showing: false, components: [
@@ -139,15 +139,15 @@ enyo.kind({
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endMonth"}
+				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endMonth", maxHeight: "500"}
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endDay"}
+				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endDay", maxHeight: "500"}
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endYear"}
+				{kind: "onyx.Picker", onChange: "endDateChanged", name: "endYear", maxHeight: "500"}
 			]},
 		]},
 		{kind: "FittableColumns", name: "submitDateItems", showing: false, components: [
@@ -162,15 +162,15 @@ enyo.kind({
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", onChange: "submitDateChanged", name: "submitMonth"}
+				{kind: "onyx.Picker", onChange: "submitDateChanged", name: "submitMonth", maxHeight: "500"}
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", onChange: "submitDateChanged", name: "submitDay"}
+				{kind: "onyx.Picker", onChange: "submitDateChanged", name: "submitDay", maxHeight: "500"}
 			]},
 			{kind: "onyx.PickerDecorator", components: [
 				{},
-				{kind: "onyx.Picker", onChange: "submitDateChanged", name: "submitYear"}
+				{kind: "onyx.Picker", onChange: "submitDateChanged", name: "submitYear", maxHeight: "500"}
 			]},
 		]},
 		{kind: "FittableColumns", name: "nodeCountItems", showing: false, components: [
@@ -198,6 +198,11 @@ enyo.kind({
 		{kind: "FittableColumns", showing: false, name: "accountItems", components: [
 			{kind: "onyx.InputDecorator", components: [
 				{kind: "onyx.Input", name: "account", oninput: "accountChanged"}
+			]}
+		]},
+		{kind: "FittableColumns", showing: false, name: "onNodeItems", components: [
+			{kind: "onyx.InputDecorator", components: [
+				{kind: "onyx.Input", name: "onNode", oninput: "onNodeChanged"}
 			]}
 		]},
 		{kind: "FittableColumns", showing: false, name: "userItems", components: [
@@ -299,6 +304,14 @@ enyo.kind({
 			this.doQueryServer();
 		}
 	},
+	onNodeChanged: function(inSender, inEvent) {
+		if(!this.disableQueryValue) {
+			this.queryValue = [	this.$.queryType.selected.content,
+						this.$.onNode.getValue()];
+			this.doQueryValueChanged();
+			this.doQueryServer();
+		}
+	},
 	userChanged: function(inSender, inEvent) {
 		if(!this.disableQueryValue) {
 			this.queryValue = [	this.$.queryType.selected.content,
@@ -391,6 +404,12 @@ enyo.kind({
 				this.activeControl = this.$.accountItems;
 				if(this.queryValue.length > 1) {
 					this.$.account.setValue(this.queryValue[1]);
+				}
+				break;
+			case "Ran On Node":
+				this.activeControl = this.$.onNodeItems;
+				if(this.queryValue.length > 1) {
+					this.$.onNode.setValue(this.queryValue[1]);
 				}
 				break;
 			case "User":

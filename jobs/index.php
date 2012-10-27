@@ -64,6 +64,10 @@
 					$queryItem[1] = $db->escapeSimple($queryItem[1]);
 					$sql .= "$queryItem[0] = '$queryItem[1]'";
 					break;
+				case "Ran On Node":
+					$queryItem[1] = $db->escapeSimple($queryItem[1]);
+					$sql .= "moab_job_details.jobs_id in (select job_id from host_jobs, hosts where host_jobs.host_id = hosts.id and hosts.host_name = '$queryItem[1]') ";
+					break;
 			}
 		}
 		$ret = $db->getAll($sql);
