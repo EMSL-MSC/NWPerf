@@ -16,23 +16,37 @@ enyo.kind({
 				]},
 				{name: "jobGraphs"},
 			]},
-			{kind: "Scroller", classes: "legend", name: "legendScroller", components: [
+			{kind: "FittableRows", components: [
 				{kind: "FittableColumns", components: [
 					{components: [
-						{kind: "Checkbox", onActivate: "toggleCheckboxes", active: true},
+						{kind: "Checkbox", showing: false},
 					]},
-					{content: "Select All"},
+					{name: "averageDisplay"},
 				]},
-				{kind: "Repeater", name: "legend", onSetupItem: "legendItem", components: [
+				{kind: "FittableColumns", components: [
+					{components: [
+						{kind: "Checkbox", showing: false},
+					]},
+					{name: "sumDisplay"},
+				]},
+				{kind: "Scroller", classes: "legend", name: "legendScroller", fit: true, components: [
 					{kind: "FittableColumns", components: [
 						{components: [
-							{name: "enable", kind: "Checkbox", onActivate: "legendChecked", host: ""},
+							{kind: "Checkbox", onActivate: "toggleCheckboxes", active: true},
 						]},
-						{classes: "color-border", components: [
-							{name: "color"},
+						{content: "Select All"},
+					]},
+					{kind: "Repeater", name: "legend", onSetupItem: "legendItem", components: [
+						{kind: "FittableColumns", components: [
+							{components: [
+								{name: "enable", kind: "Checkbox", onActivate: "legendChecked", host: ""},
+							]},
+							{classes: "color-border", components: [
+								{name: "color"},
+							]},
+							{name: "label", classes: "legend-label"},
+							{name: "value", classes: "legend-label"},
 						]},
-						{name: "label", classes: "legend-label"},
-						{name: "value", classes: "legend-label"},
 					]},
 				]},
 			]},
@@ -46,6 +60,7 @@ enyo.kind({
 		window.location.href = this.job.cview;
 	},
 	toggleCheckboxes: function(inSender, inEvent) {
+		this.legendUpdatesEnabled = false;
 		for(i=0;i<this.legend.length;i++) {
 			this.legend[i].enabled = inSender.checked;
 		}
@@ -53,18 +68,22 @@ enyo.kind({
 			this.graphs[i].setLegend(this.legend.slice(0));
 		}
 		this.$.legend.setCount(this.legend.length);
+		this.legendUpdatesEnabled = true;
 	},
+	legendUpdatesEnabled: true,
 	legendChecked: function(inSender, inEvent) {
-		for(i=0;i<this.legend.length;i++) {
-			if(this.legend[i].host == inSender.host) {
-				this.legend[i].enabled = inSender.checked;
-				break;
+		if(this.legendUpdatesEnabled) {
+			for(i=0;i<this.legend.length;i++) {
+				if(this.legend[i].host == inSender.host) {
+					this.legend[i].enabled = inSender.checked;
+					break;
+				}
 			}
-		}
-		this.values[inSender.host].setContent("");
-		this.updateLegendValues()
-		for(i=0;i<this.graphs.length;i++) {
-			this.graphs[i].setLegend(this.legend.slice(0));
+			this.values[inSender.host].setContent("");
+			this.updateLegendValues()
+			for(i=0;i<this.graphs.length;i++) {
+				this.graphs[i].setLegend(this.legend.slice(0));
+			}
 		}
 	},
 	values: {},
@@ -78,9 +97,18 @@ enyo.kind({
 		return true;
 	},
 	updateLegendValues: function(inSender, inEvent) {
+		sum = 0;
+		count = 0;
 		for(host in inEvent) {
-			if(host != "originator")
-				this.values[host].setContent(": " + inEvent[host]);
+			if(host != "originator") {
+				this.values[host].setContent(": " + inEvent[host].toPrecision(4));
+				sum += inEvent[host];
+				count++;
+			}
+		}
+		if(count > 0) {
+			this.$.averageDisplay.setContent("Average: " + (sum/count).toPrecision(4));
+			this.$.sumDisplay.setContent("Sum: " + sum.toPrecision(4));
 		}
 	},
 	spin: function() {
