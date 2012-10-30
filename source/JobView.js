@@ -118,10 +118,8 @@ enyo.kind({
 	legend: [],
 	graphs: [],
 	jobChanged: function(oldValue) {
-		//this.$.jobGraphs.destroyClientControls();
 		this.graphs = [];
 		this.values = {};
-		//this.$.jobGraphs.render();
 		if(this.job.cview) {
 			this.$.cviewButton.setShowing(true);
 		} else {
@@ -141,8 +139,10 @@ enyo.kind({
 			}
 			this.$.legend.setCount(numHosts);
 			this.$.legendView.setShowing(true);
+			this.$.jobGraphs.render();
 		} else {
 			this.$.legendView.setShowing(false);
+			this.$.jobGraphs.render();
 		}
 		for(group in this.job["graphs"]) {
 			length++;
