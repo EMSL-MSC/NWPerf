@@ -16,7 +16,7 @@ enyo.kind({
 				]},
 				{name: "jobGraphs"},
 			]},
-			{kind: "FittableRows", components: [
+			{kind: "FittableRows", name: "legendView", components: [
 				{kind: "FittableColumns", components: [
 					{components: [
 						{kind: "Checkbox", showing: false},
@@ -29,7 +29,7 @@ enyo.kind({
 					]},
 					{name: "sumDisplay"},
 				]},
-				{kind: "Scroller", classes: "legend", name: "legendScroller", fit: true, components: [
+				{kind: "Scroller", classes: "legend", fit: true, components: [
 					{kind: "FittableColumns", components: [
 						{components: [
 							{kind: "Checkbox", onActivate: "toggleCheckboxes", active: true},
@@ -140,9 +140,9 @@ enyo.kind({
 				this.legend[host] = {host: this.job["hosts"][host], color: [hue, 1, lightness], enabled: true};
 			}
 			this.$.legend.setCount(numHosts);
-			this.$.legendScroller.setShowing(true);
+			this.$.legendView.setShowing(true);
 		} else {
-			this.$.legendScroller.setShowing(false);
+			this.$.legendView.setShowing(false);
 		}
 		for(group in this.job["graphs"]) {
 			length++;
