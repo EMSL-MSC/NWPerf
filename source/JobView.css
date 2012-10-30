@@ -61,3 +61,9 @@
 	font-size: smaller;
 	color: #545454;
 }
+.legend-aggregate {
+	border: 1px solid white;
+	background: #E9961A;
+	padding: 4px;
+	color: white;
+}

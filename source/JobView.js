@@ -17,17 +17,17 @@ enyo.kind({
 				{name: "jobGraphs"},
 			]},
 			{kind: "FittableRows", name: "legendView", components: [
-				{kind: "FittableColumns", components: [
+				{kind: "FittableColumns", classes: "legend-aggregate", components: [
 					{components: [
 						{kind: "Checkbox", showing: false},
 					]},
-					{name: "averageDisplay"},
+					{name: "averageDisplay", content: "Average: "},
 				]},
-				{kind: "FittableColumns", components: [
+				{kind: "FittableColumns", classes: "legend-aggregate", components: [
 					{components: [
 						{kind: "Checkbox", showing: false},
 					]},
-					{name: "sumDisplay"},
+					{name: "sumDisplay", content: "Sum: "},
 				]},
 				{kind: "Scroller", classes: "legend", fit: true, components: [
 					{kind: "FittableColumns", components: [
