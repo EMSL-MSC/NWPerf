@@ -27,7 +27,13 @@
 					"startTime" => $graph->startTime*1000,
 					"data" => array());
 			if(isset($graph->downSampledData)) {
-				$ret["data"] = $graph->downSampledData;
+				$ret["data"] = array();
+				foreach($graph->downSampledData as $host => $points) {
+					$ret["data"][$host] =  array();
+					foreach($points as $point) {
+						$ret["data"][$host][] =  array($point[0]*1000, $point[1]);
+					}
+				}
 			} else {
 				foreach($graph->data as $host => $points) {
 					if(! array_key_exists($host, $ret["data"])) {
