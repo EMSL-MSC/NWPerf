@@ -8,6 +8,11 @@ enyo.kind({
 	events: {
 		onValuesUpdate: "",
 	},
+	components: [
+		{kind: "onyx.Popup", name: "graphSpinner", components: [
+			{kind: "onyx.Spinner"},
+		]},
+	],
 	graphData: null,
 	hasPlotted: false,
 	legendChanged: function(oldValue) {
@@ -72,6 +77,7 @@ enyo.kind({
 	plot: function() {
 		var n = this.hasNode();
 		if(n) {
+			this.$.graphSpinner.show();
 			if(this.graphData) {
 				this.hasPlotted = true;
 				data = []
@@ -104,6 +110,7 @@ enyo.kind({
 					}
 				});
 				jQuery(n).bind("plothover",{owner: this}, this.scheduleUpdateValues);
+				this.$.graphSpinner.hide();
 			} else {
 				new enyo.Ajax({url: this.src})
 				.response(this, function(inSender, inResponse) {
