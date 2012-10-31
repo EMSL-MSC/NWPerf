@@ -1,0 +1,10 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^(.*)$ server.py/$1 [NC,L,QSA]
+<files server.py>
+	SetHandler wsgi-script
+	Options ExecCGI FollowSymLinks
+</Files>
+
