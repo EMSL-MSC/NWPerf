@@ -66,9 +66,23 @@ enyo.kind({
 			}
 		} else {
 			if(this.curSortedOrder == "asc") {
-				sortFunc = function(a,b) { return a[field].localeCompare(b[field]); }
+				sortFunc = function(a,b) {
+					if(a[field] == null)
+						a[field] = "";
+					if(b[field] == null) 
+						b[field] = "";
+						
+					return a[field].localeCompare(b[field]);
+				}
 			} else {
-				sortFunc = function(a,b) { return b[field].localeCompare(a[field]); }
+				sortFunc = function(a,b) {
+					if(a[field] == null)
+						a[field] = "";
+					if(b[field] == null) 
+						b[field] = "";
+						
+					return b[field].localeCompare(a[field]);
+				}
 			}
 		}
 		this.jobs.sort(sortFunc);
