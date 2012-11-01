@@ -182,12 +182,18 @@ class Jobs(object):
 							vars={"point": point})
 					try:
 						row = res[0]
-						ret.setdefault(row["group"], []).append({	"name": point,
-												"src": "graphs/%s/%s" % (job, point),
-												"unit": row["units"],
-												"description": row["description"]})
+						group = row["group"]
+						unit = row["units"]
+						description = row["description"]
 					except IndexError:
-						pass
+						group = "other"
+						unit = None
+						description = None
+						
+					ret.setdefault(group, []).append({	"name": point,
+										"src": "graphs/%s/%s" % (job, point),
+										"unit": unit,
+										"description": description})
 				return json.dumps({"version": 2, "graphs": ret, "hosts": metadata["hosts"], "cview": cview, "tag": tag})
 
 class Users(object):
