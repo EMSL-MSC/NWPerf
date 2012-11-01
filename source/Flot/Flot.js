@@ -125,7 +125,8 @@ enyo.kind({
 		units = ["", "K", "M", "G", "T", "P"];
 		for(unit in units) {
 			if(val < 1000) {
-				return val+units[unit];
+				factor = Math.pow(10, axis.tickDecimals);
+				return Math.round(val * factor) / factor + units[unit];
 			} else {
 				val /= 1000.0;
 			}
