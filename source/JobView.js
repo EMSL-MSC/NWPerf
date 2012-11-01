@@ -17,25 +17,15 @@ enyo.kind({
 				{name: "jobGraphs"},
 			]},
 			{kind: "FittableRows", name: "legendView", components: [
-				{kind: "FittableColumns", classes: "legend-aggregate", components: [
+				{kind: "FittableColumns", classes: "legend-aggregate", name: "averageDisplay", content: "Average: "},
+				{kind: "FittableColumns", classes: "legend-aggregate", name: "sumDisplay", content: "Sum: "},
+				{kind: "FittableColumns", components: [
 					{components: [
-						{kind: "Checkbox", showing: false},
+						{kind: "Checkbox", onActivate: "toggleCheckboxes", active: true},
 					]},
-					{name: "averageDisplay", content: "Average: "},
-				]},
-				{kind: "FittableColumns", classes: "legend-aggregate", components: [
-					{components: [
-						{kind: "Checkbox", showing: false},
-					]},
-					{name: "sumDisplay", content: "Sum: "},
+					{content: "Select All"},
 				]},
 				{kind: "Scroller", classes: "legend", fit: true, components: [
-					{kind: "FittableColumns", components: [
-						{components: [
-							{kind: "Checkbox", onActivate: "toggleCheckboxes", active: true},
-						]},
-						{content: "Select All"},
-					]},
 					{kind: "Repeater", name: "legend", onSetupItem: "legendItem", components: [
 						{kind: "FittableColumns", components: [
 							{components: [
