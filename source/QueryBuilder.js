@@ -81,7 +81,6 @@ enyo.kind({
 	kind: "FittableColumns",
 	published: {
 		queryValue: [],
-		queryValue: [],
 		rowNumber: -1,
 		allowUserSelect: false,
 	},
@@ -334,12 +333,13 @@ enyo.kind({
 		if(this.activeControl != false) {
 			this.activeControl.setShowing(false);
 		}
-		d = new Date();
+		now = new Date();
+		then = new Date(now.valueOf() - 1209600000);
 		switch(this.queryValue[0]) {
 			case "Start Date":
 				this.activeControl = this.$.startDateItems;
 				if(this.queryValue.length < 5) {
-					this.queryValue = [this.queryValue[0], ">", this.months[d.getMonth()], 1, 2012];
+					this.queryValue = [this.queryValue[0], ">", this.months[then.getMonth()], then.getDate(), then.getFullYear()];
 					this.doQueryValueChanged();
 				}
 				this.setPickerWithText(this.$.startDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
@@ -350,15 +350,7 @@ enyo.kind({
 			case "End Date":
 				this.activeControl = this.$.endDateItems;
 				if(this.queryValue.length < 5) {
-					month = d.getMonth();
-					if(month == 11) {
-						month = 0
-						year = d.getFullYear()+1;
-					} else {
-						month++;
-						year = d.getFullYear();
-					}
-					this.queryValue = [this.queryValue[0], "<", this.months[month], 1, year];
+					this.queryValue = [this.queryValue[0], "<", this.months[now.getMonth()], now.getDate(), now.getFullYear()];
 					this.doQueryValueChanged();
 				}
 				this.setPickerWithText(this.$.endDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
@@ -369,15 +361,7 @@ enyo.kind({
 			case "Submit Date":
 				this.activeControl = this.$.submitDateItems;
 				if(this.queryValue.length < 5) {
-					month = d.getMonth();
-					if(month == 11) {
-						month = 0
-						year = d.getFullYear()+1;
-					} else {
-						month++;
-						year = d.getFullYear();
-					}
-					this.queryValue = [this.queryValue[0], "<", this.months[month], 1, year];
+					this.queryValue = [this.queryValue[0], ">", this.months[then.getMonth()], then.getDate(), then.getFullYear()];
 					this.doQueryValueChanged();
 				}
 				this.setPickerWithText(this.$.submitDateBeforeAfter, {"<": "Before", ">": "After"}[this.queryValue[1]]);
