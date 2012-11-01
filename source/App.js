@@ -42,10 +42,10 @@ enyo.kind({
 	getJob: function(inSender, inEvent) {
 		this.$.jobManager.getJob(inEvent.jobid);
 		this.$.jobView.spin();
-		this.$.jobViews.setIndex(1);
 	},
 	displayJob: function(inSender, inEvent) {
 		this.$.jobView.setJob(inEvent);
+		this.$.jobViews.setIndex(1);
 	},
 	closeJobView: function(inSender, inEvent) {
 		this.$.jobViews.setIndex(0);
