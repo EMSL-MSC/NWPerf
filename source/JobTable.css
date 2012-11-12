@@ -39,3 +39,8 @@
 .JobTable-row:hover {
 	background-color: #D6E6BC;
 }
+
+.JobTable-cell {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

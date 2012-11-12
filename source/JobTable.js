@@ -25,14 +25,14 @@ enyo.kind({
 		]},
 		{kind: "List", fit: true, name: "jobList", onSetupItem: "addJob", toggleSelected: true, components: [
 			{kind: "FittableColumns", classes: "JobTable-row", ontap: "jobTap", components: [
-				{style: "width: 9%;", name: "jobId"},
-				{style: "width: 9%;", name: "account"},
-				{style: "width: 9%;", name: "user", showing: false},
-				{style: "width: 16%;", name: "submitTime"},
-				{style: "width: 16%;", name: "startTime"},
-				{style: "width: 16%;", name: "endTime"},
-				{style: "width: 11%; text-align: right;", name: "runTime"},
-				{style: "width: 14%; text-align: right;", name: "nodes"},
+				{classes: "JobTable-cell", style: "width: 9%;", name: "jobId"},
+				{classes: "JobTable-cell", style: "width: 9%;", name: "account"},
+				{classes: "JobTable-cell", style: "width: 9%;", name: "user", showing: false},
+				{classes: "JobTable-cell", style: "width: 16%;", name: "submitTime"},
+				{classes: "JobTable-cell", style: "width: 16%;", name: "startTime"},
+				{classes: "JobTable-cell", style: "width: 16%;", name: "endTime"},
+				{classes: "JobTable-cell", style: "width: 11%; text-align: right;", name: "runTime"},
+				{classes: "JobTable-cell", style: "width: 14%; text-align: right;", name: "nodes"},
 			]},
 		]}
         ],
