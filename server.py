@@ -130,7 +130,7 @@ class Jobs(object):
 					if queryItem[1] not in  ("<", ">"):
 						continue
 					if queryItem[0] == "end_time":
-						date = web.db.SQLParam("%s-%s-%s 24:59:59" % (queryItem[4], months[queryItem[2]], queryItem[3]))
+						date = web.db.SQLParam("%s-%s-%s 23:59:59" % (queryItem[4], months[queryItem[2]], queryItem[3]))
 					else:
 						date = web.db.SQLParam("%s-%s-%s 00:00:00" % (queryItem[4], months[queryItem[2]], queryItem[3]))
 					where.append(	"%s %s '%s'" % ( queryItem[0], queryItem[1], date))
