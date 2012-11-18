@@ -107,6 +107,26 @@ enyo.kind({
 	},
 	legend: [],
 	graphs: [],
+	alphaNumericSort: function(a, b) {
+		nodeRePair=/([\D]*)([\d]*)/g;
+		aPairs = a.match(nodeRePair);
+		bPairs = b.match(nodeRePair);
+		numLoops = Math.min(aPairs.length, bPairs.length);
+		for(i=0;i<numLoops;i++) {
+			nodeRePaira=/([\D]*)([\d]*)/g;
+			nodeRePairb=/([\D]*)([\d]*)/g;
+			aElements = nodeRePaira.exec(aPairs[i]);
+			bElements = nodeRePairb.exec(bPairs[i]);
+			if(aElements[1] == bElements[1]) {
+				diff = parseInt(aElements[2]) - parseInt(bElements[2]);
+				if(diff != 0)
+					return diff;
+			} else {
+				return aElements[1] - bElements[1];
+			}
+		}
+		return aElements.length - bElements.length;
+	},
 	jobChanged: function(oldValue) {
 		this.graphs = [];
 		this.values = {};
@@ -122,6 +142,7 @@ enyo.kind({
 			hue = hueFractions = 350/numHosts;
 			lightnessFractions = .3/numHosts;
 			lightness = .3;
+			this.job["hosts"].sort(this.alphaNumericSort);
 			for(host in this.job["hosts"]) {
 				hue += hueFractions;
 				lightness += lightnessFractions;
