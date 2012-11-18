@@ -175,7 +175,10 @@ class Jobs(object):
 				if not os.path.exists(pointsDir):
 					tar = tarfile.open(pointsArchive)
 					tar.extractall(pointsDir)
-				metadata = json.load(open(os.path.join(pointsDir, "metadata")))
+				try:
+					metadata = json.load(open(os.path.join(pointsDir, "metadata")))
+				except:
+					return json.dumps({"error": "Error reading job metadata", "tag": tag})
 				for point in metadata["points"]:
 					res = db.select("point_descriptions pd, point_groups pg",
 							what="point_description as description, name as group, pd.units as units",
