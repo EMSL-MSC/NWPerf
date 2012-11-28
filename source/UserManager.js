@@ -3,7 +3,7 @@ enyo.kind({
 	kind: "Component",
 	events: {
 		onGroupMembership: "",
-		onUserListRetrieved: "",
+		onUserListRetrieved: ""
 	},
 	getGroupMembership: function(user) {
 		if(user == undefined) {
@@ -23,5 +23,5 @@ enyo.kind({
 		})
 		.go();
 		return userList;
-	},
+	}
 });

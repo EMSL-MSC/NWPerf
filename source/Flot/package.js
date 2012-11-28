@@ -5,5 +5,6 @@ enyo.depends(
 	"jquery.flot.selection.js",
 	"jquery.flot.resize.js",
 	"jquery.flot.time.js",
+	"excanvas.js",
 	"Flot.js"
 );

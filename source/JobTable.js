@@ -4,10 +4,10 @@ enyo.kind({
 	classes: "enyo-selectable",
 	published: {
 		jobs: [],
-		showUsers: false,
+		showUsers: false
 	},
 	events: {
-		onJobSelected: "",
+		onJobSelected: ""
 	},
         components:[
 		{name: "spinnerPopup", kind: "onyx.Popup", centered: true, floating: true, components: [
@@ -21,7 +21,7 @@ enyo.kind({
 			{classes: "JobTable-header", style: "width: 16%", ontap: "sortColumn", content: "Start Time", name: "starttimeHeader"},
 			{classes: "JobTable-header", style: "width: 16%", ontap: "sortColumn", content: "End Time", name: "endtimeHeader"},
 			{classes: "JobTable-header", style: "width: 11%", ontap: "sortColumn", content: "Run Time", name: "runtimeHeader"},
-			{classes: "JobTable-header", style: "width: 14%", ontap: "sortColumn", content: "Node Count", name: "numnodesHeader"},
+			{classes: "JobTable-header", style: "width: 14%", ontap: "sortColumn", content: "Node Count", name: "numnodesHeader"}
 		]},
 		{kind: "List", fit: true, name: "jobList", onSetupItem: "addJob", toggleSelected: true, components: [
 			{kind: "FittableColumns", classes: "JobTable-row", ontap: "jobTap", components: [
@@ -32,8 +32,8 @@ enyo.kind({
 				{classes: "JobTable-cell", style: "width: 16%;", name: "startTime"},
 				{classes: "JobTable-cell", style: "width: 16%;", name: "endTime"},
 				{classes: "JobTable-cell", style: "width: 11%; text-align: right;", name: "runTime"},
-				{classes: "JobTable-cell", style: "width: 14%; text-align: right;", name: "nodes"},
-			]},
+				{classes: "JobTable-cell", style: "width: 14%; text-align: right;", name: "nodes"}
+			]}
 		]}
         ],
 	spin: function() {

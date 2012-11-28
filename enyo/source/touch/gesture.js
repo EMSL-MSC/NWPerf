@@ -101,7 +101,7 @@
 			return {
 				magnitude: p.h,
 				xcenter: Math.abs(Math.round(p.fx + (p.x / 2))),
-				ycenter: Math.abs(Math.round(p.fy + (p.y / 2))),
+				ycenter: Math.abs(Math.round(p.fy + (p.y / 2)))
 			};
 		},
 		makeGesture: function(inType, inEvent, inCache) {

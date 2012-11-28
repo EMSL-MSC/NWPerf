@@ -3,15 +3,15 @@ enyo.kind({
 	kind:"Control",
 	published:{
        		src: null,
-       		legend: null,
+       		legend: null
 	},
 	events: {
-		onValuesUpdate: "",
+		onValuesUpdate: ""
 	},
 	components: [
 		{kind: "onyx.Popup", name: "graphSpinner", components: [
-			{kind: "onyx.Spinner"},
-		]},
+			{kind: "onyx.Spinner"}
+		]}
 	],
 	graphData: null,
 	hasPlotted: false,
@@ -95,18 +95,18 @@ enyo.kind({
 				}
 				this.plotItem = $.plot(jQuery(n), data, {
 					grid: {
-						hoverable: true,
+						hoverable: true
 					},
 					crosshair: { mode: "x"},
 					legend: {
-						show: false,
+						show: false
 					},
 					"yaxis": {
-						tickFormatter: this.siTicks,
+						tickFormatter: this.siTicks
 					},
 					"xaxis": {
 						mode: "time",
-						timezone: "browser",
+						timezone: "browser"
 					}
 				});
 				jQuery(n).bind("plothover",{owner: this}, this.scheduleUpdateValues);

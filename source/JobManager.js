@@ -3,7 +3,7 @@ enyo.kind({
 	kind: "Component",
 	events: {
 		onNewJobList: "",
-		onNewJob: "",
+		onNewJob: ""
 	},
 	jobListTag: 0,
 	jobListReq: false,
@@ -29,5 +29,5 @@ enyo.kind({
 		})
 		.go({tag: ++this.jobTag});
 		return this.jobReq;
-	},
+	}
 });

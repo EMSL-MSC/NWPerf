@@ -8,7 +8,7 @@ enyo.kind({
 		{kind: "Panels", draggable: false, name: "jobViews", fit: true, arrangerKind: "CollapsingArranger", realtimeFit: true, components: [
 			{kind: "JobTable", name: "jobTable", onJobSelected: "getJob", style: "width: 100%;"},
 			{kind: "JobView", name: "jobView", style: "width: 0%;", onJobViewClosed: "closeJobView"},
-		]},
+		]}
 	],
 	ready: false,
 	create: function() {
@@ -49,5 +49,5 @@ enyo.kind({
 	},
 	closeJobView: function(inSender, inEvent) {
 		this.$.jobViews.setIndex(0);
-	},
+	}
 });

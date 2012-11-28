@@ -3,10 +3,10 @@ enyo.kind({
 	kind: "FittableRows",
 	classes: "JobView",
 	published: {
-		job: false,
+		job: false
 	},
 	events: {
-		onJobViewClosed: "",
+		onJobViewClosed: ""
 	},
 	components:[
 		{kind: "FittableColumns", fit: true, components: [
@@ -14,36 +14,36 @@ enyo.kind({
 				{name: "spinnerPopup", kind: "onyx.Popup", centered: true, floating: true, components: [
 					{kind: "onyx.Spinner"}
 				]},
-				{name: "jobGraphs"},
+				{name: "jobGraphs"}
 			]},
 			{kind: "FittableRows", name: "legendView", components: [
 				{kind: "FittableColumns", classes: "legend-aggregate", name: "averageDisplay", content: "Average: "},
 				{kind: "FittableColumns", classes: "legend-aggregate", name: "sumDisplay", content: "Sum: "},
 				{kind: "FittableColumns", components: [
 					{components: [
-						{kind: "Checkbox", onActivate: "toggleCheckboxes", active: true},
+						{kind: "Checkbox", onActivate: "toggleCheckboxes", active: true}
 					]},
-					{content: "Select All"},
+					{content: "Select All"}
 				]},
 				{kind: "Scroller", classes: "legend", fit: true, components: [
 					{kind: "Repeater", name: "legend", onSetupItem: "legendItem", components: [
 						{kind: "FittableColumns", components: [
 							{components: [
-								{name: "enable", kind: "Checkbox", onActivate: "legendChecked", host: ""},
+								{name: "enable", kind: "Checkbox", onActivate: "legendChecked", host: ""}
 							]},
 							{classes: "color-border", components: [
-								{name: "color"},
+								{name: "color"}
 							]},
 							{name: "label", classes: "legend-label"},
-							{name: "value", classes: "legend-label"},
-						]},
-					]},
-				]},
-			]},
+							{name: "value", classes: "legend-label"}
+						]}
+					]}
+				]}
+			]}
 		]},
 		{kind: "onyx.Toolbar", components: [
 			{kind: "onyx.Button", ontap: "doJobViewClosed", content: "Close"},
-			{kind: "onyx.Button", show: false, name: "cviewButton", ontap: "downloadCview", content: "Download Cview"},
+			{kind: "onyx.Button", show: false, name: "cviewButton", ontap: "downloadCview", content: "Download Cview"}
 		]},
 	],
 	downloadCview: function(inSender, inEvent) {
@@ -77,13 +77,36 @@ enyo.kind({
 		}
 	},
 	values: {},
+	hsl2rgb: function(h, s, l){
+		var r, g, b;
+
+		if(s == 0){
+			r = g = b = l; // achromatic
+		}else{
+			function hue2rgb(p, q, t){
+				if(t < 0) t += 1;
+				if(t > 1) t -= 1;
+				if(t < 1/6) return p + (q - p) * 6 * t;
+				if(t < 1/2) return q;
+				if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+				return p;
+			}
+			var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+			var p = 2 * l - q;
+			r = hue2rgb(p, q, h + 1/3);
+			g = hue2rgb(p, q, h);
+			b = hue2rgb(p, q, h - 1/3);
+		}
+		return [r * 255, g * 255, b * 255];
+	},
 	legendItem: function(inSender, inEvent) {
-		item = this.legend[inEvent.index];
-		inEvent.item.$.enable.checked = item.enabled;
-		inEvent.item.$.enable.host = item.host
-		inEvent.item.$.color.setStyle("border: 5px solid hsl("+item.color[0]+", "+(item.color[1]*100)+"%, "+(item.color[2]*100)+"%);");
-		inEvent.item.$.label.setContent(item.host);
-		this.values[item.host] = inEvent.item.$.value;
+		inEvent.item.$.enable.checked = this.legend[inEvent.index].enabled;
+		inEvent.item.$.enable.host = this.legend[inEvent.index].host
+		color = this.legend[inEvent.index].color;
+		color = this.hsl2rgb(color[0]/360.0, color[1], color[2]);
+		inEvent.item.$.color.setStyle("border: 5px solid rgb("+Math.round(color[0])+", "+Math.round(color[1])+", "+Math.round(color[2])+");");
+		inEvent.item.$.label.setContent(this.legend[inEvent.index].host);
+		this.values[this.legend[inEvent.index].host] = inEvent.item.$.value;
 		return true;
 	},
 	updateLegendValues: function(inSender, inEvent) {
@@ -135,7 +158,7 @@ enyo.kind({
 		} else {
 			this.$.cviewButton.setShowing(false);
 		}
-		length = 0;
+		numGraphs = 0;
 		if(this.job["version"] == 2) {
 			this.legend = [];
 			numHosts = this.job["hosts"].length;
@@ -156,7 +179,7 @@ enyo.kind({
 			this.$.jobGraphs.render();
 		}
 		for(group in this.job["graphs"]) {
-			length++;
+			numGraphs++;
 			if(group == "") {
 				groupHeader = this.$.jobGraphs.createComponent({content: "other", ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
 			} else {
@@ -187,7 +210,7 @@ enyo.kind({
 				}
 			}
 		}
-		if(length == 0) {
+		if(numGraphs == 0) {
 			this.$.jobGraphs.createComponent({content: "Sorry there is no data for this job", classes:"job-error"});
 		}
 		this.$.spinnerPopup.hide();
@@ -213,5 +236,5 @@ enyo.kind({
 	toggleThumbnail: function(inSender, inEvent) {
 		inSender.thumbnail = !inSender.thumbnail;
 		inSender.addRemoveClass("thumbnail", inSender.thumbnail);
-	},
+	}
 });
