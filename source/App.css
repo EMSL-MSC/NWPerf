@@ -28,3 +28,13 @@
 	padding: 0px 8px 0px 8px;
 	background-color: white;
 }
+
+.logo {
+	width: 550px;
+	overflow: hidden;
+}
+ 
+.header {
+	background-color: #89B13F;
+	height: 104px;
+}

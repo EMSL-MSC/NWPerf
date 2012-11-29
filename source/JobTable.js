@@ -1,7 +1,7 @@
 enyo.kind({
         name: "JobTable",
 	kind: "FittableRows",
-	classes: "enyo-selectable",
+	classes: "enyo-selectable JobTable",
 	published: {
 		jobs: [],
 		showUsers: false

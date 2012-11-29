@@ -1,7 +1,3 @@
 .QueryBuilder {
-	background: url(../assets/NWPerfHeaderImage.png);
-	background-repeat: no-repeat;
-	background-position: right bottom;
-	background-color: #89B13F;
-	height: 104px;
+	min-width: 400px;
 }

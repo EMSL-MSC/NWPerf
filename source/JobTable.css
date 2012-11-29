@@ -1,3 +1,7 @@
+.JobTable {
+	cursor: default;
+}
+
 .JobTable-header-container {
 /*
 	background-color: white;

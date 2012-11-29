@@ -1,14 +1,24 @@
 enyo.kind({
 	name: "App",
-	kind: "FittableRows",
+	kind: "Panels",
+	draggable: false,
+	arrangerKind: "CollapsingArranger",
 	components:[
 		{kind: "UserManager", name: "userManager", onGroupMembership: "updateUserGroup", onUserListRetrieved:"updateUserList"},
 		{kind: "JobManager", name: "jobManager", onNewJobList: "updateJobTable", onNewJob:"displayJob"},
-		{kind: "QueryBuilder", name: "queryBuilder", onQueryChanged: "getJobList"},
-		{kind: "Panels", draggable: false, name: "jobViews", fit: true, arrangerKind: "CollapsingArranger", realtimeFit: true, components: [
-			{kind: "JobTable", name: "jobTable", onJobSelected: "getJob", style: "width: 100%;"},
-			{kind: "JobView", name: "jobView", style: "width: 0%;", onJobViewClosed: "closeJobView"},
-		]}
+		{kind: "FittableRows", name: "jobViews", realtimeFit: true, style: "width: 100%;", components: [
+			{kind: "FittableColumns", classes: "header", components: [
+				{classes: "logo", components: [
+					{kind: "Image", src: "assets/logo.png"},
+				]},
+				{kind: "QueryBuilder", name: "queryBuilder", onQueryChanged: "getJobList"},
+			]},
+			{kind: "JobTable", name: "jobTable", fit: true, onJobSelected: "getJob"},
+			{kind: "onyx.Toolbar", components: [
+				{kind: "onyx.Button", content: "Admin"},
+			]}
+		]},
+		{kind: "JobView", name: "jobView", style: "width: 0%;", onJobViewClosed: "closeJobView"}
 	],
 	ready: false,
 	create: function() {
@@ -33,7 +43,7 @@ enyo.kind({
 		this.$.jobManager.getJobList(inEvent);
 		if(this.ready) {
 			this.$.jobTable.spin();
-			this.$.jobViews.setIndex(0);
+			this.$.setIndex(0);
 		}
 	},
 	updateJobTable: function(inSender, inEvent) {
@@ -45,9 +55,9 @@ enyo.kind({
 	},
 	displayJob: function(inSender, inEvent) {
 		this.$.jobView.setJob(inEvent);
-		this.$.jobViews.setIndex(1);
+		this.setIndex(1);
 	},
 	closeJobView: function(inSender, inEvent) {
-		this.$.jobViews.setIndex(0);
+		this.setIndex(0);
 	}
 });
