@@ -9,6 +9,36 @@ enyo.kind({
 		onJobViewClosed: ""
 	},
 	components:[
+		{kind: "FittableColumns", name: "jobInfo", classes: "job-info", components: [
+			{kind: "FittableRows", components: [
+				{classes: "job-info-label", content: "Job ID:"},
+				{classes: "job-info-label", content: "Account:"},
+				{classes: "job-info-label", content: "Number of Hosts:"}
+			]},
+			{kind: "FittableRows", components: [
+				{classes: "job-info-value", name: "jobID"},
+				{classes: "job-info-value", name: "account"},
+				{classes: "job-info-value", name: "numNodes"}
+			]},
+			{kind: "FittableRows", components: [
+				{classes: "job-info-label", content: "User:"},
+				{classes: "job-info-label", content: "Group:"},
+			]},
+			{kind: "FittableRows", components: [
+				{classes: "job-info-value", name: "user"},
+				{classes: "job-info-value", name: "group"}
+			]},
+			{kind: "FittableRows", components: [
+				{classes: "job-info-label", content: "Start Time:"},
+				{classes: "job-info-label", content: "End Time:"},
+				{classes: "job-info-label", content: "Run Time:"}
+			]},
+			{kind: "FittableRows", components: [
+				{classes: "job-info-value", name: "startTime"},
+				{classes: "job-info-value", name: "endTime"},
+				{classes: "job-info-value", name: "runTime"}
+			]}
+		]},
 		{kind: "FittableColumns", fit: true, components: [
 			{kind: "Scroller", fit: true, components: [
 				{name: "spinnerPopup", kind: "onyx.Popup", centered: true, floating: true, components: [
@@ -150,6 +180,35 @@ enyo.kind({
 		}
 		return aElements.length - bElements.length;
 	},
+	updateJobInfo: function() {
+		this.$.startTime.setContent(Date(this.job.startTime).toLocaleString());
+		this.$.endTime.setContent(Date(this.job.endTime).toLocaleString());
+		runtime = this.job.runTime;
+		numDays = Math.floor(runtime/86400);
+		runtime %= 86400;
+		numHours = Math.floor(runtime/3600);
+		runtime %= 3600;
+		numMinutes = Math.floor(runtime/60);
+		runtime %= 60;
+		numSeconds = runtime;
+		this.$.runTime.setContent(numDays+" days "+numHours+":"+numMinutes+":"+numSeconds);
+		this.$.jobID.setContent(this.job.id);
+		this.$.user.setContent(this.job.user);
+		this.$.numNodes.setContent(this.job.numHosts);
+		this.$.group.setContent(this.job.group);
+		this.$.account.setContent(this.job.account);
+		this.$.jobInfo.render();
+	},
+	clearJobInfo: function() {
+		this.$.startTime.setContent("");
+		this.$.jobID.setContent("");
+		this.$.user.setContent("");
+		this.$.endTime.setContent("");
+		this.$.numNodes.setContent("");
+		this.$.group.setContent("");
+		this.$.runTime.setContent("");
+		this.$.account.setContent("");
+	},
 	jobChanged: function(oldValue) {
 		this.graphs = [];
 		this.values = {};
@@ -159,7 +218,9 @@ enyo.kind({
 			this.$.cviewButton.setShowing(false);
 		}
 		numGraphs = 0;
+		this.clearJobInfo();
 		if(this.job["version"] == 2) {
+			this.updateJobInfo();
 			this.legend = [];
 			numHosts = this.job["hosts"].length;
 			hue = hueFractions = 350/numHosts;

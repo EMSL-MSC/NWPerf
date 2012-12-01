@@ -67,3 +67,14 @@
 	padding: 4px;
 	color: white;
 }
+.job-info-label {
+	font-weight: bolder;
+}
+.job-info-value {
+	padding-right: 50px;
+	padding-left: 1em;
+}
+.job-info {
+	background-color: #89B13F;
+	color: white;
+}
