@@ -81,14 +81,14 @@ enyo.kind({
 			if(this.graphData) {
 				this.hasPlotted = true;
 				data = []
-				for(host in this.graphData["data"]) {
+				for(host in this.graphData) {
 					points = [];
 					color = "#000000";
 					for(entry in this.legend) {
 						entry = this.legend[entry];
 						if(entry.host == host && entry.enabled) {
 							color = "hsl("+entry.color[0]+", "+(entry.color[1]*100)+"%, "+(entry.color[2]*100)+"%)";
-							data.push({lines: { show: true }, color: color, label: host, data: this.graphData["data"][host]});
+							data.push({lines: { show: true }, color: color, label: host, data: this.graphData[host]});
 							break;
 						}
 					}

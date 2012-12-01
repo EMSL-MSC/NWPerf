@@ -3,7 +3,7 @@ dbhost = "fishladder.emsl.pnl.gov"
 dbname = "nwperf"
 dbuser = "guppy"
 dbpass = "GuPpY"
-flotgraphsdir = "/var/www/nwperf-graphs/flot-graphs"
+flotgraphsdir = "/var/www/nwperf-graphs/flot-graphs/newgraphs"
 graphsdir = "/var/www/nwperf-graphs/"
 tempdir = "/tmp/"
 cviewdir = "/var/www/nwperf-graphs/cview/jobs/"
@@ -66,23 +66,7 @@ class Graph(object):
 	def GET(self, id, metric):
 		pointArchiveDir = os.path.join(tempdir,"flot",id)
 		try:
-			graph = json.load(open(os.path.join(pointArchiveDir,"%s.flot" % metric)))
-			ret = { "endTime": graph["endTime"]*1000,
-				"startTime": graph["startTime"]*1000,
-				"data": {}}
-			if "downSampledData" in graph:
-				ret["data"] = {}
-				for (host, points) in graph["downSampledData"].iteritems():
-					ret["data"][host] = []
-					for point in points:
-						ret["data"][host].append((point[0]*1000, point[1]))
-			else:
-				for (host, points) in graph["data"].iteritems():
-					if host not in ret["data"]:
-						ret["data"][host] = []
-					for (time, point) in enumerate(points):
-						ret["data"][host].append((time*60000+ret["startTime"], point))
-			return json.dumps(ret)
+			return open(os.path.join(pointArchiveDir,"%s.flot" % metric)).read()
 		except IOError:
 			import phpserialize
 			id = int(id)
@@ -104,6 +88,7 @@ class GroupMembership(object):
 		if user == "":
 			user = get_user()
 		res = db.select("usergroups", what="nwperf_group", where="nwperf_user = $user", vars={"user": user})
+		#return json.dumps([])
 		return json.dumps([i["nwperf_group"] for i in res])
 
 class Jobs(object):
@@ -143,17 +128,27 @@ class Jobs(object):
 				elif queryItem[0] == "Ran On Node":
 					where.append("moab_job_details.jobs_id in (select job_id from host_jobs, hosts where host_jobs.host_id = hosts.id and hosts.host_name = '%s')" % web.db.SQLParam(queryItem[1]))
 			ret = db.select(["moab_job_details", "jobs"],
-					what="jobs.job_id as id, moab_job_details.user as user, jobs_id as jobId, account, num_nodes_allocated as numNodes, submit_time as submitTime, start_time as startTime, end_time as endTime, end_time-start_time as runTime",
+					what="jobs.job_id as id, moab_job_details.user as user, 'chinook-'||job_id||'-'||extract(epoch from start_time) as jobId, account, num_nodes_allocated as numNodes, submit_time as submitTime, start_time as startTime, end_time as endTime, end_time-start_time as runTime",
 					where=" and ".join(where))
 			return json.dumps({"tag": tag, "jobs": tuple(ret)}, default=encode_datetime)
 	
 		else:
-			job = int(job)
-			file = os.path.join(cviewdir, str(job%100), str(job/100%100), "%d.tar.gz" % job)
-			cview = {True: "cview/%s" % job, False: False}[os.path.exists(file)]
+			(cluster, jobnum, starttime) = job.split("-")
+			jobnum = int(jobnum)
+			starttime = int(starttime)
+			if ".." in cluster:
+				return json.dumps({"error": "Invalid job id"})
+			#file = os.path.join(cviewdir, str(job%100), str(job/100%100), "%d.tar.gz" % job)
+			#cview = {True: "cview/%s" % job, False: False}[os.path.exists(file)]
+			cview = False
 
-			pointsArchive = os.path.join(flotgraphsdir, str(job%100), str(job/100%100), "%d.tar.bz2" % job)
+			pointsArchive = os.path.join(flotgraphsdir, str(jobnum%100), str(jobnum/100%100), "%s.tar.bz2" % job)
 			if not os.path.exists(pointsArchive): 
+				ret = db.select(["jobs", "moab_job_details"],
+						what="jobs.id as id",
+						where="jobs.id = moab_job_details.jobs_id and job_id = $id and start_time = TIMESTAMP WITH TIME ZONE 'epoch' + $starttime * INTERVAL '1 second'",
+						vars={"id": jobnum, "starttime": starttime})
+				job = ret["id"]
 				pointsDir = os.path.join(graphsdir, str(job%100), str(job/100%100), str(job))
 				pointsDescFile = os.path.join(pointsDir, "pointsDescriptions")
 				import phpserialize
@@ -167,7 +162,7 @@ class Jobs(object):
 												"description": res[0]["point_description"]})
 				return json.dumps({"version": 1, "graphs": ret, "cview": cview, "tag": tag})
 			else:
-				ret = {}
+				graphs = {}
 				pointsDir = os.path.join(tempdir, "flot")
 				if not os.path.exists(pointsDir):
 					os.mkdir(pointsDir)
@@ -194,11 +189,14 @@ class Jobs(object):
 						unit = None
 						description = None
 						
-					ret.setdefault(group, []).append({	"name": point,
+					graphs.setdefault(group, []).append({	"name": point,
 										"src": "graphs/%s/%s" % (job, point),
 										"unit": unit,
 										"description": description})
-				return json.dumps({"version": 2, "graphs": ret, "hosts": metadata["hosts"], "cview": cview, "tag": tag})
+				del(metadata["points"])
+				ret = {"version": 2, "graphs": graphs, "cview": cview, "tag": tag}
+				ret.update(metadata)
+				return json.dumps(ret)
 
 class Users(object):
 	def GET(self):
@@ -209,7 +207,7 @@ class Users(object):
 			return json.dumps([get_user()])
 urls = (
     '/cview/(\d+)', 'Cview',
-    '/graphs/(\d+)/(.*)', 'Graph',
+    '/graphs/([^/]+)/(.*)', 'Graph',
     '/groupMembership/(.*)', 'GroupMembership',
     '/jobs/(.*)', 'Jobs',
     '/users/', 'Users'
