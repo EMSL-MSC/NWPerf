@@ -15,7 +15,7 @@ enyo.kind({
 			]},
 			{kind: "JobTable", name: "jobTable", fit: true, onJobSelected: "getJob"},
 			{kind: "onyx.Toolbar", components: [
-				{kind: "onyx.Button", content: "Admin"},
+				{kind: "onyx.Button", name: "adminButton", content: "Admin", showing: false},
 			]}
 		]},
 		{kind: "JobView", name: "jobView", style: "width: 0%;", onJobViewClosed: "closeJobView"}
@@ -32,6 +32,8 @@ enyo.kind({
 				//this.$.userManager.getUserList();
 				this.$.queryBuilder.setAllowUserSelect(true);
 				this.$.jobTable.setShowUsers(true);
+				this.$.adminButton.setShowing(true);
+				this.render();
 				break;
 			}
 		}
@@ -43,7 +45,7 @@ enyo.kind({
 		this.$.jobManager.getJobList(inEvent);
 		if(this.ready) {
 			this.$.jobTable.spin();
-			this.$.setIndex(0);
+			this.setIndex(0);
 		}
 	},
 	updateJobTable: function(inSender, inEvent) {
