@@ -91,6 +91,60 @@ class GroupMembership(object):
 		#return json.dumps([])
 		return json.dumps([i["nwperf_group"] for i in res])
 
+class Metrics(object):
+	def GET(self, name):
+		tag = web.input(tag=0).tag
+		if name != "":
+			res = db.select("point_descriptions, point_groups",
+					what="point_description as description, point_name as name, units as unit, point_groups.name as group",
+					where="point_descriptions.point_groups_id = point_groups.id and point_name = $name",
+					vars={"name": name})
+			if len(res) > 0:
+				return json.dumps({"tag": tag, "metric": res[0]})
+			else:
+				return web.NotFound()
+		else:
+			res = db.select("point_descriptions, point_groups",
+					what="point_description as description, point_name as name, units as unit, point_groups.name as group",
+					where="point_descriptions.point_groups_id = point_groups.id and active = true")
+			return json.dumps({"tag": tag, "metrics": tuple(res)})
+	def PUT(self, name):
+		if not is_admin():
+			return web.Forbidden()
+
+		metric = web.input()
+		res = db.select("point_groups", what="id", where="name = $group", vars={"group": metric["group"]})
+		if len(res) == 0:
+			groupId = db.insert("point_groups", name=metric["group"])
+		else:
+			groupId = res[0]["id"]
+			
+		numUpdated = db.update("point_descriptions",
+					where="point_name=$name",
+					vars={"name": metric["name"]},
+					point_name=metric["name"],
+					point_description=metric["description"],
+					units=metric["unit"],
+					point_groups_id=groupId,
+					active=True)
+		if numUpdated != 0:
+			return json.dumps({"status": "OK", "message": "Metric Updated"})
+		else:
+			db.insert("point_descriptions",
+					point_name=metric["name"],
+					point_description=metric["description"],
+					units=metric["unit"],
+					point_groups_id=groupId,
+					active=True)
+			return json.dumps({"status": "OK", "message": "Metric Added"})
+
+	def DELETE(self, name):
+		if not is_admin():
+			return web.Forbidden()
+
+		db.update("point_descriptions", where="point_name=$name", vars={"name": name}, active=False)
+		return json.dumps({"status": "OK", "message": "Metric Deleted"})
+
 class Jobs(object):
 	def GET(self, job):
 		input = web.input(q=None)
@@ -177,7 +231,7 @@ class Jobs(object):
 				for point in metadata["points"]:
 					res = db.select("point_descriptions pd, point_groups pg",
 							what="point_description as description, name as group, pd.units as units",
-							where="pd.point_groups_id = pg.id and point_name = $point",
+							where="pd.point_groups_id = pg.id and point_name = $point and active = true",
 							vars={"point": point})
 					try:
 						row = res[0]
@@ -209,6 +263,7 @@ urls = (
     '/cview/(\d+)', 'Cview',
     '/graphs/([^/]+)/(.*)', 'Graph',
     '/groupMembership/(.*)', 'GroupMembership',
+    '/Metrics/(.*)', 'Metrics',
     '/jobs/(.*)', 'Jobs',
     '/users/', 'Users'
 )
