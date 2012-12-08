@@ -37,4 +37,7 @@
 .header {
 	background-color: #89B13F;
 	height: 104px;
+	background-image: url(../assets/headerBar.png);
+	background-repeat: no-repeat;
+	background-position: left;
 }
