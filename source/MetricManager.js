@@ -1,13 +1,14 @@
 enyo.kind({
         name: "MetricManager",
 	kind: "Component",
+	url: "metrics/",
 	events: {
 		onNewMetricList: "",
 		onNewMetric: ""
 	},
 	metricListTag: 0,
 	getMetricList: function() {
-		metricListReq = new enyo.Ajax({url: "Metrics/"})
+		metricListReq = new enyo.Ajax({url: this.url})
 		.response(this, function(inSender, inResponse) {
 			if(parseInt(inResponse.tag) == this.metricListTag) {
 				this.doNewMetricList(inResponse.metrics);
@@ -18,7 +19,7 @@ enyo.kind({
 	},
 	getMetricTag: 0,
 	getMetric: function(metricName) {
-		return new enyo.Ajax({url: "Metrics/"+metricName})
+		return new enyo.Ajax({url: this.url+metricName})
 		.response(this, function(inSender, inResponse) {
 			if(parseInt(inResponse.tag) == this.getMetricTag) {
 				delete inResponse.tag
@@ -29,9 +30,9 @@ enyo.kind({
 		
 	},
 	updateMetric: function(name, metric) {
-		return new enyo.Ajax({url: "Metrics/"+name, method: "PUT"}).go(metric);
+		return new enyo.Ajax({url: this.url+name, method: "PUT"}).go(metric);
 	},
 	deleteMetric: function(name) {
-		return new enyo.Ajax({url: "Metrics/"+name, method: "DELETE"}).go();
+		return new enyo.Ajax({url: this.url+name, method: "DELETE"}).go();
 	}
 });

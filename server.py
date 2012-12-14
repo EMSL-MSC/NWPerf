@@ -1,3 +1,4 @@
+CONFIG="/etc/nwperf.conf"
 dbtype = "postgres"
 dbhost = "fishladder.emsl.pnl.gov"
 dbname = "nwperf"
@@ -17,7 +18,6 @@ try:
 except:
 	import json
 
-db = web.database(dbn=dbtype, host=dbhost, db=dbname, user=dbuser, password=dbpass)
 
 def is_admin(user = None):
 	if user == None:
@@ -32,6 +32,47 @@ def get_user():
 	except:
 		return web.ctx.env["REMOTE_USER"]
 
+class Settings(object):
+	settings = False
+	def __init__(self):
+		if self.settings == False:
+			self.settings = json.load(open(CONFIG, "r"))
+
+	def __getitem__(self, key):
+		return self.settings[key]["value"]
+
+	def __setitem__(self, key, item):
+		self.settings[key]["value"] = item
+		json.dump(self.settings, open(CONFIG, "w"), indent=4)
+		
+	def GET(self, setting):
+		tag = web.input(tag=0).tag
+		if setting == "":
+			return json.dumps({
+					"settings": [dict([("id",k)]+v.items()) for (k,v) in self.settings.items() if k != "metrics"],
+					"tag": tag
+				}
+				,separators=(',', ':'))
+		else:
+			try:
+				return json.dumps({
+						"setting": dict(self.settings[setting].items() + [("id", setting)]),
+						"tag": tag
+					}
+					,separators=(',', ':'))
+			except KeyError:
+				return web.NotFound()
+
+	def PUT(self, setting):
+		print web.input()
+		if is_admin():
+			try:
+				if setting != "metrics":
+					self[setting] = web.input()["value"]
+					return json.dumps({"status": "OK", "message": "Setting Updated"})
+			except KeyError:
+				pass
+		return web.Forbidden()
 
 def encode_datetime(obj):
 	if isinstance(obj, datetime.datetime):
@@ -48,7 +89,7 @@ class Cview(object):
 		res = db.select("moab_job_details", where="moab_job_details.user = $user and jobs_id = $id", vars={"user": user, "id": id})
 		jobOwner = len(res) > 0
 
-                file = os.path.join(cviewdir, str(id%100), str(id/100%100), "%d.tar.gz" %id)
+                file = os.path.join(settings["cviewdir"], str(id%100), str(id/100%100), "%d.tar.gz" %id)
                 cviewAvail = os.path.exists(file)
 
 		ret = str(web.ctx.env)
@@ -64,13 +105,13 @@ class Cview(object):
 
 class Graph(object):
 	def GET(self, id, metric):
-		pointArchiveDir = os.path.join(tempdir,"flot",id)
+		pointArchiveDir = os.path.join(settings["tempdir"],"flot",id)
 		try:
 			return open(os.path.join(pointArchiveDir,"%s.flot" % metric)).read()
 		except IOError:
 			import phpserialize
 			id = int(id)
-			pointsDir = os.path.join(graphsdir, str(id%100), str(id/100%100), str(id))
+			pointsDir = os.path.join(settings["graphsdir"], str(id%100), str(id/100%100), str(id))
 			pointsDescFile = os.path.join(pointsDir, "pointsDescriptions")
 			jobData = phpserialize.load(open(pointsDescFile))
 			for graph in jobData.values():
@@ -192,18 +233,18 @@ class Jobs(object):
 			starttime = int(starttime)
 			if ".." in cluster:
 				return json.dumps({"error": "Invalid job id"})
-			#file = os.path.join(cviewdir, str(job%100), str(job/100%100), "%d.tar.gz" % job)
+			#file = os.path.join(settings["cviewdir"], str(job%100), str(job/100%100), "%d.tar.gz" % job)
 			#cview = {True: "cview/%s" % job, False: False}[os.path.exists(file)]
 			cview = False
 
-			pointsArchive = os.path.join(flotgraphsdir, str(jobnum%100), str(jobnum/100%100), "%s.tar.bz2" % job)
+			pointsArchive = os.path.join(settings["flotgraphsdir"], str(jobnum%100), str(jobnum/100%100), "%s.tar.bz2" % job)
 			if not os.path.exists(pointsArchive): 
 				ret = db.select(["jobs", "moab_job_details"],
 						what="jobs.id as id",
 						where="jobs.id = moab_job_details.jobs_id and job_id = $id and start_time = TIMESTAMP WITH TIME ZONE 'epoch' + $starttime * INTERVAL '1 second'",
 						vars={"id": jobnum, "starttime": starttime})
 				job = ret["id"]
-				pointsDir = os.path.join(graphsdir, str(job%100), str(job/100%100), str(job))
+				pointsDir = os.path.join(settings["graphsdir"], str(job%100), str(job/100%100), str(job))
 				pointsDescFile = os.path.join(pointsDir, "pointsDescriptions")
 				import phpserialize
 				jobData = phpserialize.load(open(pointsDescFile))
@@ -217,7 +258,7 @@ class Jobs(object):
 				return json.dumps({"version": 1, "graphs": ret, "cview": cview, "tag": tag})
 			else:
 				graphs = {}
-				pointsDir = os.path.join(tempdir, "flot")
+				pointsDir = os.path.join(settings["tempdir"], "flot")
 				if not os.path.exists(pointsDir):
 					os.mkdir(pointsDir)
 				pointsDir = os.path.join(pointsDir,str(job))
@@ -263,10 +304,13 @@ urls = (
     '/cview/(\d+)', 'Cview',
     '/graphs/([^/]+)/(.*)', 'Graph',
     '/groupMembership/(.*)', 'GroupMembership',
-    '/Metrics/(.*)', 'Metrics',
+    '/metrics/(.*)', 'Metrics',
+    '/settings/(.*)', 'Settings',
     '/jobs/(.*)', 'Jobs',
     '/users/', 'Users'
 )
 
+settings = Settings()
+db = web.database(dbn=settings["dbtype"], host=settings["dbhost"], db=settings["dbname"], user=settings["dbuser"], password=settings["dbpass"])
 app = web.application(urls, globals(), autoreload=False)
 application = app.wsgifunc()

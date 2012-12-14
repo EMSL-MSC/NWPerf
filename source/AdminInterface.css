@@ -3,6 +3,21 @@
 	height: 80%;
 }
 
+.admin-active-button {
+}
+
 .admin-close-button {
 	float: right;
+}
+
+.admin-row {
+	padding: 2px;
+}
+
+.admin-description {
+	padding-top: 2px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: white;
+	background-color: black;
 }

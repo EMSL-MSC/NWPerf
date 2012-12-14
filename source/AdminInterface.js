@@ -4,11 +4,13 @@ enyo.kind({
 	classes: "admin-interface",
 	components:[
 		{kind: "MetricManager", name: "metricManager", onNewMetricList: "updateMetrics"},
+		{kind: "SettingManager", name: "settingManager", onNewSettingList: "updateSettings"},
 		{kind: "FittableRows", style: "width: 100%; height: 100%;", components: [
 			{kind: "onyx.Toolbar", components: [
-				{kind: "onyx.Button", content: "Metrics", ontap: "closeAdmin"}
+				{kind: "onyx.Button", content: "Metrics", panel: 0, classes: "admin-active-button", ontap: "changeAdminPanel"},
+				{kind: "onyx.Button", content: "Settings", panel: 1, ontap: "changeAdminPanel"}
 			]},
-			{kind: "Panels", fit: true, components: [
+			{kind: "Panels", name: "adminPanel", fit: true, components: [
 				{kind: "FittableRows", components: [
 					{kind: "FittableColumns", components: [
 						{style: "margin: 1px; width: 28%;", content: "Name"},
@@ -49,6 +51,28 @@ enyo.kind({
 							]},
 						]}
 					]}
+				]},
+				{kind: "FittableRows", components: [
+					{kind: "Scroller", fit: true, components: [
+						{kind: "Repeater", name: "settingList", onSetupItem: "newSettingRow", components: [
+							{name: "description", classes: "admin-description"},
+							{kind: "FittableColumns", classes: "admin-row", components: [
+								{name: "label", style: "width: 20%", classes: "admin-label"},
+								{fit: true, components: [
+									{kind: "onyx.InputDecorator", style: "width: 50%", name: "stringValueDecorator", components: [
+										{kind: "onyx.Input", style: "width: 100%", name: "stringValue", onchange: "settingUpdated"}
+									]},
+									{kind: "onyx.InputDecorator", style: "width: 50%", name: "passwordValueDecorator", components: [
+										{kind: "onyx.Input", style: "width: 100%", name: "passwordValue", type: "password", onchange: "settingUpdated"}
+									]},
+									{kind: "onyx.PickerDecorator", name: "pickerValueDecorator", components: [
+										{},
+										{kind: "onyx.Picker", name: "pickerValue", onChange:"settingUpdated"}
+									]}
+								]}
+							]}
+						]}
+					]}
 				]}
 			]},
 			{kind: "onyx.Toolbar", components: [
@@ -56,8 +80,74 @@ enyo.kind({
 			]}
 		]}
 	],
+	changeAdminPanel: function(inSender, inEvent) {
+		buttons = inSender.parent.children;
+		for(i=0;i<buttons.length;i++) {
+			buttons[i].removeClass("admin-active-button");
+		}
+		inSender.addClass("admin-active-button");
+		this.$.adminPanel.setIndex(inSender.panel);
+	},
+	showSettings: function(inSender, inEvent) {
+		console.log(inSender, inEvent);
+		this.$.adminPanel.setIndex(1);
+	},
 	updateValues: function() {
 		this.$.metricManager.getMetricList();
+		this.$.settingManager.getSettingList();
+	},
+	settings: false,
+	updateSettings: function(inSender, inResponse) {
+		this.settings = inResponse;
+		this.settings.sort(function(a,b) {
+			if(a.id > b.id)
+				return 1;
+			else 
+				return -1;
+		});
+		this.$.settingList.setCount(inResponse.length);
+	},
+	newSettingRow: function(inSender, inEvent) {
+		inEvent.item.$.label.setContent(this.settings[inEvent.index].label);
+		if(typeof this.settings[inEvent.index].description != "undefined")
+			inEvent.item.$.description.setContent(this.settings[inEvent.index].description);
+		else
+			inEvent.item.$.description.setShowing(false);
+			
+		if(this.settings[inEvent.index].type == "string" || this.settings[inEvent.index].type == "integer") {
+			inEvent.item.$.stringValue.setValue(this.settings[inEvent.index].value);
+			inEvent.item.$.stringValueDecorator.setShowing(true);
+			inEvent.item.$.passwordValueDecorator.setShowing(false);
+			inEvent.item.$.pickerValueDecorator.setShowing(false);
+		} else if(this.settings[inEvent.index].type == "password") {
+			inEvent.item.$.passwordValue.setValue(this.settings[inEvent.index].value);
+			inEvent.item.$.passwordValueDecorator.setShowing(true);
+			inEvent.item.$.stringValueDecorator.setShowing(false);
+			inEvent.item.$.pickerValueDecorator.setShowing(false);
+		} else if(this.settings[inEvent.index].type == "list") {
+			inEvent.item.$.pickerValue.destroyClientControls();
+			for(i=0;i<this.settings[inEvent.index].values.length;i++) {
+				var newComponent = {content: this.settings[inEvent.index].values[i]};
+				newComponent.active = this.settings[inEvent.index].values[i] == this.settings[inEvent.index].value;
+				inEvent.item.$.pickerValue.createComponent(newComponent);
+			}
+			inEvent.item.$.pickerValueDecorator.setShowing(true);
+			inEvent.item.$.stringValueDecorator.setShowing(false);
+			inEvent.item.$.passwordValueDecorator.setShowing(false);
+		}
+			
+	},
+	settingUpdated: function(inSender, inEvent) {
+		settingId = this.settings[inEvent.index].id;
+		if(inSender.kind == "onyx.Picker") {
+			newValue = inEvent.content;
+		} else {
+			newValue = inSender.getValue();
+		}
+		if(newValue != this.settings[inEvent.index].value) {
+			this.settings[inEvent.index].value = newValue;
+			this.$.settingManager.updateSetting(settingId, this.settings[inEvent.index].value);
+		}
 	},
 	metrics: false,
 	updateMetrics: function(inSender, inResponse) {
