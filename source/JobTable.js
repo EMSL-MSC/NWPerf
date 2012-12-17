@@ -58,16 +58,16 @@ enyo.kind({
 			this.curSortedOrder = "asc";
 			this.curSortedColumn.setClasses("JobTable-header-asc");
 		}
-		field = inSender.name.replace("Header", "");
+		var field = inSender.name.replace("Header", "");
 		if(field == "numnodes" || field == "id") {
 			if(this.curSortedOrder == "asc") {
-				sortFunc = function(a,b) { return parseInt(a[field]) - parseInt(b[field]); }
+				var sortFunc = function(a,b) { return parseInt(a[field]) - parseInt(b[field]); }
 			} else {
-				sortFunc = function(a,b) { return parseInt(b[field]) - parseInt(a[field]); }
+				var sortFunc = function(a,b) { return parseInt(b[field]) - parseInt(a[field]); }
 			}
 		} else {
 			if(this.curSortedOrder == "asc") {
-				sortFunc = function(a,b) {
+				var sortFunc = function(a,b) {
 					if(a[field] == null)
 						a[field] = "";
 					if(b[field] == null) 
@@ -76,7 +76,7 @@ enyo.kind({
 					return a[field].localeCompare(b[field]);
 				}
 			} else {
-				sortFunc = function(a,b) {
+				var sortFunc = function(a,b) {
 					if(a[field] == null)
 						a[field] = "";
 					if(b[field] == null) 
@@ -103,7 +103,7 @@ enyo.kind({
 		this.$.jobList.refresh();
 	},
 	addJob: function(inSender, inEvent) {
-		job = this.jobs[inEvent.index];
+		var job = this.jobs[inEvent.index];
 		this.$.user.setContent(job.user);
 		this.$.user.setShowing(this.showUsers);
 		this.$.jobId.setContent(job.id);

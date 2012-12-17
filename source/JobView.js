@@ -81,10 +81,10 @@ enyo.kind({
 	},
 	toggleCheckboxes: function(inSender, inEvent) {
 		this.legendUpdatesEnabled = false;
-		for(i=0;i<this.legend.length;i++) {
+		for(var i=0;i<this.legend.length;i++) {
 			this.legend[i].enabled = inSender.checked;
 		}
-		for(i=0;i<this.graphs.length;i++) {
+		for(var i=0;i<this.graphs.length;i++) {
 			this.graphs[i].setLegend(this.legend.slice(0));
 		}
 		this.$.legend.setCount(this.legend.length);
@@ -101,7 +101,7 @@ enyo.kind({
 			}
 			this.values[inSender.host].setContent("");
 			this.updateLegendValues()
-			for(i=0;i<this.graphs.length;i++) {
+			for(var i=0;i<this.graphs.length;i++) {
 				this.graphs[i].setLegend(this.legend.slice(0));
 			}
 		}
@@ -132,7 +132,7 @@ enyo.kind({
 	legendItem: function(inSender, inEvent) {
 		inEvent.item.$.enable.checked = this.legend[inEvent.index].enabled;
 		inEvent.item.$.enable.host = this.legend[inEvent.index].host
-		color = this.legend[inEvent.index].color;
+		var color = this.legend[inEvent.index].color;
 		color = this.hsl2rgb(color[0]/360.0, color[1], color[2]);
 		inEvent.item.$.color.setStyle("border: 5px solid rgb("+Math.round(color[0])+", "+Math.round(color[1])+", "+Math.round(color[2])+");");
 		inEvent.item.$.label.setContent(this.legend[inEvent.index].host);
@@ -140,8 +140,8 @@ enyo.kind({
 		return true;
 	},
 	updateLegendValues: function(inSender, inEvent) {
-		sum = 0;
-		count = 0;
+		var sum = 0;
+		var count = 0;
 		for(host in inEvent) {
 			if(host != "originator") {
 				this.values[host].setContent(": " + inEvent[host].toPrecision(4));
@@ -161,17 +161,17 @@ enyo.kind({
 	legend: [],
 	graphs: [],
 	alphaNumericSort: function(a, b) {
-		nodeRePair=/([\D]*)([\d]*)/g;
-		aPairs = a.match(nodeRePair);
-		bPairs = b.match(nodeRePair);
-		numLoops = Math.min(aPairs.length, bPairs.length);
-		for(i=0;i<numLoops;i++) {
-			nodeRePaira=/([\D]*)([\d]*)/g;
-			nodeRePairb=/([\D]*)([\d]*)/g;
-			aElements = nodeRePaira.exec(aPairs[i]);
-			bElements = nodeRePairb.exec(bPairs[i]);
+		var nodeRePair=/([\D]*)([\d]*)/g;
+		var aPairs = a.match(nodeRePair);
+		var bPairs = b.match(nodeRePair);
+		var numLoops = Math.min(aPairs.length, bPairs.length);
+		for(var i=0;i<numLoops;i++) {
+			var nodeRePaira=/([\D]*)([\d]*)/g;
+			var nodeRePairb=/([\D]*)([\d]*)/g;
+			var aElements = nodeRePaira.exec(aPairs[i]);
+			var bElements = nodeRePairb.exec(bPairs[i]);
 			if(aElements[1] == bElements[1]) {
-				diff = parseInt(aElements[2]) - parseInt(bElements[2]);
+				var diff = parseInt(aElements[2]) - parseInt(bElements[2]);
 				if(diff != 0)
 					return diff;
 			} else {
@@ -183,14 +183,14 @@ enyo.kind({
 	updateJobInfo: function() {
 		this.$.startTime.setContent(Date(this.job.startTime).toLocaleString());
 		this.$.endTime.setContent(Date(this.job.endTime).toLocaleString());
-		runtime = this.job.runTime;
-		numDays = Math.floor(runtime/86400);
+		var runtime = this.job.runTime;
+		var numDays = Math.floor(runtime/86400);
 		runtime %= 86400;
-		numHours = Math.floor(runtime/3600);
+		var numHours = Math.floor(runtime/3600);
 		runtime %= 3600;
-		numMinutes = Math.floor(runtime/60);
+		var numMinutes = Math.floor(runtime/60);
 		runtime %= 60;
-		numSeconds = runtime;
+		var numSeconds = runtime;
 		this.$.runTime.setContent(numDays+" days "+numHours+":"+numMinutes+":"+numSeconds);
 		this.$.jobID.setContent(this.job.id);
 		this.$.user.setContent(this.job.user);
@@ -217,15 +217,15 @@ enyo.kind({
 		} else {
 			this.$.cviewButton.setShowing(false);
 		}
-		numGraphs = 0;
+		var numGraphs = 0;
 		this.clearJobInfo();
 		if(this.job["version"] == 2) {
 			this.updateJobInfo();
 			this.legend = [];
-			numHosts = this.job["hosts"].length;
-			hue = hueFractions = 350/numHosts;
-			lightnessFractions = .3/numHosts;
-			lightness = .3;
+			var numHosts = this.job["hosts"].length;
+			var hue = hueFractions = 350/numHosts;
+			var lightnessFractions = .3/numHosts;
+			var lightness = .3;
 			this.job["hosts"].sort(this.alphaNumericSort);
 			for(host in this.job["hosts"]) {
 				hue += hueFractions;
@@ -242,11 +242,11 @@ enyo.kind({
 		for(group in this.job["graphs"]) {
 			numGraphs++;
 			if(group == "") {
-				groupHeader = this.$.jobGraphs.createComponent({content: "other", ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
+				var groupHeader = this.$.jobGraphs.createComponent({content: "other", ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
 			} else {
-				groupHeader = this.$.jobGraphs.createComponent({content: group, ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
+				var groupHeader = this.$.jobGraphs.createComponent({content: group, ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
 			}
-			groupDrawer = this.$.jobGraphs.createComponent({kind: "onyx.Drawer", open: false});
+			var groupDrawer = this.$.jobGraphs.createComponent({kind: "onyx.Drawer", open: false});
 			groupHeader.drawer = groupDrawer;
 			for(metric in this.job["graphs"][group]) {
 				if(this.job["graphs"][group][metric]["unit"] != null)
@@ -261,8 +261,8 @@ enyo.kind({
 				headerText = 	this.job["graphs"][group][metric]["name"]
 						+ unit
 						+ description;
-				metricHeader = groupDrawer.createComponent({content: headerText, ontap: "toggleDrawer", classes: "image-header"}, {owner:  this})
-				metricDrawer = groupDrawer.createComponent({kind: "onyx.Drawer", open: false});
+				var metricHeader = groupDrawer.createComponent({content: headerText, ontap: "toggleDrawer", classes: "image-header"}, {owner:  this})
+				var metricDrawer = groupDrawer.createComponent({kind: "onyx.Drawer", open: false});
 				metricHeader.drawer = metricDrawer;
 				if(this.job["version"] == 1) {
 					metricDrawer.createComponent({kind: "Image", src: this.job["graphs"][group][metric]["src"], ontap: "toggleThumbnail", classes: "thumbnail", thumbnail: true}, {owner: this});
@@ -283,7 +283,7 @@ enyo.kind({
 			if(inSender.getClasses().indexOf("group-header") != -1)
 				inSender.setClasses("group-header");
 		} else {
-			components = inSender.drawer.getControls();
+			var components = inSender.drawer.getControls();
 			for(comp in components) {
 				if(components[comp].kind == "Flot") {
 					components[comp].plot();

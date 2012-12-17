@@ -81,15 +81,14 @@ enyo.kind({
 		]}
 	],
 	changeAdminPanel: function(inSender, inEvent) {
-		buttons = inSender.parent.children;
-		for(i=0;i<buttons.length;i++) {
+		var buttons = inSender.parent.children;
+		for(var i=0;i<buttons.length;i++) {
 			buttons[i].removeClass("admin-active-button");
 		}
 		inSender.addClass("admin-active-button");
 		this.$.adminPanel.setIndex(inSender.panel);
 	},
 	showSettings: function(inSender, inEvent) {
-		console.log(inSender, inEvent);
 		this.$.adminPanel.setIndex(1);
 	},
 	updateValues: function() {
@@ -126,7 +125,7 @@ enyo.kind({
 			inEvent.item.$.pickerValueDecorator.setShowing(false);
 		} else if(this.settings[inEvent.index].type == "list") {
 			inEvent.item.$.pickerValue.destroyClientControls();
-			for(i=0;i<this.settings[inEvent.index].values.length;i++) {
+			for(var i=0;i<this.settings[inEvent.index].values.length;i++) {
 				var newComponent = {content: this.settings[inEvent.index].values[i]};
 				newComponent.active = this.settings[inEvent.index].values[i] == this.settings[inEvent.index].value;
 				inEvent.item.$.pickerValue.createComponent(newComponent);
@@ -138,7 +137,7 @@ enyo.kind({
 			
 	},
 	settingUpdated: function(inSender, inEvent) {
-		settingId = this.settings[inEvent.index].id;
+		var settingId = this.settings[inEvent.index].id;
 		if(inSender.kind == "onyx.Picker") {
 			newValue = inEvent.content;
 		} else {
@@ -169,7 +168,7 @@ enyo.kind({
 	metricAdded: function(inSender, inEvent) {
 		if(this.$.newName.getValue() == "")
 			return true;
-		metric = {	"name": this.$.newName.getValue(),
+		var metric = {	"name": this.$.newName.getValue(),
 				"unit": this.$.newUnit.getValue(),
 				"group": this.$.newGroup.getValue(),
 				"description": this.$.newDescription.getValue()};
@@ -177,7 +176,7 @@ enyo.kind({
 		this.$.metricManager.getMetricList();
 	},
 	metricUpdated: function(inSender, inEvent) {
-		metricName = this.metrics[inEvent.index].name;
+		var metricName = this.metrics[inEvent.index].name;
 		this.metrics[inEvent.index][inSender.name] = inSender.getValue();
 		this.$.metricManager.updateMetric(metricName, this.metrics[inEvent.index]);
 	},

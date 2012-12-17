@@ -215,7 +215,7 @@ enyo.kind({
 	months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 	create: function() {
 		this.inherited(arguments);
-		for(i = 0; i < this.months.length; i++) {
+		for(var i = 0; i < this.months.length; i++) {
 			this.$.startMonth.createComponent({content: this.months[i]});
 			this.$.endMonth.createComponent({content: this.months[i]});
 			this.$.submitMonth.createComponent({content: this.months[i]});
@@ -241,7 +241,7 @@ enyo.kind({
 	},
 	startDateChanged: function(inSender, inEvent) {
 		if(!this.disableQueryValue) {
-			beforeAfter = {"After": ">", "Before": "<"}[this.$.startDateBeforeAfter.selected.content]
+			var beforeAfter = {"After": ">", "Before": "<"}[this.$.startDateBeforeAfter.selected.content]
 			this.queryValue = [	this.$.queryType.selected.content,
 						beforeAfter,
 						this.$.startMonth.selected.content,
@@ -253,7 +253,7 @@ enyo.kind({
 	},
 	endDateChanged: function(inSender, inEvent) {
 		if(!this.disableQueryValue) {
-			beforeAfter = {"After": ">", "Before": "<"}[this.$.endDateBeforeAfter.selected.content]
+			var beforeAfter = {"After": ">", "Before": "<"}[this.$.endDateBeforeAfter.selected.content]
 			this.queryValue = [	this.$.queryType.selected.content,
 						beforeAfter,
 						this.$.endMonth.selected.content,
@@ -265,7 +265,7 @@ enyo.kind({
 	},
 	submitDateChanged: function(inSender, inEvent) {
 		if(!this.disableQueryValue) {
-			beforeAfter = {"After": ">", "Before": "<"}[this.$.submitDateBeforeAfter.selected.content]
+			var beforeAfter = {"After": ">", "Before": "<"}[this.$.submitDateBeforeAfter.selected.content]
 			this.queryValue = [	this.$.queryType.selected.content,
 						beforeAfter,
 						this.$.submitMonth.selected.content,
@@ -323,7 +323,7 @@ enyo.kind({
 		if(this.queryValue.length == 0) {
 			this.queryValue = ["Start Date" ];
 		}
-		components = this.$.queryType.getControls();
+		var components = this.$.queryType.getControls();
 		for(i=0;i<components.length;i++) {
 			if(components[i].content == this.queryValue[0]) {
 				this.$.queryType.setSelected(components[i]);
@@ -332,8 +332,8 @@ enyo.kind({
 		if(this.activeControl != false) {
 			this.activeControl.setShowing(false);
 		}
-		now = new Date();
-		then = new Date(now.valueOf() - 1209600000);
+		var now = new Date();
+		var then = new Date(now.valueOf() - 1209600000);
 		switch(this.queryValue[0]) {
 			case "Start Date":
 				this.activeControl = this.$.startDateItems;
@@ -406,8 +406,8 @@ enyo.kind({
 		this.disableQueryValue = false;
 	},
 	setPickerWithText: function(component, selectText) {
-		components = component.getControls();
-		for(i = 0; i < components.length; i++) {
+		var components = component.getControls();
+		for(var i = 0; i < components.length; i++) {
 			if(components[i].content == selectText) {
 				component.setSelected(components[i]);
 			}

@@ -27,7 +27,7 @@ enyo.kind({
 		this.ready = true;
 	},
 	updateUserGroup: function(inSender, inEvent) {
-		for(i = 0; i < inEvent.length; i++) {
+		for(var i = 0; i < inEvent.length; i++) {
 			if(inEvent[i] == "admin") {
 				//this.$.userManager.getUserList();
 				this.$.queryBuilder.setAllowUserSelect(true);

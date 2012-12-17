@@ -8,14 +8,13 @@ enyo.kind({
 	},
 	metricListTag: 0,
 	getMetricList: function() {
-		metricListReq = new enyo.Ajax({url: this.url})
+		return new enyo.Ajax({url: this.url})
 		.response(this, function(inSender, inResponse) {
 			if(parseInt(inResponse.tag) == this.metricListTag) {
 				this.doNewMetricList(inResponse.metrics);
 			}
 		})
 		.go({tag: ++this.metricListTag});
-		return metricListReq;
 	},
 	getMetricTag: 0,
 	getMetric: function(metricName) {

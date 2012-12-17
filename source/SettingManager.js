@@ -8,14 +8,13 @@ enyo.kind({
 	},
 	settingListTag: 0,
 	getSettingList: function() {
-		settingListReq = new enyo.Ajax({url: this.url})
+		return new enyo.Ajax({url: this.url})
 		.response(this, function(inSender, inResponse) {
 			if(parseInt(inResponse.tag) == this.settingListTag) {
 				this.doNewSettingList(inResponse.settings);
 			}
 		})
 		.go({tag: ++this.settingListTag});
-		return settingListReq;
 	},
 	getSettingTag: 0,
 	getSetting: function(settingName) {

@@ -9,19 +9,17 @@ enyo.kind({
 		if(user == undefined) {
 			user = "";
 		}
-		groupMembership = new enyo.Ajax({url: "groupMembership/"+user})
+		return new enyo.Ajax({url: "groupMembership/"+user})
 		.response(this, function(inSender, inResponse) {
 			this.doGroupMembership(inResponse);
 		})
 		.go();
-		return groupMembership;
 	},
 	getUserList: function() {
-		userList = new enyo.Ajax({url: "users/"})
+		return new enyo.Ajax({url: "users/"})
 		.response(this, function(inSender, inResponse) {
 			this.doUserList(inResponse);
 		})
 		.go();
-		return userList;
 	}
 });
