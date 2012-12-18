@@ -333,7 +333,7 @@ enyo.kind({
 			this.activeControl.setShowing(false);
 		}
 		var now = new Date();
-		var then = new Date(now.valueOf() - 1209600000);
+		var then = new Date(now.valueOf() - 604800000);
 		switch(this.queryValue[0]) {
 			case "Start Date":
 				this.activeControl = this.$.startDateItems;
