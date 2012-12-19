@@ -98,12 +98,6 @@ enyo.kind({
 	settings: false,
 	updateSettings: function(inSender, inResponse) {
 		this.settings = inResponse;
-		this.settings.sort(function(a,b) {
-			if(a.id > b.id)
-				return 1;
-			else 
-				return -1;
-		});
 		this.$.settingList.setCount(inResponse.length);
 	},
 	newSettingRow: function(inSender, inEvent) {

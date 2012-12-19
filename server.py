@@ -27,42 +27,47 @@ def get_user():
 
 class Settings(object):
 	settings = False
+	ftime = False
 	def __init__(self, config):
 		self.configfile = config
-		self.ftime = os.path.getmtime(self.configfile)
 		self.load_config()
 
 	def load_config(self):
 		if self.settings == False:
 			self.settings = json.load(open(self.configfile, "r"))
+			self.ftime = os.path.getmtime(self.configfile)
 
 	def __getitem__(self, key):
 		if self.ftime != os.path.getmtime(self.configfile):
 			self.load_config()
 
-		return self.settings[key]["value"]
+		return [i for i in self.settings if i["id"] == key][0]["value"]
 
 	def __setitem__(self, key, item):
-		self.settings[key]["value"] = item
+		item = [i for i in self.settings if i.id == key][0]["value"] = item
 		json.dump(self.settings, open(self.configfile, "w"), indent=4)
 		self.ftime = os.path.getmtime(self.configfile)
+
+class SettingsWeb(settings.Settings):
+	def __init__(self):
+		super(SettingsWeb, self).__init__(CONFIG)
 		
 	def GET(self, setting):
 		tag = web.input(tag=0).tag
 		if setting == "":
 			return json.dumps({
-					"settings": [dict([("id",k)]+v.items()) for (k,v) in self.settings.items() if k != "metrics"],
+					"settings": [i for i in self.settings if i["id"] != "metrics"],
 					"tag": tag
 				}
 				,separators=(',', ':'))
 		else:
 			try:
 				return json.dumps({
-						"setting": dict(self.settings[setting].items() + [("id", setting)]),
+						"setting": [i for i in self.settings if i["id"] == setting][0],
 						"tag": tag
 					}
 					,separators=(',', ':'))
-			except KeyError:
+			except IndexError:
 				return web.NotFound()
 
 	def PUT(self, setting):
@@ -348,7 +353,7 @@ urls = (
     '/graphs/([^/]+)/(.*)', 'Graph',
     '/groupMembership/(.*)', 'GroupMembership',
     '/metrics/(.*)', 'Metrics',
-    '/settings/(.*)', 'Settings',
+    '/settings/(.*)', 'SettingsWeb',
     '/jobs/(.*)', 'Jobs',
     '/users/', 'Users'
 )
