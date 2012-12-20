@@ -44,11 +44,11 @@ class Settings(object):
 		return [i for i in self.settings if i["id"] == key][0]["value"]
 
 	def __setitem__(self, key, item):
-		item = [i for i in self.settings if i.id == key][0]["value"] = item
+		item = [i for i in self.settings if i["id"] == key][0]["value"] = item
 		json.dump(self.settings, open(self.configfile, "w"), indent=4)
 		self.ftime = os.path.getmtime(self.configfile)
 
-class SettingsWeb(settings.Settings):
+class SettingsWeb(Settings):
 	def __init__(self):
 		super(SettingsWeb, self).__init__(CONFIG)
 		
@@ -75,6 +75,12 @@ class SettingsWeb(settings.Settings):
 			try:
 				if setting != "metrics":
 					self[setting] = web.input()["value"]
+					if setting in ("dbtype", "dbhost", "dbname", "dbuser", "dbpass", "dbport"):
+						try:
+							db = web.database(dbn=settings["dbtype"], host=settings["dbhost"], db=settings["dbname"], user=settings["dbuser"], password=settings["dbpass"], port=int(settings["dbport"]))
+						except ValueError:
+							db = web.database(dbn=settings["dbtype"], host=settings["dbhost"], db=settings["dbname"], user=settings["dbuser"], password=settings["dbpass"])
+							
 					return json.dumps({"status": "OK", "message": "Setting Updated"})
 			except KeyError:
 				pass
@@ -359,6 +365,9 @@ urls = (
 )
 
 settings = Settings(CONFIG)
-db = web.database(dbn=settings["dbtype"], host=settings["dbhost"], db=settings["dbname"], user=settings["dbuser"], password=settings["dbpass"])
+try:
+	db = web.database(dbn=settings["dbtype"], host=settings["dbhost"], db=settings["dbname"], user=settings["dbuser"], password=settings["dbpass"], port=int(settings["dbport"]))
+except ValueError:
+	db = web.database(dbn=settings["dbtype"], host=settings["dbhost"], db=settings["dbname"], user=settings["dbuser"], password=settings["dbpass"])
 app = web.application(urls, globals(), autoreload=False)
 application = app.wsgifunc()
