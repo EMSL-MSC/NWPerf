@@ -13,6 +13,8 @@ import datetime
 _parser = None
 _options = None
 
+from Settings import *
+
 def isoToEpoch(iso):
     t = datetime.datetime.strptime(iso,'%Y-%m-%dT%H:%M:%S')
     return int(time.mktime(t.timetuple()))
@@ -160,3 +162,4 @@ if __name__ == "__main__":
 
 	time.sleep(options.sleeptime)
 	sys.stderr.write("Log Entry\n")
+

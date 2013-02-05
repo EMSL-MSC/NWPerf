@@ -26,3 +26,20 @@ class Settings(object):
 		item = [i for i in self.settings if i["id"] == key][0]["value"] = item
 		json.dump(self.settings, open(self.configfile, "w"), indent=4)
 		self.ftime = os.path.getmtime(self.configfile)
+
+	def __iter__(self):
+		if self.ftime != os.path.getmtime(self.configfile):
+			self.load_config()
+		for i in self.settings:
+			yield (i["id"],i["value"])
+			
+	def add(self, key, vtype, value, label, info):
+		d={'id':key,'value':value,'type':vtype}
+		if label:
+			d['label'] = label
+		if info:
+			d['description'] = info
+		self.settings.append(d)
+		json.dump(self.settings, open(self.configfile, "w"), indent=4)
+		self.ftime = os.path.getmtime(self.configfile)
+

@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+
+import sys
+import imp
+import optparse
+import nwperf
+
+def main():
+	error=0
+	parser = optparse.OptionParser()
+	parser.add_option("-d","--dump",action="store_true",dest="dump",help="Dump all config infomation",default=False)
+	parser.add_option("-c","--config",dest="config",type="string",help="Location of the nwperf config file",default="/etc/nwperf.conf")
+
+	parser.add_option("-a","--add",dest="add",type="string",help="Add/Replace the specified key",default=None)
+	parser.add_option("-t","--type",dest="vtype",type="string",help="Specify the type of value for add",default='string')
+	parser.add_option("-l","--label",dest="label",type="string",help="Specify the label of the value",default=None)
+	parser.add_option("-i","--info",dest="info",type="string",help="Specify a Long Description of the value",default=None)
+	parser.add_option("-v","--value",dest="value",type="string",help="Specify the value to set",default=None)
+
+	parser.add_option("-g","--get",dest="get",type="string",help="Get the value of a key",default=None)
+	parser.add_option("-e","--evaluate",dest="evaluate",action="store_true",help="Replace %(key) in value with other values from database",default=False)
+
+
+	options,args = parser.parse_args()
+
+	#deal with options not needed config file
+	
+	#load config
+	nwconfig = nwperf.Settings(options.config)
+
+	#deal with actions needing config file
+	if options.dump:
+		for k,v in nwconfig:
+			print k,"=",v
+	if options.get:
+		try:
+			val = nwconfig[options.get]
+		except IndexError: # should this be handled by the Settings Class?
+			print "No Key Found"
+			error=-1
+			val = ""
+		if options.evaluate:
+			for k,v in nwconfig:
+				val=val.replace("%("+k+")",v)
+		print val
+	if options.add:
+		if options.value:
+			try:
+				nwconfig[options.add]=options.value
+				# we dont deal with info,label here at all.. fix?
+			except IndexError:
+				#try to add a new value
+				nwconfig.add(options.add,options.vtype,options.value,options.label,options.info)
+		else:
+			print "No value specified for Add/Replace"
+			error=-1
+
+	sys.exit(error)
+
+if __name__ == "__main__":
+	main()
