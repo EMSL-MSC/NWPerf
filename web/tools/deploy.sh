@@ -16,7 +16,12 @@ NAME=${SOURCE##*/}
 
 # target names
 DEPLOY="$NAME$SUFFIX"
-TARGET="$SOURCE/$FOLDER/$DEPLOY"
+if [ -z $1 ]
+then
+	TARGET="$SOURCE/$FOLDER/$DEPLOY"
+else
+	TARGET=$1
+fi
 
 if [ -d $TARGET ]; then
 	echo "$DEPLOY folder already exists, please rename or remove it and try again."
