@@ -1,0 +1,20 @@
+Source: nwperf
+Section: admin
+Priority: optional
+Maintainer: Evan Felix <e@pnnl.gov>
+Build-Depends: debhelper, python-dev, nodejs
+Standards-Version: 0.1
+
+Package: nwperf
+Architecture: any
+Description: NWPerf Tools
+ NWPerf is a collection of tools for gathering, storing and providing data for visualzation
+ .
+ This package contains the services and client tools
+
+Package: nwperf-web
+Architecture: any
+Description: NWPerf Web 
+ NWPerf is a collection of tools for gathering, storing and providing data for visualzation
+ .
+ This package contains the web pages for looking at the nwperf data

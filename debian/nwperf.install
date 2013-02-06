@@ -1,0 +1,5 @@
+etc/init/nwperf.conf
+etc/init/nwperf-service.conf
+etc/nwperf.conf
+usr/bin/*
+usr/lib/python*/dist-packages/nwperf*

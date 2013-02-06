@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+DH_VERBOSE=1
+
+%:
+	dh $@ -v --with python2 --buildsystem=python_distutils
+
+override_dh_auto_build:
+	dh_auto_build -O--buildsystem=python_distutils
+	bash -v -x -e `pwd`/web/tools/deploy.sh `pwd`/debian/tmp/usr/share/nwperf-web/
+	
+override_dh_install:
+	dh_install -O--buildsystem=python_distutils --sourcedir=debian/tmp
+	
+
