@@ -7,9 +7,14 @@ DH_VERBOSE=1
 
 override_dh_auto_build:
 	dh_auto_build -O--buildsystem=python_distutils
-	bash -v -x -e `pwd`/web/tools/deploy.sh `pwd`/debian/tmp/usr/share/nwperf-web/
+	rm -rf `pwd`/debian/web
+	bash -e `pwd`/web/tools/deploy.sh `pwd`/debian/web
+	# remove hardcoded paths for now..	
+	sed -i -e '/enyo.path.addPaths/d' `pwd`/debian/web/build/app.js
 	
 override_dh_install:
+	mkdir -p `pwd`/debian/tmp/usr/share/
+	cp -a debian/web debian/tmp/usr/share/nwperf-web
 	dh_install -O--buildsystem=python_distutils --sourcedir=debian/tmp
 	
 
