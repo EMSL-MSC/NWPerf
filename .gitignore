@@ -1,2 +1,14 @@
 *.pyc
 .*.sw*
+dist
+build
+*.debhelper.log
+debian/*.debhelper
+debian/*.substvars
+debian/nwperf-web
+debian/nwperf
+debian/tmp
+debian/web
+debian/files
+MANIFEST
+nwperf.egg-info

@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import subprocess
+from nwperf import nnslib
+from nwperf.Settings import Settings
+import zmq
+from operator import itemgetter
+import optparse
+
+
+def main():
+	settings=Settings("/etc/nwperf.conf")
+	parser = optparse.OptionParser()
+	parser.add_option("-s","--name-server",dest="nameserver",type="string",help="The ZMQ URL of the nameserver to register with",default=settings["nameserver"])
+	parser.add_option("-c","--cluster",dest="cluster",type="string",help="The cluster prefix to publish as",default=None)
+	parser.add_option("-j","--jobinfo",dest="jobid",type="string",help="Retrieve Information on a specific job ID",default=None)
+	parser.add_option("-d","--delimiter",dest="delimiter",type="string",help="Set the Delimeter for string output",default=" ")
+	parser.add_option("-r","--running",action="store_true",dest="running",help="Retrieve information on all running jobs",default=False)
+	parser.add_option("-e","--ended",action="store_true",dest="ended",help="Retrieve information on recently ended",default=False)
+	parser.add_option("-v","--verbose",action="store_true",dest="verbose",help="Show all information avalable, for example, show all information on running jobs instead of just the job id list",default=False)
+	
+	options,args = parser.parse_args()
+
+	if not options.cluster:
+		parser.error("No Cluster Specified")
+
+	ns=nnslib.NameServer(options.nameserver)
+
+	try:
+		srv = ns.getService(options.cluster+".slurm.jobinfo")
+		srv.sort(key=itemgetter(1))
+		url=srv[-1][0]
+		#print srv,url
+	except nnslib.NameServerException,msg:
+		print "Error:",msg
+		sys.exit(1)
+
+
+	c = zmq.Context()
+
+	s = c.socket(zmq.REQ)
+	s.connect(url)
+	
+	if options.jobid:
+		s.send_multipart(("jobinfo",options.jobid))
+		info=s.recv_json()
+	
+		for k,v in info.iteritems():
+			print k+options.delimiter+v
+
+	if options.running or options.ended:
+		if options.running:
+			s.send_multipart(("running",))
+		else:
+			s.send_multipart(("completed",))
+		jobs=s.recv_json()
+	
+		for jobid,job in jobs.iteritems():
+			if options.verbose:
+				print jobid+":"
+				for k,v in job.iteritems():
+					print "  "+k+options.delimiter+v
+			else:
+				print jobid
+
+if __name__ == "__main__":
+	main()
