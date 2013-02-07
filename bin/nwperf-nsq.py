@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-import nnslib
+from nwperf import nnslib
 
 options = {	"addService": [3,5],
 		"removeService": [1,1],

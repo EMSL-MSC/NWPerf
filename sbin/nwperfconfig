@@ -44,7 +44,7 @@ def main():
 				val=val.replace("%("+k+")",v)
 		print val
 	if options.add:
-		if options.value:
+		if options.value != None:
 			try:
 				nwconfig[options.add]=options.value
 				# we dont deal with info,label here at all.. fix?
