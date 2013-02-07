@@ -2,4 +2,5 @@ etc/init/nwperf.conf
 etc/init/nwperf-service.conf
 etc/nwperf.conf
 usr/bin/*
+usr/sbin/*
 usr/lib/python*/dist-packages/nwperf*
