@@ -1,0 +1,5 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+initctl start nwperf
