@@ -4,9 +4,11 @@ Priority: optional
 Maintainer: Evan Felix <e@pnnl.gov>
 Build-Depends: debhelper, python-dev, nodejs
 Standards-Version: 0.1
+Vcs-Git: https://github.com/EMSL-MSC/NWPerf
 
 Package: nwperf
 Architecture: any
+Suggests: python-ceph
 Description: NWPerf Tools
  NWPerf is a collection of tools for gathering, storing and providing data for visualzation
  .
