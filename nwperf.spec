@@ -115,13 +115,22 @@ fi
 %files
 %defattr(-,root,root,-)
 %if 0%{?fedora} > 15
-%{_unitdir}/%{name}.service
+%{_unitdir}/%{name}@.service
+%{_unitdir}/%{name}-service.service
 %else
-%if %if 0%{?rhel} < 6
+%if 0%{?rhel} < 6
 %{_sysconfdir}/rc.d/init.d/%{name}
 %else
-%{_sysconfdir}/rc.d/init/%{name}
+%{_sysconfdir}/rc.d/init/%{name}.conf
+%{_sysconfdir}/rc.d/init/%{name}-service.conf
 %endif
+%endif
+%{_sysconfdir}/nwperf.conf
+%{_bindir}/*
+%{_sbindir}/*
+%{python_sitearch}/%{name}
+%if 0%{?rhel}%{?fedora} > 5
+%{python_sitearch}/%{name}-*egg-info
 %endif
 
 %files web
