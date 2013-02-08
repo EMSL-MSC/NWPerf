@@ -121,16 +121,16 @@ fi
 %if 0%{?rhel} < 6
 %{_sysconfdir}/rc.d/init.d/%{name}
 %else
-%{_sysconfdir}/rc.d/init/%{name}.conf
-%{_sysconfdir}/rc.d/init/%{name}-service.conf
+%{_sysconfdir}/init/%{name}.conf
+%{_sysconfdir}/init/%{name}-service.conf
 %endif
 %endif
 %{_sysconfdir}/nwperf.conf
 %{_bindir}/*
 %{_sbindir}/*
-%{python_sitearch}/%{name}
+%{python_sitelib}/%{name}
 %if 0%{?rhel}%{?fedora} > 5
-%{python_sitearch}/%{name}-*egg-info
+%{python_sitelib}/%{name}-*egg-info
 %endif
 
 %files web
