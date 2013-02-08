@@ -1,35 +1,129 @@
-%define name nwperf
-%define version 0.1
-%define unmangled_version 0.1
-%define release 1
+%if 0%{?rhel} <= 5
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%endif
 
 Summary: A set of utilities for gathering and stroing performance information for clusters of computers
-Name: %{name}
-Version: %{version}
-Release: %{release}
-Source0: %{name}-%{unmangled_version}.tar.gz
+Name: nwperf
+Version: 0.1
+Release: 1
+Source0: %{name}-%{version}.tar.gz
 License: UNKNOWN
 Group: Development/Libraries
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Prefix: %{_prefix}
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Vendor: EMSL MSC team <UNKNOWN>
+BuildRequires: python2-devel
 Url: https://github.com/EMSL-MSC/NWPerf/
 
 %description
 UNKNOWN
 
+%package web
+Summary: The web bits to NWPerf
+Group:         Applications/Communications
+Requires:	httpd
+
+%description web
+UNKNOWN
+
+# this is only for built .so shared objects
+# but its handy to have just in case
+%{?filter_setup:
+%filter_provides_in %{python_sitearch}/.*\.so$
+%filter_setup
+}
+
 %prep
-%setup -n %{name}-%{unmangled_version}
+%setup
+%if 0%{?rhel} <= 6
+cat << \EOF > %{name}-python-prov
+#!/bin/sh
+%{__python_provides} $* |\
+sed -e '/.*Lib%{name}.so.*/d'
+EOF
+
+%global __python_provides %{_builddir}/%{name}-%{version}/%{name}-python-prov
+chmod +x %{__python_provides}
+%endif
 
 %build
-python setup.py build
+%{__python} setup.py build
 
 %install
-python setup.py install -O1 --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
+%{__python} setup.py install --root=%{buildroot}
 
+%if 0%{?rhel} <= 6
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
+%endif
 
-%files -f INSTALLED_FILES
-%defattr(-,root,root)
+%post
+%if 0%{?fedora} > 15
+%if 0%{?fedora} > 17
+%systemd_post %{name}.service
+%else
+if [ $1 -eq 1 ] ; then
+    # Initial installation 
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%endif
+%else # EPEL thing
+if [ $1 -eq 1 ] ; then
+    # Initial installation 
+    /sbin/chkconfig --add %{name}
+fi
+%endif
+
+%preun
+%if 0%{?fedora} > 15
+%if 0%{?fedora} > 17
+%systemd_preun %{name}.service
+%else
+if [ $1 -eq 0 ] ; then
+    # Package removal, not upgrade
+    /bin/systemctl --no-reload disable %{name}.service > /dev/null 2>&1 || :
+    /bin/systemctl stop %{name}.service > /dev/null 2>&1 || :
+fi
+%endif
+%else # EPEL thing
+if [ $1 -eq 0 ] ; then
+    # Package removal, not upgrade
+    /sbin/service %{name} stop >/dev/null 2>&1 || :
+    /sbin/chkconfig --del %{name} >/dev/null 2>&1 || :
+fi
+%endif
+
+%postun
+%if 0%{?fedora} > 15
+%if 0%{?fedora} > 17
+%systemd_postun_with_restart %{name}.service
+%else
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    /bin/systemctl try-restart %{name}.service >/dev/null 2>&1 || :
+fi
+%endif
+%else #EPEL thing
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    /sbin/service %{name} condrestart
+fi
+%endif
+
+%files
+%defattr(-,root,root,-)
+%if 0%{?fedora} > 15
+%{_unitdir}/%{name}.service
+%else
+%if %if 0%{?rhel} < 6
+%{_sysconfdir}/rc.d/init.d/%{name}
+%else
+%{_sysconfdir}/rc.d/init/%{name}
+%endif
+%endif
+
+%files web
+%defattr(-,root,root,-)
+
