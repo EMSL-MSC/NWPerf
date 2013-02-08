@@ -72,7 +72,7 @@ setup(	name = "nwperf",
 			#"nwperf-zmq.py",
 			#"point-ceph-store.py",
 			#"PointStore.py",
-			#"slurmjob-zmq.py",
+			"sbin/slurmjob-zmq.py",
 		],
 		data_files=[
 			("/etc/",["conf/nwperf.conf"]),
