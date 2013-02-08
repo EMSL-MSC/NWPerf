@@ -31,10 +31,10 @@ class JobStore(object):
 			count = 0
 			for i in points:
 				try:
-					while hostTimes[i["host"]] + twoMinutes < i["timestamp"]:
-						for metric in self.graphs.itervalues():
-							metric[i["host"]].append((i["timestamp"], None))
+					while hostTimes[i["host"]] + oneMinute < i["timestamp"]:
 						hostTimes[i["host"]] += oneMinute
+						for metric in self.graphs.itervalues():
+							metric[i["host"]].append((hostTimes[i["host"]], None))
 				except KeyError:
 					hostTimes[i["host"]] = i["timestamp"]
 				hostTimes[i["host"]] = i["timestamp"]
@@ -64,6 +64,7 @@ class JobStore(object):
 									downSampled.setdefault(host,[]).append((startTime+totalPointCount*60,None))
 								sum = 0
 								curPointCount = 0
+								numHoles = 0
 						if curPointCount > 0:
 							downSampled.setdefault(host,[]).append((startTime+totalPointCount*60000,sum/curPointCount))
 						self.graphs[metric] = downSampled

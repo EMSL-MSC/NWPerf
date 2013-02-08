@@ -26,7 +26,7 @@ class MongoJobStore(JobStore.JobStore):
 		endTime = datetime.datetime.strptime(self.job["End"], "%Y-%m-%dT%H:%M:%S")
 		startTime = datetime.datetime.strptime(self.job["Start"], "%Y-%m-%dT%H:%M:%S")
 		submitTime = datetime.datetime.strptime(self.job["Submit"], "%Y-%m-%dT%H:%M:%S")
-		metadata = {	"hosts":	self.job["hosts"].keys(),
+		metadata = {	"hosts":	self.job["hosts"],
 				"numHosts":	len(self.job["hosts"]),
 				"id":		self.job["JobID"],
 				"account":	self.job["Account"],
