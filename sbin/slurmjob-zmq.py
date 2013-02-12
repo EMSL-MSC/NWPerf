@@ -4,7 +4,7 @@ import os
 import sys
 import socket
 import subprocess
-import nnslib
+from nwperf import nnslib
 import zmq
 import nwperf
 import time
