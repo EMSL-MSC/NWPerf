@@ -43,9 +43,9 @@ class MongoPointStore(object):
 		for entry in entries:
 			for point in entry["points"]:
 				yield { "host": entry["host"],
-					"metric": point[0],
-					"timestamp": entry["time"],
-					"value": point[1]}
+					"pointname": point[0],
+					"time": entry["time"],
+					"val": point[1]}
 if __name__ == "__main__":
 	import time
 	ps = MongoStore()

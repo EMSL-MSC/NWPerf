@@ -139,9 +139,9 @@ class PointStore(object):
 					(host, metric, value) = self.pointStruct.unpack_from(data, entry*self.pointStruct.size)
 					if host in hosts and metric in metrics:
 						yield { "host": self.index2host[host],
-							"metric": self.index2metric[metric],
-							"timestamp": minute,
-							"value": value}
+							"pointname": self.index2metric[metric],
+							"time": minute,
+							"val": value}
 				data = f.read(self.headerStruct.size)
 				if len(data) < self.headerStruct.size:
 					break
