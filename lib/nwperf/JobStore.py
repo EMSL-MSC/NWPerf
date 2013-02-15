@@ -21,7 +21,6 @@ class JobStore(object):
 		self.additionalFields = additionalFields
 		twoMinutes = datetime.timedelta(0,120)
 		oneMinute = datetime.timedelta(0,60)
-		self.job["points"] = []
 		if forceProcessing or not self.jobProcessed():
 			hostTimes = {}
 			startTime = int(time.strftime("%s", time.strptime(job["Start"], "%Y-%m-%dT%H:%M:%S")))
@@ -31,20 +30,20 @@ class JobStore(object):
 			count = 0
 			for i in points:
 				try:
-					while hostTimes[i["host"]] + oneMinute < i["timestamp"]:
+					while hostTimes[i["host"]] + oneMinute < i["time"]:
 						hostTimes[i["host"]] += oneMinute
 						for metric in self.graphs.itervalues():
 							metric[i["host"]].append((hostTimes[i["host"]], None))
 				except KeyError:
-					hostTimes[i["host"]] = i["timestamp"]
-				hostTimes[i["host"]] = i["timestamp"]
-				self.graphs.setdefault(i["metric"],{}).setdefault(i["host"],[]).append((i["timestamp"], i["value"]))
+					hostTimes[i["host"]] = i["time"]
+				hostTimes[i["host"]] = i["time"]
+				self.graphs.setdefault(i["pointname"],{}).setdefault(i["host"],[]).append((i["time"], i["val"]))
 				count+=1
 
-			if (count/len(job["hosts"])) > 2000:
-				for (metric, job["hosts"]) in self.graphs.iteritems():
+			if (count/len(job["Nodes"])) > 2000:
+				for (metric, nodes) in self.graphs.iteritems():
 					downSampled = {}
-					for (host, points) in job["hosts"].iteritems():
+					for (host, points) in nodes.iteritems():
 						numPoints = len(points)/100
 						curPointCount = 0
 						totalPointCount = 0
@@ -68,9 +67,8 @@ class JobStore(object):
 						if curPointCount > 0:
 							downSampled.setdefault(host,[]).append((startTime+totalPointCount*60000,sum/curPointCount))
 						self.graphs[metric] = downSampled
+			
 							
-					if metric not in self.job["points"]:
-						self.job["points"].append(metric)
 			self.storeJob()
 		self.job = {}
 		self.graphs = {}

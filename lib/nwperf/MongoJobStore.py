@@ -26,20 +26,20 @@ class MongoJobStore(JobStore.JobStore):
 		endTime = datetime.datetime.strptime(self.job["End"], "%Y-%m-%dT%H:%M:%S")
 		startTime = datetime.datetime.strptime(self.job["Start"], "%Y-%m-%dT%H:%M:%S")
 		submitTime = datetime.datetime.strptime(self.job["Submit"], "%Y-%m-%dT%H:%M:%S")
-		metadata = {	"hosts":	self.job["hosts"],
-				"numHosts":	len(self.job["hosts"]),
-				"id":		self.job["JobID"],
-				"account":	self.job["Account"],
-				"submitTime":	submitTime,
-				"endTime":	endTime,
-				"startTime":	startTime,
-				"runTime":	(endTime - startTime).seconds,
-				"user":		self.job["User"],
-				"graphs":	[]}
+		metadata = self.job
+		metadata["NumNodes"]	= len(metadata["Nodes"])
+		metadata["NCPUS"]	= int(self.job["NCPUS"])
+		metadata["Submit"]	= submitTime
+		metadata["End"]		= endTime
+		metadata["Start"]	= startTime
+		metadata["RunTime"]	= (endTime - startTime).seconds
+		metadata["Graphs"]	= []
+		metadata["UID"]		= int(metadata["UID"])
+		metadata["GID"]		= int(metadata["GID"])
 		metadata.update(self.additionalFields)
 		_id = self.db.jobs.insert(metadata)
 		graphs=[]
 		for graph in self.graphs:
 			self.graphs[graph]["job"] = _id
 			graphs.append({"name": graph, "graph": self.db.graphs.insert(self.graphs[graph])})
-		self.db.jobs.update({"_id": _id}, {"$set": {"graphs": graphs}})
+		self.db.jobs.update({"_id": _id}, {"$set": {"Graphs": graphs}})
