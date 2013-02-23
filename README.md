@@ -31,7 +31,7 @@ In order to use the ceph point storage tools (gen_cview,nwperf-ceph-store.py) yo
 
 Pool Creation Steps
 -------------------
-We will create a pool for a cluster called io, with 38 nodes names io1 to io38. It is assumed that you already have some sort of collection system setup. In this case we are using the nwperf-ganglia.py script, and will gather points from it. Since it published all the point information to the NWPerf Nameserver we can get a list of point from the nameserver.
+We will create a pool for a cluster called io, with 38 nodes names io1 to io38. It is assumed that you already have some sort of collection system setup. In this case we are using the nwperf-ganglia.py script, and will gather points from it. we can gather a point list from a running ganglia on port 8649.
 
   1. Create rados pool
 
@@ -44,7 +44,7 @@ We will create a pool for a cluster called io, with 38 nodes names io1 to io38. 
     ```
 seq -f io%g 1 38 > /tmp/hostorder
 echo 0 38 > /tmp/hostorder.sizelog
-nwperf-nsq.py tcp://nwperf-ns:6967 listServices | grep io | sed -e 's/^io.//' -e '/multipart/d' | sort > /tmp/pointindex
+nc io1 8649 | grep NAME | cut -d\" -f 2 | sort -u > /tmp/pointindex
 rados -p io.points put hostorder /tmp/hostorder
 rados -p io.points put hostorder.sizelog /tmp/hostorder.sizelog
 rados -p io.points put pointdesc ~/NWPerf/examples/pointdesc
