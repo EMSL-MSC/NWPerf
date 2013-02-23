@@ -54,5 +54,10 @@ rados -p io.points ls
     The final command allows you to verify that all files are present in the rados pool.
 
   1. Collect Data
+    ```
+    nwperf-ceph-store.py -n -c io -p /tmp/io.pid
+    ```
   1. Output
-
+    ```
+    gen_cview -c io -o /dev/shm/io/ -r 60
+    ```
