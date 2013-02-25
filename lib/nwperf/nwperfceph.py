@@ -51,7 +51,7 @@ class RadosDataStore:
 		return "No Description in Ceph Database" 
 
 	def getRate(self,reftime,key):
-		daystr=time.strftime("%Y-%m-%d",time.gmtime(reftime-84600))
+		daystr=time.strftime("%Y-%m-%d",time.gmtime(reftime-300)) # look backwards a little in case we are on the day boundary, and the object is not there yet.
 		try:
 			unit = self.ioctx.get_xattr(daystr+"/"+key,"unit")
 		except rados.ObjectNotFound,msg:

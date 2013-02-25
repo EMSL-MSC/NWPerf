@@ -138,8 +138,9 @@ def main(zmqns,cephconfig,cluster):
 						daystring = time.strftime("%Y-%m-%d",time.gmtime(secs))
 						object = daystring+"/"+data['pointname']
 						try:
-							location=hostorder[data['host'].replace(".local","")] 
+							location=hostorder[data['host'].partition(".")[0]] 
 						except KeyError:
+							print "bad host",data
 							continue
 						try:
 							hostcount=hostsizes[daystring]
