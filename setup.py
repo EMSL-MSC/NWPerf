@@ -75,6 +75,7 @@ setup(	name = "nwperf",
 		],
 		data_files=[
 			("/etc/",["conf/nwperf.conf"]),
+			("/etc/rc.d/init.d/", ["sysvinit/nwperf"]),
 			("/etc/init",glob("upstart/*.conf"))
 		],
 		cmdclass = {
