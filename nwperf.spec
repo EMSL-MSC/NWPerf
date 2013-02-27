@@ -52,6 +52,15 @@ chmod +x %{__python_provides}
 
 %install
 %{__python} setup.py install --root=%{buildroot}
+%if 0%{?fedora} > 15
+rm -rf %{buildroot}/etc/rc.d
+%else
+%if 0%{?rhel} < 6
+rm -rf %{buildroot}/etc/init 
+%else
+rm -rf %{buildroot}/etc/rc.d
+%endif
+%endif
 
 %if 0%{?rhel} <= 6
 %clean
