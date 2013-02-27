@@ -17,6 +17,10 @@ import traceback
 from nwperf import nnslib
 import multiprocessing
 import Queue
+try:
+	HIGHWATER=zmq.HWM
+except AttributeError:
+	HIGHWATER=zmq.SNDHWM
 
 fdlogfile = None
 mypidfile = None
@@ -62,7 +66,7 @@ class PointPublisher(object):
 		for stream in streams:
 			if stream not in self.streams:
 				socket = zmq.Context().socket(zmq.PUB)
-				socket.setsockopt(zmq.HWM, 15000)
+				socket.setsockopt(HIGHWATER, 15000)
 				port = socket.bind_to_random_port("tcp://%s" % self.ip)
 				self.streams[stream] = socket
 				if "multipart" in stream:
