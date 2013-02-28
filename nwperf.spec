@@ -3,7 +3,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %endif
 
-Summary: A set of utilities for gathering and stroing performance information for clusters of computers
+Summary: A set of utilities for gathering and storing performance information for clusters of computers
 Name: nwperf
 Version: 0.1
 Release: 1
