@@ -59,23 +59,23 @@ setup(	name = "nwperf",
 		package_dir = {'nwperf':'lib/nwperf'},
 		scripts = [
 			#"fp_wsgi.py",# this should be in a web directory or some such... fixme
-			#"ganglia-zmq.py",
+			"sbin/nwperf-ganglia.py",
 			"bin/gen_cview",
-			#"generateFlotGraph.py",
+			#"generateFlotGraph.py",  kenny will deal with this
 			"bin/getjobinfo",
-			#"jobpacker-zmq.py",
-			#"moab-zmq.py",
-			#"nwperf-mq.py",
+			#"jobpacker-zmq.py", ???
+			#"moab-zmq.py", probably should keep
+			#"nwperf-mq.py",   dont need it
 			"sbin/nwperf-ns.py",
 			"bin/nwperf-nsq.py",
 			"sbin/nwperfconfig",
-			#"nwperf-zmq.py",
-			#"point-ceph-store.py",
-			#"PointStore.py",
-			#"slurmjob-zmq.py",
+			#"nwperf-zmq.py", old, probably dont need
+			"sbin/nwperf-ceph-store.py",
+			"sbin/slurmjob-zmq.py",
 		],
 		data_files=[
 			("/etc/",["conf/nwperf.conf"]),
+			("/etc/rc.d/init.d/", ["sysvinit/nwperf"]),
 			("/etc/init",glob("upstart/*.conf"))
 		],
 		cmdclass = {

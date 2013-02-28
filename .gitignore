@@ -12,3 +12,4 @@ debian/web
 debian/files
 MANIFEST
 nwperf.egg-info
+*~

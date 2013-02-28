@@ -1,5 +1,11 @@
+nwperf (0.1ubuntu1) precise; urgency=low
+
+  * Add a ceph, ganglia, and config changes 
+
+ -- Evan Felix <e@pnnl.gov>  Fri, 08 Feb 2013 10:59:58 -0800
+
 nwperf (0.1) unstable; urgency=low
 
   * Initial release.
 
- -- Evan Felix <e@pnnl.gov>  Tue, 05 Feb 2013 10:01:35 -0800
+ -- Evan Felix <e@pnnl.gov>  Fri, 08 Feb 2013 10:58:57 -0800

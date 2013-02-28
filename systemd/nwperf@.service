@@ -1,0 +1,12 @@
+[Unit]
+Description=389 Directory Server %i.
+BindTo=nwperf.target
+After=nwperf.target
+
+[Service]
+Type=forking
+EnvironmentFile=/etc/sysconfig/nwperf
+EnvironmentFile=/etc/sysconfig/nwperf-%i
+# if you need to set other directives e.g. LimitNOFILE=8192
+# set them in this file
+.include /etc/sysconfig/nwperf-%i.systemd

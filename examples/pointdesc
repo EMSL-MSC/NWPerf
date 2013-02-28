@@ -1,0 +1,600 @@
+3v_battery:3v_battery
+blocks_rcv:blocks_rcv
+blocks_sent:blocks_sent
+boottime:boottime
+boottime:The last time that the system was started (module sys_module)
+buffer_overrun:buffer_overrun
+buffer_overrun.port.1:buffer_overrun.port.1
+buffer_overrun.port.2:buffer_overrun.port.2
+buffers_size:buffers_size
+buffers_used:buffers_used
+bytes_in:bytes_in
+bytes_in:Number of bytes in per second (module net_module)
+bytes_out:bytes_out
+bytes_out:Number of bytes out per second (module net_module)
+cache_size:cache_size
+cache_used:cache_used
+cpu_0_CPU_CLK_UNHALTED:cpu_0_CPU_CLK_UNHALTED
+cpu_0_DATA_CACHE_ACCESSES:cpu_0_DATA_CACHE_ACCESSES
+cpu_0_DATA_CACHE_MISSES:cpu_0_DATA_CACHE_MISSES
+cpu0_diode:cpu0_diode
+cpu_0_DISPATCHED_FPU_OPS:cpu_0_DISPATCHED_FPU_OPS
+cpu0_mem_vcore:cpu0_mem_vcore
+cpu0_mem_vtt:cpu0_mem_vtt
+cpu0_vcore:cpu0_vcore
+cpu_1_CPU_CLK_UNHALTED:cpu_1_CPU_CLK_UNHALTED
+cpu_1_DATA_CACHE_ACCESSES:cpu_1_DATA_CACHE_ACCESSES
+cpu_1_DATA_CACHE_MISSES:cpu_1_DATA_CACHE_MISSES
+cpu1_diode:cpu1_diode
+cpu_1_DISPATCHED_FPU_OPS:cpu_1_DISPATCHED_FPU_OPS
+cpu1_mem_vcore:cpu1_mem_vcore
+cpu1_mem_vtt:cpu1_mem_vtt
+cpu1_vcore:cpu1_vcore
+cpu_2_CPU_CLK_UNHALTED:cpu_2_CPU_CLK_UNHALTED
+cpu_2_DATA_CACHE_ACCESSES:cpu_2_DATA_CACHE_ACCESSES
+cpu_2_DATA_CACHE_MISSES:cpu_2_DATA_CACHE_MISSES
+cpu_2_DISPATCHED_FPU_OPS:cpu_2_DISPATCHED_FPU_OPS
+cpu_3_CPU_CLK_UNHALTED:cpu_3_CPU_CLK_UNHALTED
+cpu_3_DATA_CACHE_ACCESSES:cpu_3_DATA_CACHE_ACCESSES
+cpu_3_DATA_CACHE_MISSES:cpu_3_DATA_CACHE_MISSES
+cpu_3_DISPATCHED_FPU_OPS:cpu_3_DISPATCHED_FPU_OPS
+cpu_4_CPU_CLK_UNHALTED:cpu_4_CPU_CLK_UNHALTED
+cpu_4_DATA_CACHE_ACCESSES:cpu_4_DATA_CACHE_ACCESSES
+cpu_4_DATA_CACHE_MISSES:cpu_4_DATA_CACHE_MISSES
+cpu_4_DISPATCHED_FPU_OPS:cpu_4_DISPATCHED_FPU_OPS
+cpu_5_CPU_CLK_UNHALTED:cpu_5_CPU_CLK_UNHALTED
+cpu_5_DATA_CACHE_ACCESSES:cpu_5_DATA_CACHE_ACCESSES
+cpu_5_DATA_CACHE_MISSES:cpu_5_DATA_CACHE_MISSES
+cpu_5_DISPATCHED_FPU_OPS:cpu_5_DISPATCHED_FPU_OPS
+cpu_6_CPU_CLK_UNHALTED:cpu_6_CPU_CLK_UNHALTED
+cpu_6_DATA_CACHE_ACCESSES:cpu_6_DATA_CACHE_ACCESSES
+cpu_6_DATA_CACHE_MISSES:cpu_6_DATA_CACHE_MISSES
+cpu_6_DISPATCHED_FPU_OPS:cpu_6_DISPATCHED_FPU_OPS
+cpu_7_CPU_CLK_UNHALTED:cpu_7_CPU_CLK_UNHALTED
+cpu_7_DATA_CACHE_ACCESSES:cpu_7_DATA_CACHE_ACCESSES
+cpu_7_DATA_CACHE_MISSES:cpu_7_DATA_CACHE_MISSES
+cpu_7_DISPATCHED_FPU_OPS:cpu_7_DISPATCHED_FPU_OPS
+cpu_aidle:cpu_aidle
+cpu_aidle:Percent of time since boot idle CPU (module cpu_module)
+cpu_idle:cpu_idle
+cpu_idle:Percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request (module cpu_module)
+cpuinfo.intrpt.cpu0:cpuinfo.intrpt.cpu0
+cpuinfo.intrpt.cpu1:cpuinfo.intrpt.cpu1
+cpuinfo.intrpt.cpu2:cpuinfo.intrpt.cpu2
+cpuinfo.intrpt.cpu3:cpuinfo.intrpt.cpu3
+cpuinfo.intrpt.cpu4:cpuinfo.intrpt.cpu4
+cpuinfo.intrpt.cpu5:cpuinfo.intrpt.cpu5
+cpuinfo.intrpt.cpu6:cpuinfo.intrpt.cpu6
+cpuinfo.intrpt.cpu7:cpuinfo.intrpt.cpu7
+cpuinfo.irq.cpu0:cpuinfo.irq.cpu0
+cpuinfo.irq.cpu1:cpuinfo.irq.cpu1
+cpuinfo.irq.cpu2:cpuinfo.irq.cpu2
+cpuinfo.irq.cpu3:cpuinfo.irq.cpu3
+cpuinfo.irq.cpu4:cpuinfo.irq.cpu4
+cpuinfo.irq.cpu5:cpuinfo.irq.cpu5
+cpuinfo.irq.cpu6:cpuinfo.irq.cpu6
+cpuinfo.irq.cpu7:cpuinfo.irq.cpu7
+cpuinfo.nice.cpu0:cpuinfo.nice.cpu0
+cpuinfo.nice.cpu1:cpuinfo.nice.cpu1
+cpuinfo.nice.cpu2:cpuinfo.nice.cpu2
+cpuinfo.nice.cpu3:cpuinfo.nice.cpu3
+cpuinfo.nice.cpu4:cpuinfo.nice.cpu4
+cpuinfo.nice.cpu5:cpuinfo.nice.cpu5
+cpuinfo.nice.cpu6:cpuinfo.nice.cpu6
+cpuinfo.nice.cpu7:cpuinfo.nice.cpu7
+cpuinfo.soft.cpu0:cpuinfo.soft.cpu0
+cpuinfo.soft.cpu1:cpuinfo.soft.cpu1
+cpuinfo.soft.cpu2:cpuinfo.soft.cpu2
+cpuinfo.soft.cpu3:cpuinfo.soft.cpu3
+cpuinfo.soft.cpu4:cpuinfo.soft.cpu4
+cpuinfo.soft.cpu5:cpuinfo.soft.cpu5
+cpuinfo.soft.cpu6:cpuinfo.soft.cpu6
+cpuinfo.soft.cpu7:cpuinfo.soft.cpu7
+cpuinfo.steal.cpu0:cpuinfo.steal.cpu0
+cpuinfo.steal.cpu1:cpuinfo.steal.cpu1
+cpuinfo.steal.cpu2:cpuinfo.steal.cpu2
+cpuinfo.steal.cpu3:cpuinfo.steal.cpu3
+cpuinfo.steal.cpu4:cpuinfo.steal.cpu4
+cpuinfo.steal.cpu5:cpuinfo.steal.cpu5
+cpuinfo.steal.cpu6:cpuinfo.steal.cpu6
+cpuinfo.steal.cpu7:cpuinfo.steal.cpu7
+cpuinfo.sys.cpu0:cpuinfo.sys.cpu0
+cpuinfo.sys.cpu1:cpuinfo.sys.cpu1
+cpuinfo.sys.cpu2:cpuinfo.sys.cpu2
+cpuinfo.sys.cpu3:cpuinfo.sys.cpu3
+cpuinfo.sys.cpu4:cpuinfo.sys.cpu4
+cpuinfo.sys.cpu5:cpuinfo.sys.cpu5
+cpuinfo.sys.cpu6:cpuinfo.sys.cpu6
+cpuinfo.sys.cpu7:cpuinfo.sys.cpu7
+cpuinfo.user.cpu0:cpuinfo.user.cpu0
+cpuinfo.user.cpu1:cpuinfo.user.cpu1
+cpuinfo.user.cpu2:cpuinfo.user.cpu2
+cpuinfo.user.cpu3:cpuinfo.user.cpu3
+cpuinfo.user.cpu4:cpuinfo.user.cpu4
+cpuinfo.user.cpu5:cpuinfo.user.cpu5
+cpuinfo.user.cpu6:cpuinfo.user.cpu6
+cpuinfo.user.cpu7:cpuinfo.user.cpu7
+cpuinfo.wait.cpu0:cpuinfo.wait.cpu0
+cpuinfo.wait.cpu1:cpuinfo.wait.cpu1
+cpuinfo.wait.cpu2:cpuinfo.wait.cpu2
+cpuinfo.wait.cpu3:cpuinfo.wait.cpu3
+cpuinfo.wait.cpu4:cpuinfo.wait.cpu4
+cpuinfo.wait.cpu5:cpuinfo.wait.cpu5
+cpuinfo.wait.cpu6:cpuinfo.wait.cpu6
+cpuinfo.wait.cpu7:cpuinfo.wait.cpu7
+cpu_intr:cpu_intr
+cpu_intr:cpu_intr (module cpu_module)
+cpuload.avg15:cpuload.avg15
+cpuload.avg1:cpuload.avg1
+cpuload.avg5:cpuload.avg5
+cpu_nice:cpu_nice
+cpu_nice:Percentage of CPU utilization that occurred while executing at the user level with nice priority (module cpu_module)
+cpunifo.idle.cpu0:cpunifo.idle.cpu0
+cpunifo.idle.cpu1:cpunifo.idle.cpu1
+cpunifo.idle.cpu2:cpunifo.idle.cpu2
+cpunifo.idle.cpu3:cpunifo.idle.cpu3
+cpunifo.idle.cpu4:cpunifo.idle.cpu4
+cpunifo.idle.cpu5:cpunifo.idle.cpu5
+cpunifo.idle.cpu6:cpunifo.idle.cpu6
+cpunifo.idle.cpu7:cpunifo.idle.cpu7
+cpu_num:cpu_num
+cpu_num:Total number of CPUs (module cpu_module)
+cpu_sintr:cpu_sintr
+cpu_sintr:cpu_sintr (module cpu_module)
+cpu_speed:cpu_speed
+cpu_speed:CPU Speed in terms of MHz (module cpu_module)
+cpu_system:Percentage of CPU utilization that occurred while executing at the system level (kernel).
+cpu_system:Percentage of CPU utilization that occurred while executing at the system level (module cpu_module)
+cputotals.idle.cpu0:cputotals.idle.cpu0
+cputotals.idle.cpu1:cputotals.idle.cpu1
+cputotals.idle.cpu2:cputotals.idle.cpu2
+cputotals.idle.cpu3:cputotals.idle.cpu3
+cputotals.idle.cpu4:cputotals.idle.cpu4
+cputotals.idle.cpu5:cputotals.idle.cpu5
+cputotals.idle.cpu6:cputotals.idle.cpu6
+cputotals.idle.cpu7:cputotals.idle.cpu7
+cputotals.idle:Percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request. 
+cputotals.intrpt.cpu0:cputotals.intrpt.cpu0
+cputotals.intrpt.cpu1:cputotals.intrpt.cpu1
+cputotals.intrpt.cpu2:cputotals.intrpt.cpu2
+cputotals.intrpt.cpu3:cputotals.intrpt.cpu3
+cputotals.intrpt.cpu4:cputotals.intrpt.cpu4
+cputotals.intrpt.cpu5:cputotals.intrpt.cpu5
+cputotals.intrpt.cpu6:cputotals.intrpt.cpu6
+cputotals.intrpt.cpu7:cputotals.intrpt.cpu7
+cputotals.irq.cpu0:cputotals.irq.cpu0
+cputotals.irq.cpu1:cputotals.irq.cpu1
+cputotals.irq.cpu2:cputotals.irq.cpu2
+cputotals.irq.cpu3:cputotals.irq.cpu3
+cputotals.irq.cpu4:cputotals.irq.cpu4
+cputotals.irq.cpu5:cputotals.irq.cpu5
+cputotals.irq.cpu6:cputotals.irq.cpu6
+cputotals.irq.cpu7:cputotals.irq.cpu7
+cputotals.irq:cputotals.irq
+cputotals.nice.cpu0:cputotals.nice.cpu0
+cputotals.nice.cpu1:cputotals.nice.cpu1
+cputotals.nice.cpu2:cputotals.nice.cpu2
+cputotals.nice.cpu3:cputotals.nice.cpu3
+cputotals.nice.cpu4:cputotals.nice.cpu4
+cputotals.nice.cpu5:cputotals.nice.cpu5
+cputotals.nice.cpu6:cputotals.nice.cpu6
+cputotals.nice.cpu7:cputotals.nice.cpu7
+cputotals.nice:Percentage of CPU utilization that occurred while executing at the user level with nice priority. 
+cputotals.soft.cpu0:cputotals.soft.cpu0
+cputotals.soft.cpu1:cputotals.soft.cpu1
+cputotals.soft.cpu2:cputotals.soft.cpu2
+cputotals.soft.cpu3:cputotals.soft.cpu3
+cputotals.soft.cpu4:cputotals.soft.cpu4
+cputotals.soft.cpu5:cputotals.soft.cpu5
+cputotals.soft.cpu6:cputotals.soft.cpu6
+cputotals.soft.cpu7:cputotals.soft.cpu7
+cputotals.soft:cputotals.soft
+cputotals.steal.cpu0:cputotals.steal.cpu0
+cputotals.steal.cpu1:cputotals.steal.cpu1
+cputotals.steal.cpu2:cputotals.steal.cpu2
+cputotals.steal.cpu3:cputotals.steal.cpu3
+cputotals.steal.cpu4:cputotals.steal.cpu4
+cputotals.steal.cpu5:cputotals.steal.cpu5
+cputotals.steal.cpu6:cputotals.steal.cpu6
+cputotals.steal.cpu7:cputotals.steal.cpu7
+cputotals.steal:cputotals.steal
+cputotals.sys.cpu0:cputotals.sys.cpu0
+cputotals.sys.cpu1:cputotals.sys.cpu1
+cputotals.sys.cpu2:cputotals.sys.cpu2
+cputotals.sys.cpu3:cputotals.sys.cpu3
+cputotals.sys.cpu4:cputotals.sys.cpu4
+cputotals.sys.cpu5:cputotals.sys.cpu5
+cputotals.sys.cpu6:cputotals.sys.cpu6
+cputotals.sys.cpu7:cputotals.sys.cpu7
+cputotals.sys:Percentage of CPU utilization that occurred while executing at the system level (kernel).
+cputotals.user.cpu0:cputotals.user.cpu0
+cputotals.user.cpu1:cputotals.user.cpu1
+cputotals.user.cpu2:cputotals.user.cpu2
+cputotals.user.cpu3:cputotals.user.cpu3
+cputotals.user.cpu4:cputotals.user.cpu4
+cputotals.user.cpu5:cputotals.user.cpu5
+cputotals.user.cpu6:cputotals.user.cpu6
+cputotals.user.cpu7:cputotals.user.cpu7
+cputotals.user:Percentage of CPU utilization that occurred while executing at the user level (application).
+cputotals.wait.cpu0:cputotals.wait.cpu0
+cputotals.wait.cpu1:cputotals.wait.cpu1
+cputotals.wait.cpu2:cputotals.wait.cpu2
+cputotals.wait.cpu3:cputotals.wait.cpu3
+cputotals.wait.cpu4:cputotals.wait.cpu4
+cputotals.wait.cpu5:cputotals.wait.cpu5
+cputotals.wait.cpu6:cputotals.wait.cpu6
+cputotals.wait.cpu7:cputotals.wait.cpu7
+cputotals.wait:Percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request.
+cpu_user:Percentage of CPU utilization that occurred while executing at the user level (application).
+cpu_user:Percentage of CPU utilization that occurred while executing at the user level (module cpu_module)
+cpu_wio:cpu_wio
+cpu_wio:Percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request (module cpu_module)
+ctxint.ctx:ctxint.ctx
+ctxint.int:ctxint.int
+ctxint.proc:ctxint.proc
+ctxint.runq:ctxint.runq
+ctxt_sw:ctxt_sw
+current_bank_1:Bank 1 Current
+current_bank_2:Bank 2 Current
+disk_free:disk_free
+disk_free:Total free disk space (module disk_module)
+disk_total:disk_total
+disktotals.readkbs:disktotals.readkbs
+disktotals.reads:disktotals.reads
+disktotals.writekbs:disktotals.writekbs
+disktotals.writes:disktotals.writes
+disk_total:Total available disk space (module disk_module)
+env.ATemp:Ambient Temperature
+env.CTemp0:CPU0 Temperature
+env.CTemp1:CPU1 Temperature
+env.Fan1:env.Fan1
+env.Fan2:env.Fan2
+env.Fan3:env.Fan3
+env.Fan4:env.Fan4
+env.Fan5:env.Fan5
+env.Fan6:env.Fan6
+env.Fan:env.Fan
+env.FTemp:Front Panel Temperature
+env.Power:env.Power
+env.RFan:env.RFan
+env.SFAN1:env.SFAN1
+env.SFAN2:env.SFAN2
+env.SFAN3:env.SFAN3
+env.SFAN4:env.SFAN4
+env.Temp1:env.Temp1
+env.Temp2:env.Temp2
+env.Temp3:env.Temp3
+env.Temp4:env.Temp4
+env.Temp5:env.Temp5
+env.Temp6:env.Temp6
+env.Temp7:env.Temp7
+front_panel_temp:front_panel_temp
+gexec:gexec available (module core_metrics)
+heartbeat:Last heartbeat (module core_metrics)
+hwtotals.hw:hwtotals.hw
+iconnect.kbin:iconnect.kbin
+iconnect.kbout:iconnect.kbout
+iconnect.pktin:iconnect.pktin
+iconnect.pktout:iconnect.pktout
+idle_time:idle_time
+InBroadcastPkts:Broadcast Packets In
+InMulticastPkts:Multicast Packets In
+InOctets:Octets In
+inodeinfo.dentnum:inodeinfo.dentnum
+inodeinfo.dentunused:inodeinfo.dentunused
+inodeinfo.fhandalloc:inodeinfo.fhandalloc
+inodeinfo.fhandmpct:inodeinfo.fhandmpct
+inodeinfo.inodenum:inodeinfo.inodenum
+interrupts:interrupts
+InUcastPkts:Unicast Packets In
+job_id:Job ID
+link_downed:link_downed
+link_downed.port.1:link_downed.port.1
+link_downed.port.2:link_downed.port.2
+link_error_recover:link_error_recover
+link_error_recover.port.1:link_error_recover.port.1
+link_error_recover.port.2:link_error_recover.port.2
+link_integrity:link_integrity
+link_integrity.port.1:link_integrity.port.1
+link_integrity.port.2:link_integrity.port.2
+load_fifteen:Fifteen minute load average (module load_module)
+load_fifteen:load_fifteen
+load_five:Five minute load average (module load_module)
+load_five:load_five
+load_one:load_one
+load_one:One minute load average (module load_module)
+location:Location of the machine (module core_metrics)
+lusclt.close:lusclt.close
+lusclt.getattr:lusclt.getattr
+lusclt.numfs:lusclt.numfs
+lusclt.readkbs:Lustre Client Read kB/s
+lusclt.reads:Lustre Client Reads
+lusclt.reint:lusclt.reint
+lusclt.sync:lusclt.sync
+lusclt.writekbs:Lustre Client Write  kB/s
+lusclt.writes:Lustre Client Writes
+lusmds.gattrP:lusmds.gattrP
+lusmds.reint:lusmds.reint
+lusmds.sattrP:lusmds.sattrP
+lusmds.sync:lusmds.sync
+lusmds.unlink:lusmds.unlink
+lusost.readkbs:lusost.readkbs
+lusost.reads:lusost.reads
+lusost.writekbs:lusost.writekbs
+lusost.writes:lusost.writes
+machine_type:System architecture (module sys_module)
+md0_read:MD0 Read
+md0:read:MD0 Read
+md0_write:MD0 Write
+md0:write:MD0 Write
+mem_active:mem_active
+mem_buffers:Amount of buffered memory (module mem_module)
+mem_buffers:mem_buffers
+mem_cached:Amount of cached memory (module mem_module)
+mem_cached:mem_cached
+mem_free:Amount of available memory (module mem_module)
+mem_free:mem_free
+mem_inactive:mem_inactive
+meminfo.buf:meminfo.buf
+meminfo.cached:meminfo.cached
+meminfo.free:meminfo.free
+meminfo.hugefree:meminfo.hugefree
+meminfo.hugersvd:meminfo.hugersvd
+meminfo.hugetot:meminfo.hugetot
+meminfo.map:meminfo.map
+meminfo.shared:meminfo.shared
+meminfo.slab:meminfo.slab
+meminfo.tot:meminfo.tot
+meminfo.used:meminfo.used
+mem_shared:Amount of shared memory (module mem_module)
+mem_shared:mem_shared
+mem_total:mem_total
+mem_total:Total amount of memory displayed in KBs (module mem_module)
+mem_used:mem_used
+mlx4_0:1:excessive_buffer_overrun_errors:mlx4_0:1:excessive_buffer_overrun_errors
+mlx4_0:1:link_downed:mlx4_0:1:link_downed
+mlx4_0:1:link_error_recovery:mlx4_0:1:link_error_recovery
+mlx4_0:1:local_link_integrity_errors:mlx4_0:1:local_link_integrity_errors
+mlx4_0:1:port_rcv_constraint_errors:mlx4_0:1:port_rcv_constraint_errors
+mlx4_0:1:port_rcv_data:mlx4_0:1:port_rcv_data
+mlx4_0:1:port_rcv_errors:mlx4_0:1:port_rcv_errors
+mlx4_0:1:port_rcv_packets:mlx4_0:1:port_rcv_packets
+mlx4_0:1:port_rcv_remote_physical_errors:mlx4_0:1:port_rcv_remote_physical_errors
+mlx4_0:1:port_rcv_switch_relay_errors:mlx4_0:1:port_rcv_switch_relay_errors
+mlx4_0:1:port_xmit_constraint_errors:mlx4_0:1:port_xmit_constraint_errors
+mlx4_0:1:port_xmit_data:mlx4_0:1:port_xmit_data
+mlx4_0:1:port_xmit_discards:mlx4_0:1:port_xmit_discards
+mlx4_0:1:port_xmit_packets:mlx4_0:1:port_xmit_packets
+mlx4_0:1:symbol_error:mlx4_0:1:symbol_error
+mlx4_0:1:VL15_dropped:mlx4_0:1:VL15_dropped
+mlx4_0:2:excessive_buffer_overrun_errors:mlx4_0:2:excessive_buffer_overrun_errors
+mlx4_0:2:link_downed:mlx4_0:2:link_downed
+mlx4_0:2:link_error_recovery:mlx4_0:2:link_error_recovery
+mlx4_0:2:local_link_integrity_errors:mlx4_0:2:local_link_integrity_errors
+mlx4_0:2:port_rcv_constraint_errors:mlx4_0:2:port_rcv_constraint_errors
+mlx4_0:2:port_rcv_data:mlx4_0:2:port_rcv_data
+mlx4_0:2:port_rcv_errors:mlx4_0:2:port_rcv_errors
+mlx4_0:2:port_rcv_packets:mlx4_0:2:port_rcv_packets
+mlx4_0:2:port_rcv_remote_physical_errors:mlx4_0:2:port_rcv_remote_physical_errors
+mlx4_0:2:port_rcv_switch_relay_errors:mlx4_0:2:port_rcv_switch_relay_errors
+mlx4_0:2:port_xmit_constraint_errors:mlx4_0:2:port_xmit_constraint_errors
+mlx4_0:2:port_xmit_data:mlx4_0:2:port_xmit_data
+mlx4_0:2:port_xmit_discards:mlx4_0:2:port_xmit_discards
+mlx4_0:2:port_xmit_packets:mlx4_0:2:port_xmit_packets
+mlx4_0:2:symbol_error:mlx4_0:2:symbol_error
+mlx4_0:2:VL15_dropped:mlx4_0:2:VL15_dropped
+mtu:mtu
+mtu:Network maximum transmission unit (module sys_module)
+multicast_rcv_pkts:multicast_rcv_pkts
+multicast_rcv_pkts.port.1:multicast_rcv_pkts.port.1
+multicast_rcv_pkts.port.2:multicast_rcv_pkts.port.2
+multicast_xmit_pkts:multicast_xmit_pkts
+multicast_xmit_pkts.port.1:multicast_xmit_pkts.port.1
+multicast_xmit_pkts.port.2:multicast_xmit_pkts.port.2
+multicpu_idle0:CPU-0 Idle
+multicpu_idle1:CPU-1 Idle
+multicpu_idle2:CPU-2 Idle
+multicpu_idle3:CPU-3 Idle
+multicpu_idle4:CPU-4 Idle
+multicpu_idle5:CPU-5 Idle
+multicpu_idle6:CPU-6 Idle
+multicpu_idle7:CPU-7 Idle
+multicpu_intr0:CPU-0 intr
+multicpu_intr1:CPU-1 intr
+multicpu_intr2:CPU-2 intr
+multicpu_intr3:CPU-3 intr
+multicpu_intr4:CPU-4 intr
+multicpu_intr5:CPU-5 intr
+multicpu_intr6:CPU-6 intr
+multicpu_intr7:CPU-7 intr
+multicpu_nice0:CPU-0 Nice
+multicpu_nice1:CPU-1 Nice
+multicpu_nice2:CPU-2 Nice
+multicpu_nice3:CPU-3 Nice
+multicpu_nice4:CPU-4 Nice
+multicpu_nice5:CPU-5 Nice
+multicpu_nice6:CPU-6 Nice
+multicpu_nice7:CPU-7 Nice
+multicpu_sintr0:CPU-0 sintr
+multicpu_sintr1:CPU-1 sintr
+multicpu_sintr2:CPU-2 sintr
+multicpu_sintr3:CPU-3 sintr
+multicpu_sintr4:CPU-4 sintr
+multicpu_sintr5:CPU-5 sintr
+multicpu_sintr6:CPU-6 sintr
+multicpu_sintr7:CPU-7 sintr
+multicpu_system0:CPU-0 System
+multicpu_system1:CPU-1 System
+multicpu_system2:CPU-2 System
+multicpu_system3:CPU-3 System
+multicpu_system4:CPU-4 System
+multicpu_system5:CPU-5 System
+multicpu_system6:CPU-6 System
+multicpu_system7:CPU-7 System
+multicpu_user0:CPU-0 User
+multicpu_user1:CPU-1 User
+multicpu_user2:CPU-2 User
+multicpu_user3:CPU-3 User
+multicpu_user4:CPU-4 User
+multicpu_user5:CPU-5 User
+multicpu_user6:CPU-6 User
+multicpu_user7:CPU-7 User
+multicpu_wio0:CPU-0 wio
+multicpu_wio1:CPU-1 wio
+multicpu_wio2:CPU-2 wio
+multicpu_wio3:CPU-3 wio
+multicpu_wio4:CPU-4 wio
+multicpu_wio5:CPU-5 wio
+multicpu_wio6:CPU-6 wio
+multicpu_wio7:CPU-7 wio
+nb_ambient:nb_ambient
+nb__sb_vcore:nb__sb_vcore
+nettotals.kbin:nettotals.kbin
+nettotals.kbout:nettotals.kbout
+nettotals.pktin:nettotals.pktin
+nettotals.pktout:nettotals.pktout
+nfsinfo.Ccommit:nfsinfo.Ccommit
+nfsinfo.Cmeta:nfsinfo.Cmeta
+nfsinfo.CRead:nfsinfo.CRead
+nfsinfo.CWrite:nfsinfo.CWrite
+nfsinfo.Scommit:nfsinfo.Scommit
+nfsinfo.Smeta:nfsinfo.Smeta
+nfsinfo.SRead:nfsinfo.SRead
+nfsinfo.SWrite:nfsinfo.SWrite
+os_name:Operating system name (module sys_module)
+os_release:Operating system release date (module sys_module)
+OutBroadcastPkts:Broadcast Packets Out
+OutMulticastPkts:Multicast Packets Out
+OutOctets:Octets Out
+OutUcastPkts:Unicast Packets Out
+pageinfo.fault:pageinfo.fault
+pageinfo.in:pageinfo.in
+pageinfo.majfault:pageinfo.majfault
+pageinfo.out:pageinfo.out
+part_max_used:Maximum percent used for all partitions (module disk_module)
+part_max_used:part_max_used
+pkts_in:Packets in per second (module net_module)
+pkts_in:pkts_in
+pkts_out:Packets out per second (module net_module)
+pkts_out:pkts_out
+point_name:point_description
+power_ambient:power_ambient
+proc_run:proc_run
+proc_run:Total number of running processes (module proc_module)
+procs_blocked:procs_blocked
+procs_waiting:procs_waiting
+proc_total:proc_total
+proc_total:Total number of processes (module proc_module)
+ps:Process Data (module python_module)
+rcv_constraint_err.port.1:rcv_constraint_err.port.1
+rcv_constraint_err.port.2:rcv_constraint_err.port.2
+rcv_constraint_err:rcv_constraint_err
+rcv_data.port.1:rcv_data.port.1
+rcv_data.port.2:rcv_data.port.2
+rcv_data:rcv_data
+rcv_err.port.1:rcv_err.port.1
+rcv_err.port.2:rcv_err.port.2
+rcv_err:rcv_err
+rcv_pkts.port.1:rcv_pkts.port.1
+rcv_pkts.port.2:rcv_pkts.port.2
+rcv_pkts:rcv_pkts
+rcv_rem_phys_err.port.1:rcv_rem_phys_err.port.1
+rcv_rem_phys_err.port.2:rcv_rem_phys_err.port.2
+rcv_rem_phys_err:rcv_rem_phys_err
+rcv_switch_relay_err.port.1:rcv_switch_relay_err.port.1
+rcv_switch_relay_err.port.2:rcv_switch_relay_err.port.2
+rcv_switch_relay_err:rcv_switch_relay_err
+rear_ambient:rear_ambient
+sb_htx_ambient:sb_htx_ambient
+scratch.block-free:scratch.block-free
+scratch.block-size:scratch.block-size
+scratch.block-total:scratch.block-total
+scratch.inode-free:scratch.inode-free
+scratch.inode-total:scratch.inode-total
+scratch.ph:scratch.ph
+sfs-close:sfs-close
+sfs-direct_read:sfs-direct_read
+sfs-getxattr:sfs-getxattr
+sfs-snapshot_time:sfs-snapshot_time
+sfs-writeback_failed_pages:sfs-writeback_failed_pages
+sfs-writeback_from_writepage:sfs-writeback_from_writepage
+sfs-write_bytes:sfs-write_bytes
+sockinfo.alloc:sockinfo.alloc
+sockinfo.fragm:sockinfo.fragm
+sockinfo.frag:sockinfo.frag
+sockinfo.mem:sockinfo.mem
+sockinfo.orphan:sockinfo.orphan
+sockinfo.raw:sockinfo.raw
+sockinfo.tcp:sockinfo.tcp
+sockinfo.tw:sockinfo.tw
+sockinfo.udp:sockinfo.udp
+sockinfo.used:sockinfo.used
+swap_free:Amount of available swap memory (module mem_module)
+swap_free:swap_free
+swap_from_disk:swap_from_disk
+swapinfo.free:swapinfo.free
+swapinfo.in:swapinfo.in
+swapinfo.out:swapinfo.out
+swapinfo.total:swapinfo.total
+swapinfo.used:swapinfo.used
+swap_size:swap_size
+swap_to_disk:swap_to_disk
+swap_total:swap_total
+swap_total:Total amount of swap space displayed in KBs (module mem_module)
+swap_used:swap_used
+symbol_error_count.port.1:symbol_error_count.port.1
+symbol_error_count.port.2:symbol_error_count.port.2
+symbol_error_count:symbol_error_count
+sys_clock:sys_clock
+sys_clock:Time as reported by the system clock (module sys_module)
+system_12v:system_12v
+system_3.3v:system_3.3v
+system_5v:system_5v
+system_aux_3.3v:system_aux_3.3v
+system_aux_5v:system_aux_5v
+system_fan_1:system_fan_1
+system_fan_2:system_fan_2
+system_fan_3:system_fan_3
+system_fan_4:system_fan_4
+system_time:system_time
+tcp_closed:tcp_closed
+tcp_closewait:tcp_closewait
+tcp_closing:tcp_closing
+tcp_established:tcp_established
+tcp_finwait1:tcp_finwait1
+tcp_finwait2:tcp_finwait2
+tcpinfo.ftrans:tcpinfo.ftrans
+tcpinfo.hpack:tcpinfo.hpack
+tcpinfo.loss:tcpinfo.loss
+tcpinfo.pureack:tcpinfo.pureack
+tcp_lastack:tcp_lastack
+tcp_listen:tcp_listen
+tcp_synrecv:tcp_synrecv
+tcp_synsent:tcp_synsent
+tcp_synwait:tcp_synwait
+tcp_timewait:tcp_timewait
+tcp_unknown:tcp_unknown
+total_current:Total Current
+unicast_rcv_pkts.port.1:unicast_rcv_pkts.port.1
+unicast_rcv_pkts.port.2:unicast_rcv_pkts.port.2
+unicast_rcv_pkts:unicast_rcv_pkts
+unicast_xmit_pkts.port.1:unicast_xmit_pkts.port.1
+unicast_xmit_pkts.port.2:unicast_xmit_pkts.port.2
+unicast_xmit_pkts:unicast_xmit_pkts
+user_time:user_time
+vl15_dropped.port.1:vl15_dropped.port.1
+vl15_dropped.port.2:vl15_dropped.port.2
+vl15_dropped:vl15_dropped
+wait_time:wait_time
+xmit_constraint_err.port.1:xmit_constraint_err.port.1
+xmit_constraint_err.port.2:xmit_constraint_err.port.2
+xmit_constraint_err:xmit_constraint_err
+xmit_data.port.1:xmit_data.port.1
+xmit_data.port.2:xmit_data.port.2
+xmit_data:xmit_data
+xmit_discards.port.1:xmit_discards.port.1
+xmit_discards.port.2:xmit_discards.port.2
+xmit_discards:xmit_discards
+xmit_pkts.port.1:xmit_pkts.port.1
+xmit_pkts.port.2:xmit_pkts.port.2
+xmit_pkts:xmit_pkts
