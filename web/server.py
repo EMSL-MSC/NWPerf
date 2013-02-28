@@ -128,7 +128,7 @@ class Graph(object):
 	def GET(self, id, metric):
 		try:
 			job = db.jobs.find_one({"_id": bson.objectid.ObjectId(id)})
-			for graph in job["graphs"]:
+			for graph in job["Graphs"]:
 				if graph["name"] == metric:
 					return json.dumps(db.graphs.find_one({"_id": graph["graph"]}, {"_id": False, "job": False}), default=encode_datetime_to_javascript)
 		except IOError:
@@ -192,9 +192,9 @@ class Jobs(object):
 				query.append(("User", get_user()))
 			months = {	"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
 					"Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12}
-			fields = {	"Start Date": "startTime", "End Date": "endTime",
-					"Submit Date": "submitTime", "Node Count": "numHosts",
-					"User": "user", "Job Id": "id", "Account": "account"}
+			fields = {	"Start Date": "Start", "End Date": "End",
+					"Submit Date": "Submit", "Node Count": "numNodes",
+					"User": "User", "Job Id": "JobID", "Account": "Account"}
 			comps = {"<": "$lt", ">": "$gt", "<=": "$lte", ">=": "$gte"}
 			mongoQuery = {}
 			for queryItem in query:
@@ -227,20 +227,19 @@ class Jobs(object):
 					mongoQuery[column] = queryItem[1]
 				elif queryItem[0] == "Ran On Node":
 					mongoQuery.setdefault("hosts",{"$in": []})["$in"].append(queryItem[1])
-			project = {	"account": True,
-					"numHosts": True,
-					"submitTime": True,
-					"endTime": True,
-					"user": True,
-					"startTime": True,
-					"runTime": True,
-					"id": True}
+			project = {	"Account": True,
+					"NumNodes": True,
+					"Submit": True,
+					"End": True,
+					"User": True,
+					"Start": True,
+					"RunTime": True,
+					"JobID": True}
 			if len(mongoQuery) > 0:
 				ret = tuple(db.jobs.find(mongoQuery, project))
 				for i in ret:
 					i["jobid"] = i["_id"]
 					del(i["_id"])
-				print ret
 				return json.dumps({"tag": tag, "jobs": ret}, default=encode_datetime)
 			else:
 				return json.dumps({"tag": tag, "jobs": []})
@@ -250,18 +249,18 @@ class Jobs(object):
 			metrics = dict([(metric["name"], metric) for metric in metrics])
 
 			job = db.jobs.find_one({"_id": bson.objectid.ObjectId(job)})
-			graphs = job["graphs"]
-			job["graphs"] = {}
+			graphs = job["Graphs"]
+			job["Graphs"] = {}
 			for graph in graphs:
 				graphname = graph["name"]
 				try:
-					job["graphs"].setdefault(metrics[graphname]["group"],[]).append({
+					job["Graphs"].setdefault(metrics[graphname]["group"],[]).append({
 									"src": "graphs/%s/%s" % (str(job["_id"]),graph["name"]),
 									"name": graphname,
 									"unit": metrics[graphname]["unit"],
 									"description": metrics[graphname]["description"]})
 				except KeyError, e:
-					job["graphs"].setdefault("other",[]).append({
+					job["Graphs"].setdefault("other",[]).append({
 									"src": "graphs/%s" % graph["name"],
 									"name": graphname})
 			job["tag"] = tag

@@ -181,9 +181,9 @@ enyo.kind({
 		return aElements.length - bElements.length;
 	},
 	updateJobInfo: function() {
-		this.$.startTime.setContent(Date(this.job.startTime).toLocaleString());
-		this.$.endTime.setContent(Date(this.job.endTime).toLocaleString());
-		var runtime = this.job.runTime;
+		this.$.startTime.setContent(Date(this.job.Start).toLocaleString());
+		this.$.endTime.setContent(Date(this.job.End).toLocaleString());
+		var runtime = this.job.RunTime;
 		var numDays = Math.floor(runtime/86400);
 		runtime %= 86400;
 		var numHours = Math.floor(runtime/3600);
@@ -192,11 +192,12 @@ enyo.kind({
 		runtime %= 60;
 		var numSeconds = runtime;
 		this.$.runTime.setContent(numDays+" days "+numHours+":"+numMinutes+":"+numSeconds);
-		this.$.jobID.setContent(this.job.id);
-		this.$.user.setContent(this.job.user);
-		this.$.numNodes.setContent(this.job.numHosts);
-		this.$.group.setContent(this.job.group);
-		this.$.account.setContent(this.job.account);
+		console.log(this.job);
+		this.$.jobID.setContent(this.job.JobID);
+		this.$.user.setContent(this.job.User);
+		this.$.numNodes.setContent(this.job.NumNodes);
+		this.$.group.setContent(this.job.Group);
+		this.$.account.setContent(this.job.Account);
 		this.$.jobInfo.render();
 	},
 	clearJobInfo: function() {
@@ -222,15 +223,15 @@ enyo.kind({
 		if(this.job["version"] == 2) {
 			this.updateJobInfo();
 			this.legend = [];
-			var numHosts = this.job["hosts"].length;
+			var numHosts = this.job["Nodes"].length;
 			var hue = hueFractions = 350/numHosts;
 			var lightnessFractions = .3/numHosts;
 			var lightness = .3;
-			this.job["hosts"].sort(this.alphaNumericSort);
-			for(host in this.job["hosts"]) {
+			this.job["Nodes"].sort(this.alphaNumericSort);
+			for(node in this.job["Nodes"]) {
 				hue += hueFractions;
 				lightness += lightnessFractions;
-				this.legend[host] = {host: this.job["hosts"][host], color: [hue, 1, lightness], enabled: true};
+				this.legend[node] = {host: this.job["Nodes"][node], color: [hue, 1, lightness], enabled: true};
 			}
 			this.$.legend.setCount(numHosts);
 			this.$.legendView.setShowing(true);
@@ -239,7 +240,7 @@ enyo.kind({
 			this.$.legendView.setShowing(false);
 			this.$.jobGraphs.render();
 		}
-		for(group in this.job["graphs"]) {
+		for(group in this.job["Graphs"]) {
 			numGraphs++;
 			if(group == "") {
 				var groupHeader = this.$.jobGraphs.createComponent({content: "other", ontap: "toggleDrawer", classes: "group-header"}, {owner:  this});
@@ -248,26 +249,26 @@ enyo.kind({
 			}
 			var groupDrawer = this.$.jobGraphs.createComponent({kind: "onyx.Drawer", open: false});
 			groupHeader.drawer = groupDrawer;
-			for(metric in this.job["graphs"][group]) {
-				if(this.job["graphs"][group][metric]["unit"] != null)
-					unit = " ("+this.job["graphs"][group][metric]["unit"]+")";
+			for(metric in this.job["Graphs"][group]) {
+				if(this.job["Graphs"][group][metric]["unit"] != null)
+					unit = " ("+this.job["Graphs"][group][metric]["unit"]+")";
 				else
 					unit = "";
 				
-				if(this.job["graphs"][group][metric]["description"] != null)
-					description = " - " + this.job["graphs"][group][metric]["description"];
+				if(this.job["Graphs"][group][metric]["description"] != null)
+					description = " - " + this.job["Graphs"][group][metric]["description"];
 				else
 					description = "";
-				headerText = 	this.job["graphs"][group][metric]["name"]
+				headerText = 	this.job["Graphs"][group][metric]["name"]
 						+ unit
 						+ description;
 				var metricHeader = groupDrawer.createComponent({content: headerText, ontap: "toggleDrawer", classes: "image-header"}, {owner:  this})
 				var metricDrawer = groupDrawer.createComponent({kind: "onyx.Drawer", open: false});
 				metricHeader.drawer = metricDrawer;
 				if(this.job["version"] == 1) {
-					metricDrawer.createComponent({kind: "Image", src: this.job["graphs"][group][metric]["src"], ontap: "toggleThumbnail", classes: "thumbnail", thumbnail: true}, {owner: this});
+					metricDrawer.createComponent({kind: "Image", src: this.job["Graphs"][group][metric]["src"], ontap: "toggleThumbnail", classes: "thumbnail", thumbnail: true}, {owner: this});
 				} else {
-					this.graphs.push( metricDrawer.createComponent({kind: "Flot", legend: this.legend, src: this.job["graphs"][group][metric]["src"], classes: "graph", onValuesUpdate: "updateLegendValues"}, {owner: this}));
+					this.graphs.push( metricDrawer.createComponent({kind: "Flot", legend: this.legend, src: this.job["Graphs"][group][metric]["src"], classes: "graph", onValuesUpdate: "updateLegendValues"}, {owner: this}));
 				}
 			}
 		}

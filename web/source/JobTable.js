@@ -104,15 +104,15 @@ enyo.kind({
 	},
 	addJob: function(inSender, inEvent) {
 		var job = this.jobs[inEvent.index];
-		this.$.user.setContent(job.user);
+		this.$.user.setContent(job.User);
 		this.$.user.setShowing(this.showUsers);
-		this.$.jobId.setContent(job.id);
-		this.$.account.setContent(job.account);
-		this.$.nodes.setContent(job.numHosts);
-		this.$.submitTime.setContent(job.submitTime);
-		this.$.startTime.setContent(job.startTime);
-		this.$.endTime.setContent(job.endTime);
-		this.$.runTime.setContent(job.runTime);
+		this.$.jobId.setContent(job.JobID);
+		this.$.account.setContent(job.Account);
+		this.$.nodes.setContent(job.NumNodes);
+		this.$.submitTime.setContent(job.Submit);
+		this.$.startTime.setContent(job.Start);
+		this.$.endTime.setContent(job.End);
+		this.$.runTime.setContent(job.RunTime);
 	},
 
 	jobTap: function(inSender, inEvent) {
