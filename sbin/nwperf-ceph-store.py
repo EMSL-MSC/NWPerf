@@ -18,7 +18,8 @@ hostsizes={}
 def processWork(r_ioctx,worklist):
 	global seenobjects
 	write_count=0
-	print "Work",time.time(),sum([len(i) for i in worklist.values()])
+	start=time.time()
+	print "Work",start,sum([len(i) for i in worklist.values()])
 
 	for object in worklist.keys():
 		cur_offset=-0xEF
@@ -59,7 +60,9 @@ def processWork(r_ioctx,worklist):
 		r_ioctx.aio_write(object,data,start_offset)
 		write_count+=1
 
-	print "Done",time.time(),sum([len(i) for i in worklist.values()]),write_count
+	end=time.time()
+	print "Done",end,sum([len(i) for i in worklist.values()]),write_count
+	return end-start
 
 def connectZMQ(nsurl,points):
 	#zmq setup
@@ -116,7 +119,7 @@ def main(zmqns,cephconfig,cluster):
 	z_sock_data,z_poll = connectZMQ(zmqns,(cluster+".allpoints",))
 
 	lastdata=0;
-
+	worktime=1
 	try:
 		work={}
 		olddata=False
@@ -140,7 +143,7 @@ def main(zmqns,cephconfig,cluster):
 						try:
 							location=hostorder[data['host'].partition(".")[0]] 
 						except KeyError:
-							print "bad host",data
+							#print "bad host",data
 							continue
 						try:
 							hostcount=hostsizes[daystring]
@@ -172,13 +175,13 @@ def main(zmqns,cephconfig,cluster):
 					for key in work.keys():
 						if not work[key]:
 							del work[key]
-					processWork(r_ioctx,work)	
+					worktime=processWork(r_ioctx,work)	
 					lastdata = time.time()
 
 				for key in work.keys():
 						work[key]=[]
 				#print len(work.keys())
-				if time.time()-lastdata > 120:
+				if time.time()-lastdata > 120 or worktime > 120:
 					print "Reconnecting to zmq"
 					z_sock_data,z_poll = connectZMQ(zmqns,(cluster+".allpoints",))
 					#wait at least 30 seconds for next try
