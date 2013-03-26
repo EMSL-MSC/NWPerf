@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# Copyright 2013 Battelle Memorial Institute.
+# This software is licensed under the Battelle “BSD-style” open source license;
+# the full text of that license is available in the COPYING file in the root of the repository
 import sys
 import os
 import tarfile
@@ -41,6 +44,7 @@ class JobStore(object):
 				count+=1
 
 			if (count/len(job["Nodes"])) > 2000:
+				print "downsampling", count, len(job["Nodes"])
 				for (metric, nodes) in self.graphs.iteritems():
 					downSampled = {}
 					for (host, points) in nodes.iteritems():
