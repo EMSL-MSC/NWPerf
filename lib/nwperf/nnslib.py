@@ -1,4 +1,5 @@
 #!/bin/env python26
+# -*- coding: latin-1 -*-
 import zmq
 import time
 import os

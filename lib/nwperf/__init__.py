@@ -1,4 +1,5 @@
 #!/bin/env python
+# -*- coding: latin-1 -*-
 import zmq
 import time
 import optparse
