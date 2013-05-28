@@ -1,5 +1,4 @@
 #!/bin/env python
-# -*- coding: latin-1 -*-
 import zmq
 import pickle
 import time

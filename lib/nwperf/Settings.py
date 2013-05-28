@@ -1,4 +1,3 @@
-# -*- coding: latin-1 -*-
 import os.path
 try:   
 	import simplejson as json

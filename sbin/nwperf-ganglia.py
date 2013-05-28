@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: latin-1 -*-
 import sys
 try:
 	import cStringIO as stringIO

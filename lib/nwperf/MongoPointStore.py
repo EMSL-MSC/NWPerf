@@ -1,4 +1,3 @@
-# -*- coding: latin-1 -*-
 import datetime
 import os
 import pymongo

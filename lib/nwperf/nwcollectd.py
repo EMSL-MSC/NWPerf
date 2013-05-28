@@ -1,4 +1,3 @@
-# -*- coding: latin-1 -*-
 import collectd
 from nwperf import nnslib
 import zmq
