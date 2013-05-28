@@ -1,3 +1,7 @@
+# Copyright 2013 Battelle Memorial Institute.
+# This software is licensed under the Battelle “BSD-style” open source license;
+# the full text of that license is available in the COPYING file in the root of the repository
+
 %if 0%{?rhel} <= 5
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}

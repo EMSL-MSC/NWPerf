@@ -1,3 +1,8 @@
+/*
+ * Copyright 2013 Battelle Memorial Institute.
+ * This software is licensed under the Battelle “BSD-style” open source license;
+ * the full text of that license is available in the COPYING file in the root of the repository
+ */
 enyo.kind({
 	name: "JobView",
 	kind: "FittableRows",
@@ -192,7 +197,6 @@ enyo.kind({
 		runtime %= 60;
 		var numSeconds = runtime;
 		this.$.runTime.setContent(numDays+" days "+numHours+":"+numMinutes+":"+numSeconds);
-		console.log(this.job);
 		this.$.jobID.setContent(this.job.JobID);
 		this.$.user.setContent(this.job.User);
 		this.$.numNodes.setContent(this.job.NumNodes);
@@ -249,7 +253,7 @@ enyo.kind({
 			}
 			var groupDrawer = this.$.jobGraphs.createComponent({kind: "onyx.Drawer", open: false});
 			groupHeader.drawer = groupDrawer;
-			for(metric in this.job["Graphs"][group]) {
+			for(metric in this.job["Graphs"][group].sort(function(a,b){return a.name.localeCompare(b.name)})) {
 				if(this.job["Graphs"][group][metric]["unit"] != null)
 					unit = " ("+this.job["Graphs"][group][metric]["unit"]+")";
 				else

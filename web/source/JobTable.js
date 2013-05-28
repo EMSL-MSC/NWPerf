@@ -1,3 +1,8 @@
+/*
+ * Copyright 2013 Battelle Memorial Institute.
+ * This software is licensed under the Battelle “BSD-style” open source license;
+ * the full text of that license is available in the COPYING file in the root of the repository
+ */
 enyo.kind({
         name: "JobTable",
 	kind: "FittableRows",
@@ -14,14 +19,14 @@ enyo.kind({
 			{kind: "onyx.Spinner"}
 		]},
 		{kind: "FittableColumns", classes: "JobTable-header-container", components: [
-			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", content: "Job ID", name: "idHeader"},
-			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", content: "Account", name: "accountHeader"},
-			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", showing: false, content: "User", name: "userHeader"},
-			{classes: "JobTable-header", style: "width: 16%", ontap: "sortColumn", content: "Submit Time", name: "submittimeHeader"},
-			{classes: "JobTable-header", style: "width: 16%", ontap: "sortColumn", content: "Start Time", name: "starttimeHeader"},
-			{classes: "JobTable-header", style: "width: 16%", ontap: "sortColumn", content: "End Time", name: "endtimeHeader"},
-			{classes: "JobTable-header", style: "width: 11%", ontap: "sortColumn", content: "Run Time", name: "runtimeHeader"},
-			{classes: "JobTable-header", style: "width: 14%", ontap: "sortColumn", content: "Node Count", name: "numnodesHeader"}
+			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", content: "Job ID", name: "JobIDHeader"},
+			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", content: "Account", name: "AccountHeader"},
+			{classes: "JobTable-header", style: "width: 9%", ontap: "sortColumn", showing: false, content: "User", name: "UserHeader"},
+			{classes: "JobTable-header", style: "width: 16%", ontap: "sortColumn", content: "Submit Time", name: "SubmitHeader"},
+			{classes: "JobTable-header", style: "width: 16%", ontap: "sortColumn", content: "Start Time", name: "StartHeader"},
+			{classes: "JobTable-header", style: "width: 16%", ontap: "sortColumn", content: "End Time", name: "EndHeader"},
+			{classes: "JobTable-header", style: "width: 11%", ontap: "sortColumn", content: "Run Time", name: "RunTimeHeader"},
+			{classes: "JobTable-header", style: "width: 14%", ontap: "sortColumn", content: "Node Count", name: "NumNodesHeader"}
 		]},
 		{kind: "List", fit: true, name: "jobList", onSetupItem: "addJob", toggleSelected: true, components: [
 			{kind: "FittableColumns", classes: "JobTable-row", ontap: "jobTap", components: [
@@ -59,7 +64,7 @@ enyo.kind({
 			this.curSortedColumn.setClasses("JobTable-header-asc");
 		}
 		var field = inSender.name.replace("Header", "");
-		if(field == "numnodes" || field == "id") {
+		if(field == "NumNodes" || field == "JobID" || field == "RunTime") {
 			if(this.curSortedOrder == "asc") {
 				var sortFunc = function(a,b) { return parseInt(a[field]) - parseInt(b[field]); }
 			} else {
@@ -96,10 +101,10 @@ enyo.kind({
 			this.curSortedColumn.setClasses("JobTable-header");
 		this.curSortedColumn = null;
 		this.curSortedOrdered = null;
-		this.sortColumn(this.$.idHeader);
+		this.sortColumn(this.$.JobIDHeader);
 	},
 	showUsersChanged: function(oldValue) {
-		this.$.userHeader.setShowing(this.showUsers);
+		this.$.UserHeader.setShowing(this.showUsers);
 		this.$.jobList.refresh();
 	},
 	addJob: function(inSender, inEvent) {

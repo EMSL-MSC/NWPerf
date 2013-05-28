@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# Copyright 2013 Battelle Memorial Institute.
+# This software is licensed under the Battelle “BSD-style” open source license;
+# the full text of that license is available in the COPYING file in the root of the repository
 import os
 import tarfile
 import time
@@ -37,9 +40,11 @@ class MongoJobStore(JobStore.JobStore):
 		metadata["UID"]		= int(metadata["UID"])
 		metadata["GID"]		= int(metadata["GID"])
 		metadata.update(self.additionalFields)
+		print "Inserting", metadata
 		_id = self.db.jobs.insert(metadata)
 		graphs=[]
 		for graph in self.graphs:
 			self.graphs[graph]["job"] = _id
 			graphs.append({"name": graph, "graph": self.db.graphs.insert(self.graphs[graph])})
+		print "Appending Graphs", ",".join([graph["name"] for graph in graphs])
 		self.db.jobs.update({"_id": _id}, {"$set": {"Graphs": graphs}})

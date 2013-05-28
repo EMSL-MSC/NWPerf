@@ -1,3 +1,6 @@
+# Copyright 2013 Battelle Memorial Institute.
+# This software is licensed under the Battelle “BSD-style” open source license;
+# the full text of that license is available in the COPYING file in the root of the repository
 import datetime
 import os
 import pymongo
@@ -39,6 +42,7 @@ class MongoPointStore(object):
 			beginTime = datetime.datetime.fromtimestamp(beginTime/60*60)
 		except TypeError:
 			pass
+		print "Finding points:", {"time": {"$gte": beginTime, "$lte": endTime}, "host": {"$in": hosts}}
 		entries = self.db.points.find({"time": {"$gte": beginTime, "$lte": endTime}, "host": {"$in": hosts}})
 		for entry in entries:
 			for point in entry["points"]:
