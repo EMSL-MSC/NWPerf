@@ -1,4 +1,6 @@
 import collectd
+# -*- coding: latin-1 -*-
+#
 from nwperf import nnslib
 import zmq
 import time
