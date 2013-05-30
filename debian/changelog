@@ -1,3 +1,10 @@
+nwperf (0.2) precise; urgency=low
+
+  * Add collectd python module for exporting to NWperf.
+  * Add Headers and such 
+
+ -- Evan Felix <e@pnnl.gov>  Thu, 30 May 2013 09:33:52 -0700
+
 nwperf (0.1ubuntu1) precise; urgency=low
 
   * Add a ceph, ganglia, and config changes 
