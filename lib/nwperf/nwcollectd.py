@@ -2,6 +2,7 @@ import collectd
 # -*- coding: latin-1 -*-
 #
 from nwperf import nnslib
+from nwperf import Settings
 import zmq
 import time
 import threading
@@ -97,7 +98,7 @@ class NWCollectd:
 		self.qthread.terminate()
 		self.ns.removeServices()
 
-dir=os.path.dirname(os.path.abspath(__file__))
-typeinfo=json.load(open(dir+os.path.sep+"collectdtypes.json"))
+settings=Settings("/etc/nwperf.conf")
+typeinfo=settings["collectdtypes"]
 
 TheOne = NWCollectd(typeinfo)
