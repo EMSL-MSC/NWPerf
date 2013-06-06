@@ -1,0 +1,76 @@
+aggregation.cpu-average.cpu.idle:Time CPU or CPUs were idle and the system did not have an outstanding disk I/O request
+aggregation.cpu-average.cpu.system:CPU time that occurred while executing at the system level
+aggregation.cpu-average.cpu.user:CPU time that occurred while executing at the user level
+aggregation.cpu-average.cpu.interrupt:CPU time that occurred while handling Interrupts
+aggregation.cpu-average.cpu.nice:CPU time that occurred while executing at the user level with nice priority.
+aggregation.cpu-average.cpu.softirq:CPU time that occurred while handling software Interrupts
+aggregation.cpu-average.cpu.steal:CPU Steal
+aggregation.cpu-average.cpu.wait:Time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request.
+disk.sdb.disk_merged:Operations Merged
+disk.sdb.disk_octets:Octets of I/O to Disk
+disk.sdb.disk_ops:Number of Disk Operations
+disk.sdb.disk_time:Average time I/O operations take to complete
+interface.br0.if_octets:Octets per second on the br0 interface
+interface.br0.if_packets:Packets per second on the br0 interface
+interface.eth0.if_octets:Octets per second on the eth0 interface
+interface.eth0.if_packets:Packets per second on the eth0 interface
+interface.lo.if_octets:Octets per second on the lo interface
+interface.lo.if_packets:Packets per second on the lo interface
+interface.mic0.if_octets:Octets per second on the mic0 interface
+interface.mic0.if_packets:Packets per second on the mic0 interface
+interface.mic1.if_octets:Octets per second on the mic1 interface
+interface.mic1.if_packets:Packets per second on the mic1 interface
+load.load:Load average
+memory.memory.buffered:Amount of buffered memory
+memory.memory.cached:Amount of cached memory
+memory.memory.free:Amount of available memory
+memory.memory.used:Amount of used memory
+mic.0.cpu.idle:Time that the CPU or CPUs were idle on Mic0
+mic.0.cpu.sys:CPU Time that occurred while executing at the system level on Mic0
+mic.0.memory.free:Amount of available memory on Mic0
+mic.0.memory.used:Amount of used memory on Mic0
+mic.0.power.c2x3:Power on the 2x3 connector on Mic0
+mic.0.power.c2x4:Power on the 2x4 connector on Mic0
+mic.0.power.imax:Max instantaneous power on Mic0
+mic.0.power.inst:Instantaneous power on Mic0
+mic.0.power.pcie:Power on the PCIE connector on Mic0
+mic.0.power.total0:Total power utilization over Time Window 1 on Mic0
+mic.0.power.total1:Total power utilization over Time Window 2 on Mic0
+mic.0.power.vccp:Core Rail power on Mic0
+mic.0.power.vddg:UnCore Rail power on Mic0
+mic.0.power.vddq:Memory Subsystem Rail power on Mic0
+mic.0.temperature.devmem:Device Memory temperature on Mic0
+mic.0.temperature.die:Die temperature on Mic0
+mic.0.temperature.fin:Fan In temperature on Mic0
+mic.0.temperature.fout:Fan Out temperature on Mic0
+mic.0.temperature.vccp:Voltage ccp temperature on Mic0
+mic.0.temperature.vddg:Voltage ddg temperature on Mic0
+mic.0.temperature.vddq:Voltage ddq temperature on Mic0
+mic.0.voltage.vccp:Core Rail voltage on Mic0
+mic.0.voltage.vddg:UnCore Rail voltage on Mic0
+mic.0.voltage.vddq:Memory Subsystem Rail voltage on Mic0
+swap.swap.free:Amount of available swap memory
+mic.1.cpu.idle:Time that the CPU or CPUs were idle on Mic1
+mic.1.cpu.sys:CPU Time that occurred while executing at the system level on Mic1
+mic.1.memory.free:Amount of available memory on Mic1
+mic.1.memory.used:Amount of used memory on Mic1
+mic.1.power.c2x3:Power on the 2x3 connector on Mic1
+mic.1.power.c2x4:Power on the 2x4 connector on Mic1
+mic.1.power.imax:Max instantaneous power on Mic1
+mic.1.power.inst:Instantaneous power on Mic1
+mic.1.power.pcie:Power on the PCIE connector on Mic1
+mic.1.power.total0:Total power utilization over Time Window 1 on Mic1
+mic.1.power.total1:Total power utilization over Time Window 2 on Mic1
+mic.1.power.vccp:Core Rail power on Mic1
+mic.1.power.vddg:UnCore Rail power on Mic1
+mic.1.power.vddq:Memory Subsystem Rail power on Mic1
+mic.1.temperature.devmem:Device Memory temperature on Mic1
+mic.1.temperature.die:Die temperature on Mic1
+mic.1.temperature.fin:Fan In temperature on Mic1
+mic.1.temperature.fout:Fan Out temperature on Mic1
+mic.1.temperature.vccp:Voltage ccp temperature on Mic1
+mic.1.temperature.vddg:Voltage ddg temperature on Mic1
+mic.1.temperature.vddq:Voltage ddq temperature on Mic1
+mic.1.voltage.vccp:Core Rail voltage on Mic1
+mic.1.voltage.vddg:UnCore Rail voltage on Mic1
+mic.1.voltage.vddq:Memory Subsystem Rail voltage on Mic1
