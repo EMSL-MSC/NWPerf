@@ -60,7 +60,7 @@ class RadosDataStore:
 		try:
 			unit = self.ioctx.get_xattr(daystr+"/"+key,"unit")
 		except rados.ObjectNotFound,msg:
-			unit="Error Getting It:"+daystr
+			unit="Error Getting Rate Unit:"+daystr
 		return unit
 		
 	def getDataSlice(self,start,end,key,hostlist=None):

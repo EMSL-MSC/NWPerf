@@ -1,4 +1,4 @@
-import collectd
+itmport collectd
 # -*- coding: latin-1 -*-
 #
 from nwperf import nnslib
@@ -72,7 +72,7 @@ class NWCollectd:
 		self.socket.setsockopt(HIGHWATER, 15000)
 		port = self.socket.bind_to_random_port("tcp://%s" %self.ip)
 		try:
-			self.ns.publishService(self.cluster+".points", "tcp://%s:%s" % (self.ip, port), self.publishTimeout, "pub/sub", "Point")
+			self.ns.publishService(self.cluster+".allpoints", "tcp://%s:%s" % (self.ip, port), self.publishTimeout, "pub/sub", "Point")
 			self.resettime = time.time()+300
 		except nnslib.NameServerException, e:
 			collectd.error("Error",e)
