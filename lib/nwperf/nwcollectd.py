@@ -1,6 +1,6 @@
-itmport collectd
 # -*- coding: latin-1 -*-
 #
+import collectd
 from nwperf import nnslib
 from nwperf import Settings
 import zmq
