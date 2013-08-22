@@ -85,7 +85,7 @@ class NWCollectd:
 		for i in vl.values:
 			#print "%s: %s-%s (%s-%s): %f" % (vl.host,vl.plugin,vl.plugin_instance, vl.type,vl.type_instance, i)
 			try:
-				unit=str(self.typeinfo[vl.plugin]['unit'])
+				unit=str(self.typeinfo[vl.type]['unit'])
 			except:
 				unit="unknown"
 			name= '.'.join(filter(None,[vl.plugin,vl.plugin_instance,vl.type,vl.type_instance]))
