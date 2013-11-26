@@ -18,7 +18,6 @@ import nwperf
 from operator import itemgetter
 try:
 	import parsedatetime.parsedatetime as pdt
-	import parsedatetime.parsedatetime_consts as pdc
 except:
 	pdt=None
 
@@ -51,7 +50,7 @@ def main():
 	begin=0
 	end=0
 	if pdt and (options.begin or options.end ):
-		c = pdc.Constants()
+		c = pdt.Constants()
 		p = pdt.Calendar(c)
 		if options.begin:
 			res = p.parse(options.begin)
