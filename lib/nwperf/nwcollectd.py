@@ -69,7 +69,7 @@ class NWCollectd:
 	def init(self):
 		self.ns = nnslib.NameServer(self.nameserver)
 		self.socket = zmq.Context().socket(zmq.PUB)
-		self.socket.setsockopt(HIGHWATER, 15000)
+		self.socket.setsockopt(HIGHWATER, 20000000)
 		port = self.socket.bind_to_random_port("tcp://%s" %self.ip)
 		try:
 			self.ns.publishService(self.cluster+".allpoints", "tcp://%s:%s" % (self.ip, port), self.publishTimeout, "pub/sub", "Point")
@@ -82,13 +82,19 @@ class NWCollectd:
 		
 
 	def write(self,vl, data=None):
-		for i in vl.values:
+		map = {'interface':('rx','tx'),'load':('1min','5min','15min')}
+		keys=map.keys()
+		for l in range(len(vl.values)):
+			i=vl.values[l]
+			extra=None
+			if vl.plugin in keys:
+				extra = map[vl.plugin][l]
 			#print "%s: %s-%s (%s-%s): %f" % (vl.host,vl.plugin,vl.plugin_instance, vl.type,vl.type_instance, i)
 			try:
-				unit=str(self.typeinfo[vl.type]['unit'])
+				unit=str(self.typeinfo[vl.plugin]['unit'])
 			except:
 				unit="unknown"
-			name= '.'.join(filter(None,[vl.plugin,vl.plugin_instance,vl.type,vl.type_instance]))
+			name= '.'.join(filter(None,[vl.plugin,vl.plugin_instance,vl.type,vl.type_instance,extra]))
 			jsonPoint = '{"host": "%s", "unit": "%s", "val": "%s", "pointname": "%s", "time": "%s"}' % (vl.host, unit, i, name,vl.time)
 			#print jsonPoint
 			self.q.put(jsonPoint)
