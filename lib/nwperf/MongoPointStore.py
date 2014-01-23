@@ -23,7 +23,7 @@ class MongoPointStore(object):
 
         def savePoint(self, host, metric, timestamp, value):
 		value = float(value)
-		timestamp = int(timestamp)
+		timestamp = int(float(timestamp))
 		self.curValues.setdefault(timestamp/60*60, {}).setdefault(host,[]).append((metric, value))
 			
 	def flush(self):
