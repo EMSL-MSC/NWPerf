@@ -77,7 +77,7 @@ class PointStoreProcess(multiprocessing.Process):
 				try:
 					ns.updateSocket(sock)
 				except:
-					sock = self.ctx.socket(zmq.SUB)
+					sock = ctx.socket(zmq.SUB)
 					sock.setsockopt(zmq.SUBSCRIBE, "")
 					ns.connectService(sock, self.service)
 					poll = zmq.core.poll.Poller()
