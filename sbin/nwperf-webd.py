@@ -79,7 +79,15 @@ class PointStoreProcess(multiprocessing.Process):
 				except:
 					sock = ctx.socket(zmq.SUB)
 					sock.setsockopt(zmq.SUBSCRIBE, "")
-					ns.connectService(sock, self.service)
+					connected = False
+					while not connected:
+						try:
+							ns.connectService(sock, self.service)
+						except:
+							print "Error connecting to %s. Sleeping" % self.service
+							time.sleep(1)
+						finally:
+							connected = True
 					poll = zmq.core.poll.Poller()
 					poll.register(sock, zmq.POLLIN)
 	
@@ -146,7 +154,15 @@ def main():
 			sock.close()
 			sock = ctx.socket(zmq.SUB)
 			sock.setsockopt(zmq.SUBSCRIBE, "JobEnd")
-			ns.connectService(sock, options.jobservice)
+			connected = False
+			while not connected:
+				try:
+					ns.connectService(sock, options.jobservice)
+				except:
+					print "Error connecting to %s. Sleeping" % options.jobservice
+					time.sleep(1)
+				finally:
+					connected = True
 			poll.register(sock, zmq.POLLIN)
 		if q.qsize() > 0:
 			print "Queue size: %d" % q.qsize()
