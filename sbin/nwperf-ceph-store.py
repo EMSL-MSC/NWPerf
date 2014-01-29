@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: latin-1 -*-
+#
 # Copyright 2013 Battelle Memorial Institute.
 # This software is licensed under the Battelle "BSD-style" open source license;
 # the full text of that license is available in the COPYING file in the root of the repository
@@ -78,7 +80,7 @@ def connectZMQ(nsurl,points):
 	for name in points:
 		z_sock_ns.send_multipart(("1","getService",name))
 		urls+=z_sock_ns.recv_multipart()
-	print urls
+	print name,urls
 
 	z_sock_data = z_ctx.socket(zmq.SUB)
 	z_sock_data.setsockopt(zmq.SUBSCRIBE, "")
@@ -136,7 +138,7 @@ def main(zmqns,cephconfig,cluster):
 						data = json.loads(data)
 						#print data
 						# sample: {'host': 'cu01n101', 'time': '1343863450', 'val': '52', 'unit': 'percent', 'pointname': 'cputotals.user'}
-						secs = int(data['time'])
+						secs = int(float(data['time']))
 						if secs < old:
 							olddata=data
 							continue

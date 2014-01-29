@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: latin-1 -*-
+#
 # Copyright 2013 Battelle Memorial Institute.
 # This software is licensed under the Battelle "BSD-style" open source license;
 # the full text of that license is available in the COPYING file in the root of the repository
@@ -54,7 +56,7 @@ class local_build_scripts(build_scripts):
 
 
 setup(	name = "nwperf",
-		version = "0.1",
+		version = "0.2",
 		description = "A set of utilities for gathering and stroing performance information for clusters of computers",
 		author = "EMSL MSC team",
 		url = "https://github.com/EMSL-MSC/NWPerf/",

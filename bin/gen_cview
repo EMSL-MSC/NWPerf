@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: latin-1 -*-
+#
 # Copyright 2013 Battelle Memorial Institute.
 # This software is licensed under the Battelle “BSD-style” open source license;
 # the full text of that license is available in the COPYING file in the root of the repository
@@ -16,7 +18,6 @@ import nwperf
 from operator import itemgetter
 try:
 	import parsedatetime.parsedatetime as pdt
-	import parsedatetime.parsedatetime_consts as pdc
 except:
 	pdt=None
 
@@ -49,7 +50,7 @@ def main():
 	begin=0
 	end=0
 	if pdt and (options.begin or options.end ):
-		c = pdc.Constants()
+		c = pdt.Constants()
 		p = pdt.Calendar(c)
 		if options.begin:
 			res = p.parse(options.begin)

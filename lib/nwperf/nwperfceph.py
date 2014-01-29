@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: latin-1 -*-
+#
 # Copyright 2013 Battelle Memorial Institute.
 # This software is licensed under the Battelle "BSD-style" open source license;
 # the full text of that license is available in the COPYING file in the root of the repository
@@ -58,7 +60,7 @@ class RadosDataStore:
 		try:
 			unit = self.ioctx.get_xattr(daystr+"/"+key,"unit")
 		except rados.ObjectNotFound,msg:
-			unit="Error Getting It:"+daystr
+			unit="Error Getting Rate Unit:"+daystr
 		return unit
 		
 	def getDataSlice(self,start,end,key,hostlist=None):

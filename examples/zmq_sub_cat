@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+
+import zmq
+import time
+import sys
+#sys.path.append("/home/efelix/cephbuild/lib/python2.6/site-packages/")
+import rados
+import struct
+import simplejson as json
+import nwperf
+import optparse
+
+
+
+def connectZMQ(nsurl,points):
+	#zmq setup
+	z_ctx = zmq.Context()
+
+	z_sock_ns = z_ctx.socket(zmq.REQ)
+	z_sock_ns.connect(nsurl)
+
+	urls=[]
+	for name in points:
+		z_sock_ns.send_multipart(("1","getService",name))
+		urls+=z_sock_ns.recv_multipart()
+	print urls
+
+	z_sock_data = z_ctx.socket(zmq.SUB)
+	z_sock_data.setsockopt(zmq.SUBSCRIBE, "")
+	z_sock_data.setsockopt(zmq.RCVBUF, 4194304)
+	for url in urls[::2]:
+		if url != 'ERROR':
+			z_sock_data.connect(url)
+
+	z_poll = zmq.core.Poller()
+	z_poll.register(z_sock_data,zmq.POLLIN)
+
+	return z_sock_data,z_poll
+
+def main(zmqns,service):
+
+	z_sock_data,z_poll = connectZMQ(zmqns,(service,))
+
+	count = 0
+	try:
+		while True:
+			res = z_poll.poll(1000) #returns # of events ready
+			if res:
+				#o = z_sock_data.recv_multipart()
+				#print o
+				#header,data=o
+				header,data = z_sock_data.recv_multipart()
+				try:
+					data = json.loads(data)
+					print header,data
+					# sample: {'host': 'cu01n101', 'time': '1343863450', 'val': '52', 'unit': 'percent', 'pointname': 'cputotals.user'}
+				except ValueError,msg:
+					print "Error consuming a data point:",msg
+					print data
+			else:
+				count += 1
+				if count > 60:
+					z_sock_data,z_poll = connectZMQ(zmqns,(service,))
+					count = 0
+					
+	except KeyboardInterrupt:
+		pass
+	except zmq.ZMQError,msg:
+		print "ZMQ error, exiting:",msg
+			
+if __name__ == "__main__":
+	parser = optparse.OptionParser()
+	parser.add_option("-S","--name-server",dest="nameserver",type="string",help="The ZMQ URL of the nameserver to register with",default="tcp://nwperf-ns:6967")
+	parser.add_option("-s","--service",dest="service",type="string",help="the service to subscribe to",default=None)
+
+	options,args = parser.parse_args()
+
+	if not options.service:
+		parser.error("No Service Specified")
+
+	main(options.nameserver,options.service) 
+
