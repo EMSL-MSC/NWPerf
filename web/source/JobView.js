@@ -186,8 +186,8 @@ enyo.kind({
 		return aElements.length - bElements.length;
 	},
 	updateJobInfo: function() {
-		this.$.startTime.setContent(Date(this.job.Start).toLocaleString());
-		this.$.endTime.setContent(Date(this.job.End).toLocaleString());
+		this.$.startTime.setContent((new Date(this.job.Start.replace(" ","T"))).toLocaleString());
+		this.$.endTime.setContent((new Date(this.job.End.replace(" ","T"))).toLocaleString());
 		var runtime = this.job.RunTime;
 		var numDays = Math.floor(runtime/86400);
 		runtime %= 86400;
