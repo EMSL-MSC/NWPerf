@@ -4,7 +4,6 @@ import zmq
 import time
 import sys
 #sys.path.append("/home/efelix/cephbuild/lib/python2.6/site-packages/")
-import rados
 import struct
 import simplejson as json
 import nwperf
