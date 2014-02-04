@@ -49,6 +49,8 @@ class NWCollectd:
 		self.publishTimeout=600
 		self.q = multiprocessing.Queue()
 		self.qthread = None
+		self.typesdb = "/usr/share/collectd/types.db"
+		self.types = {}
 		self.typeinfo = typeinfo
 	
 		collectd.register_config(self.config)
@@ -65,6 +67,8 @@ class NWCollectd:
 					self.cluster = i.values[0]
 				if i.key == "IP":
 					self.ip = i.values[0]
+				if i.key == "TypesDB":
+					self.typesdb = i.values[0]
 
 	def init(self):
 		self.ns = nnslib.NameServer(self.nameserver)
@@ -79,24 +83,51 @@ class NWCollectd:
 		self.qthread = PublishThread(self.socket,self.ns,self.q)
 		self.qthread.setDaemon(True)
 		self.qthread.start()
-		
+		self.parsetypes()
 
+	def parsetypes(self):
+		for i in open(self.typesdb):
+			if i.startswith("#") or i.strip() == "":
+				continue
+			i = i.strip().split()
+			for val in i[1:]:
+				val = val.strip(",").split(":")
+				if val[2] == "U":
+					val[2] = "-inf"
+				if val[3] == "U":
+					val[3] = "inf"
+				for j in range(2,4):
+					val[j] = float(val[j])
+				self.types.setdefault(i[0],[]).append({
+					"ds-name": val[0],
+					"ds-type": val[1],
+					"min": val[2],
+					"max": val[3]
+				})
+		
 	def write(self,vl, data=None):
-		map = {'interface':('rx','tx'),'load':('1min','5min','15min')}
-		keys=map.keys()
-		for l in range(len(vl.values)):
-			i=vl.values[l]
-			extra=None
-			if vl.plugin in keys:
-				extra = map[vl.plugin][l]
-			#print "%s: %s-%s (%s-%s): %f" % (vl.host,vl.plugin,vl.plugin_instance, vl.type,vl.type_instance, i)
+		for (i, val) in enumerate(vl.values):
+			if vl.type_instance != "":
+				type_instance = vl.type_instance
+			else:
+				try:
+					type_instance = self.types[vl.plugin][i]["ds-name"]
+				except KeyError:
+					type_instance = ""
+				finally:
+					if type_instance == "value":
+						type_instance = ""
 			try:
 				unit=str(self.typeinfo[vl.plugin]['unit'])
 			except:
 				unit="unknown"
-			name= '.'.join(filter(None,[vl.plugin,vl.plugin_instance,vl.type,vl.type_instance,extra]))
-			jsonPoint = '{"host": "%s", "unit": "%s", "val": "%s", "pointname": "%s", "time": "%s"}' % (vl.host, unit, i, name,vl.time)
-			#print jsonPoint
+			name= vl.plugin
+			if vl.plugin_instance != "":
+				name += "-" + vl.plugin_instance
+			name += "/" + vl.type
+			if type_instance != "":
+				name += "-" + type_instance
+			jsonPoint = '{"host": "%s", "unit": "%s", "val": "%s", "pointname": "%s", "time": "%s"}' % (vl.host, unit, val, name,vl.time)
 			self.q.put(jsonPoint)
 			
 
