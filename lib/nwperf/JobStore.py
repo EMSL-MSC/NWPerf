@@ -64,14 +64,23 @@ class JobStore(object):
 							totalPointCount += 1
 							if curPointCount >= numPoints:
 								try:
-									downSampled.setdefault(host,[]).append((startTime+totalPointCount*60,sum/(curPointCount-numHoles)))
+									downSampled.setdefault(host,[]).append( (
+										datetime.datetime.fromtimestamp(startTime+totalPointCount*60),
+										sum/(curPointCount-numHoles)
+									))
 								except ZeroDivisionError:
-									downSampled.setdefault(host,[]).append((startTime+totalPointCount*60,None))
+									downSampled.setdefault(host,[]).append( (
+										datetime.datetime.fromtimestamp(startTime+totalPointCount*60),
+										None
+									))
 								sum = 0
 								curPointCount = 0
 								numHoles = 0
 						if curPointCount > 0:
-							downSampled.setdefault(host,[]).append((startTime+totalPointCount*60000,sum/curPointCount))
+							downSampled.setdefault(host,[]).append( (
+								datetime.datetime.fromtimestamp(startTime+totalPointCount*60),
+								sum/curPointCount
+							))
 						self.graphs[metric] = downSampled
 			
 							
