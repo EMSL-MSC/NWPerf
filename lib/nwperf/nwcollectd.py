@@ -111,7 +111,7 @@ class NWCollectd:
 				type_instance = vl.type_instance
 			else:
 				try:
-					type_instance = self.types[vl.plugin][i]["ds-name"]
+					type_instance = self.types[vl.type][i]["ds-name"]
 				except KeyError:
 					type_instance = ""
 				finally:
