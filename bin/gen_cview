@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: latin-1 -*-
 #
 # Copyright 2013 Battelle Memorial Institute.
@@ -16,6 +16,7 @@ import sys
 import datetime
 import nwperf
 from operator import itemgetter
+import os
 try:
 	import parsedatetime.parsedatetime as pdt
 except:
@@ -124,10 +125,19 @@ def main():
 		tms.append(time.time())
 		for metric,info in db.iteritems():
 			data,desc,rate=info
-			open(d+"/"+metric+".data","w").write(data)
-			open(d+"/"+metric+".rate","w").write(rate)
-			open(d+"/"+metric+".desc","w").write(desc)
-			open(d+"/"+metric+".ytick","w").write(Yt)
+			mpath=os.path.join(d,metric)
+			mpath.replace("..","")
+			mdir=os.path.dirname(mpath)
+			try:
+				open(mpath+".data","w").write(data)
+			except IOError:
+				print "mkdir",mdir,mpath
+				os.makedirs(mdir)
+				open(mpath+".data","w").write(data)
+			finally:
+				open(mpath+".rate","w").write(rate)
+				open(mpath+".desc","w").write(desc)
+				open(mpath+".ytick","w").write(Yt)
 		open(d+"/index","w").write(index)
 		open(d+"/xtick","w").write(Xt)
 		
