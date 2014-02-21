@@ -52,11 +52,50 @@ class NWCollectd:
 		self.typesdb = "/usr/share/collectd/types.db"
 		self.types = {}
 		self.typeinfo = typeinfo
+		self.cachedValues = {}
 	
 		collectd.register_config(self.config)
 		collectd.register_init(self.init)
 		collectd.register_write(self.write)
 		collectd.register_shutdown(self.shutdown)
+
+	def convertValue(self, name, value, time, type):
+		# this code was ported directly from collectd. This should be exposed
+		# to python instead.
+				
+		try:
+			prevValue = self.cachedValues[name]
+		except KeyError:
+			self.cachedValues[name] = {"value": value, "time": time}
+			if type in ["counter", "derive", "absolute"]:
+				return None
+			else:
+				return value
+		else:
+			if type == "counter":
+				# why doesn't this use the type.db's min/max?
+				
+				# check if the counter has wrapped around
+				if value < prevValue["value"]:
+					if prevValue["value"] <= 4294967295:
+						wrap = 4294967295
+					else:
+						wrap = 18446744073709551615
+					diff = wrap - prevValue["value"] + value
+				else: # counter has NOT wrapped around
+					diff = value - prevValue["value"]
+
+				self.cachedValues[name] = {"value": value, "time": time}
+	  			return diff / (time - prevValue["time"])
+			elif type == "derive":
+				self.cachedValues[name] = {"value": value, "time": time}
+	  			return (value - prevValue["value"]) / (time - prevValue["time"])
+			elif type == "absolute":
+				self.cachedValues[name] = {"value": value, "time": time}
+				return value / (time - prevValue["time"])
+			else:
+				self.cachedValues[name] = {"value": value, "time": time}
+				return value 
 
 	def config(self,conf):
 		if conf.values[0]=="nwcollectd":
@@ -96,9 +135,9 @@ class NWCollectd:
 					val[2] = "-inf"
 				if val[3] == "U":
 					val[3] = "inf"
-				for j in range(2,4):
+				for j in range(2, 4):
 					val[j] = float(val[j])
-				self.types.setdefault(i[0],[]).append({
+				self.types.setdefault(i[0], []).append({
 					"ds-name": val[0],
 					"ds-type": val[1],
 					"min": val[2],
@@ -114,9 +153,6 @@ class NWCollectd:
 					type_instance = self.types[vl.type][i]["ds-name"]
 				except KeyError:
 					type_instance = ""
-				finally:
-					if type_instance == "value":
-						type_instance = ""
 			try:
 				unit=str(self.typeinfo[vl.plugin]['unit'])
 			except:
@@ -125,10 +161,19 @@ class NWCollectd:
 			if vl.plugin_instance != "":
 				name += "-" + vl.plugin_instance
 			name += "/" + vl.type
-			if type_instance != "":
+			if type_instance != "" and type_instance != "value":
 				name += "-" + type_instance
-			jsonPoint = '{"host": "%s", "unit": "%s", "val": "%s", "pointname": "%s", "time": "%s"}' % (vl.host, unit, val, name,vl.time)
-			self.q.put(jsonPoint)
+
+			convertedValue = self.convertValue(name, val, vl.time, type_instance)
+			if convertedValue != None:
+				jsonPoint = '{"host": "%s", "unit": "%s", "val": "%d", "pointname": "%s", "time": "%d"}' % (
+					vl.host,
+					unit,
+					convertedValue,
+					name,
+					vl.time
+				)
+				self.q.put(jsonPoint)
 			
 
 	def shutdown(self):
