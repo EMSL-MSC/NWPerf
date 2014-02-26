@@ -59,42 +59,52 @@ class NWCollectd:
 		collectd.register_write(self.write)
 		collectd.register_shutdown(self.shutdown)
 
-	def convertValue(self, name, value, time, type):
+	def convertValue(self, host, name, value, time, type):
 		# this code was ported directly from collectd. This should be exposed
 		# to python instead.
 				
+		key = "%s-%s" % (host, name)
 		try:
-			prevValue = self.cachedValues[name]
+			prevValue = self.cachedValues[key]
 		except KeyError:
-			self.cachedValues[name] = {"value": value, "time": time}
-			if type in ["counter", "derive", "absolute"]:
+			self.cachedValues[key] = {"value": value, "time": time}
+			if type in ["COUNTER", "DERIVE", "ABSOLUTE"]:
 				return None
 			else:
 				return value
 		else:
-			if type == "counter":
+			if type == "COUNTER":
 				# why doesn't this use the type.db's min/max?
 				
-				# check if the counter has wrapped around
+				# check if the COUNTER has wrapped around
 				if value < prevValue["value"]:
 					if prevValue["value"] <= 4294967295:
 						wrap = 4294967295
 					else:
 						wrap = 18446744073709551615
 					diff = wrap - prevValue["value"] + value
-				else: # counter has NOT wrapped around
+				else: # COUNTER has NOT wrapped around
 					diff = value - prevValue["value"]
 
-				self.cachedValues[name] = {"value": value, "time": time}
-	  			return diff / (time - prevValue["time"])
-			elif type == "derive":
-				self.cachedValues[name] = {"value": value, "time": time}
-	  			return (value - prevValue["value"]) / (time - prevValue["time"])
-			elif type == "absolute":
-				self.cachedValues[name] = {"value": value, "time": time}
-				return value / (time - prevValue["time"])
+				self.cachedValues[key] = {"value": value, "time": time}
+				try:
+	  				return diff / (time - prevValue["time"])
+				except ZeroDivisionError:
+					return None
+			elif type == "DERIVE":
+				self.cachedValues[key] = {"value": value, "time": time}
+				try:
+	  				return (value - prevValue["value"]) / (time - prevValue["time"])
+				except ZeroDivisionError:
+					return None
+			elif type == "ABSOLUTE":
+				self.cachedValues[key] = {"value": value, "time": time}
+				try:
+					return value / (time - prevValue["time"])
+				except ZeroDivisionError:
+					return None
 			else:
-				self.cachedValues[name] = {"value": value, "time": time}
+				self.cachedValues[key] = {"value": value, "time": time}
 				return value 
 
 	def config(self,conf):
@@ -154,6 +164,10 @@ class NWCollectd:
 				except KeyError:
 					type_instance = ""
 			try:
+				dstype = self.types[vl.type][i]["ds-type"]
+			except KeyError:
+				dstype = "GAUGE"
+			try:
 				unit=str(self.typeinfo[vl.plugin]['unit'])
 			except:
 				unit="unknown"
@@ -164,7 +178,7 @@ class NWCollectd:
 			if type_instance != "" and type_instance != "value":
 				name += "-" + type_instance
 
-			convertedValue = self.convertValue(name, val, vl.time, type_instance)
+			convertedValue = self.convertValue(vl.host, name, val, vl.time, dstype)
 			if convertedValue != None:
 				jsonPoint = '{"host": "%s", "unit": "%s", "val": "%d", "pointname": "%s", "time": "%d"}' % (
 					vl.host,
