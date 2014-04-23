@@ -9,7 +9,7 @@
 
 Summary: A set of utilities for gathering and storing performance information for clusters of computers
 Name: nwperf
-Version: 0.3
+Version: 0.4
 Release: 1
 Source0: %{name}-%{version}.tar.gz
 License: UNKNOWN

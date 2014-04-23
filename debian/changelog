@@ -1,3 +1,9 @@
+nwperf (0.4) precise; urgency=low
+
+  * Rewrite ceph storage tool
+
+ -- Evan Felix <e@pnnl.gov>  Wed, 23 April 2014 15:50:52 -0700
+
 nwperf (0.2) precise; urgency=low
 
   * Add collectd python module for exporting to NWperf.
