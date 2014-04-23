@@ -10,7 +10,6 @@ import optparse
 import os
 import atexit
 import sys
-import traceback
 import nnslib
 from operator import itemgetter
 import datetime
@@ -159,7 +158,6 @@ def parseServerOptions():
 	return _options,args
 
 if __name__ == "__main__":
-	import time
 	parser = defaultServerOptionParser()
 	parser.add_option( "-s", "--sleep", dest="sleeptime", type="int", help="The amount of seconds to sleep before exiting", default=5)
 	

@@ -6,20 +6,20 @@
 # the full text of that license is available in the COPYING file in the root of the repository
 
 import rados
-import sys
-import os
 import numpy
 import time
-import cgi
-import struct
-import subprocess
+from nwperf import Settings
+import re
+_collectdre = re.compile("^[^-]*-?.*/([^-]*)-.*$")
+
+_settings=Settings("/etc/nwperf.conf")
+_typedb=_settings["collectdtypes"]
 
 DAY=86400
 DAYMIN=DAY/60
 
 def prevmin(seconds):
 	return int(seconds/60.0)*60
-
 
 class RadosDataStore:
 	def __init__(self,cephconfig,cluster):
@@ -29,6 +29,14 @@ class RadosDataStore:
 		self.ioctx = self.r_cluster.open_ioctx(cluster+".points")
 		#host order should not change
 		self.hosts = self.ioctx.read("hostorder",65535).split("\n")[:-1]
+		self.index = self.getIndex().split("\n")
+
+	def __del__(self):
+		self.ioctx.close()
+		self.r_cluster.shutdown()
+		
+	def hostlist(self):
+		return self.hosts
 
 	def hostindex(self,o):
 		#silly hack to deal with pic and adding .local to everything
@@ -56,13 +64,57 @@ class RadosDataStore:
 		return "No Description in Ceph Database" 
 
 	def getRate(self,reftime,key):
-		daystr=time.strftime("%Y-%m-%d",time.gmtime(reftime-300)) # look backwards a little in case we are on the day boundary, and the object is not there yet.
-		try:
-			unit = self.ioctx.get_xattr(daystr+"/"+key,"unit")
-		except rados.ObjectNotFound,msg:
-			unit="Error Getting Rate Unit:"+daystr
+		cdm = _collectdre.match(key)
+		if cdm:
+			try:
+				unit=_typedb[cdm.group(1)]['unit']
+			except:
+				unit = "No unit in nwperf.conf:"+key
+		else:
+			try:
+				daystr=time.strftime("%Y-%m-%d",time.gmtime(reftime-300)) # look backwards a little in case we are on the day boundary, and the object is not there yet.
+				unit = self.ioctx.get_xattr(daystr+"/"+key,"unit")
+			except rados.ObjectNotFound:
+				unit="Error Getting Rate Unit:"+daystr+" "+key
+			except rados.NoData:
+				unit="Error Getting Rate Unit:"+daystr+" "+key
 		return unit
 		
+	def getDataRow(self,thetime,key):
+		"""return a one minute time slice from the cluster"""
+		hostcount = self.getHostCount(thetime)
+		daystr = time.strftime("%Y-%m-%d",time.gmtime(thetime))
+		themin=thetime/60
+
+		#print daystr+"/"+key,hostcount*4,(themin%1440)*hostcount*4
+		try:
+			mindata = self.ioctx.read(daystr+"/"+key,length=hostcount*4,offset=(themin%1440)*hostcount*4)
+			minarray = numpy.frombuffer(mindata,dtype='f4')
+		except rados.ObjectNotFound:
+			raise KeyError
+		
+		#print minarray
+		return minarray.copy()
+
+	def createObject(self,thetime,key):
+		"""add a new object for the specified date, setting unit, and adding to point index if needed"""
+		hostcount = self.getHostCount(thetime)
+		daystr = time.strftime("%Y-%m-%d",time.gmtime(thetime))
+		#print "createObject",thetime,key,daystr,daystr+"/"+key
+		daysize=1440*hostcount
+		self.ioctx.write_full(daystr+"/"+key,numpy.empty((daysize*4,)).tostring())
+		if not key in self.index:
+			print "adding to pointindex: ",key
+			self.ioctx.aio_append('pointindex',key+"\n")
+			self.index.append(key)
+
+	def putDataRow(self,thetime,key,data):
+		hostcount = self.getHostCount(thetime)
+		daystr = time.strftime("%Y-%m-%d",time.gmtime(thetime))
+		themin=thetime/60
+		#print "putDataRow",thetime,daystr,key
+		self.ioctx.aio_write(daystr+"/"+key,data.tostring(),(themin%1440)*hostcount*4)
+
 	def getDataSlice(self,start,end,key,hostlist=None):
 		"""return a dataslice from the cluster"""
 		#print "getDS:",start,end,key
@@ -70,7 +122,6 @@ class RadosDataStore:
 		end   = prevmin(end)
 		hostcount=max(self.getHostCount(start),self.getHostCount(end))
 		#print "hostcount",hostcount
-		daysize=hostcount*1440
 	 
 		sday = DAY * (start / DAY) 
 		eday = DAY * (end / DAY)

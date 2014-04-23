@@ -168,7 +168,7 @@ class NWCollectd:
 			except KeyError:
 				dstype = "GAUGE"
 			try:
-				unit=str(self.typeinfo[vl.plugin]['unit'])
+				unit=str(self.typeinfo[vl.type]['unit'])
 			except:
 				unit="unknown"
 			name= vl.plugin
