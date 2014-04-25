@@ -187,7 +187,7 @@ def connectZMQ(nsurl,points):
 		if url != 'ERROR':
 			z_sock_data.connect(url)
 
-	z_poll = zmq.core.Poller()
+	z_poll = zmq.Poller()
 	z_poll.register(z_sock_data,zmq.POLLIN)
 
 	return z_sock_data,z_poll
