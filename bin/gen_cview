@@ -19,6 +19,7 @@ from operator import itemgetter
 import os
 try:
 	import parsedatetime.parsedatetime as pdt
+	import parsedatetime.parsedatetime_consts as pdc
 except:
 	pdt=None
 
@@ -34,6 +35,7 @@ def main():
 	parser.add_option("-t","--time",dest="time",type="int",help="Time in seconds to gather for the output, default is all available data for jobs or 128",default=0)
 	parser.add_option("-j","--jobid",dest="jid",type="int",help="Slurm JobID to retrieve data on",default=0)
 	parser.add_option("-m","--metrics",dest="metrics",type="string",help="List of metrics to include",default="all")
+	parser.add_option("-a","--average",dest="average",type="int",help="Number of minutes to average over, should be a even divisor of -t argeument",default=1)
 	if pdt:
 		parser.add_option("-b","--begin",dest="begin",type="string",help="exact beginning time string as understood by the parsedatetime module",default=None)
 		parser.add_option("-e","--end",dest="end",type="string",help="exact end time string as understood by the parsedatetime module",default=None)
@@ -51,7 +53,7 @@ def main():
 	begin=0
 	end=0
 	if pdt and (options.begin or options.end ):
-		c = pdt.Constants()
+		c = pdc.Constants()
 		p = pdt.Calendar(c)
 		if options.begin:
 			res = p.parse(options.begin)
@@ -104,7 +106,7 @@ def main():
 				te = t-(options.time*60)
 			
 		tms=[time.time()]
-		Yticks = rds.getYTicks(te,t)
+		Yticks = rds.getYTicks(te,t)[::options.average]
 		Yt = struct.pack("32s"*len(Yticks),*Yticks)
 		if options.jid:
 			Xticks = hosts
@@ -117,6 +119,10 @@ def main():
 		d=options.outputdir
 		for metric in metrics:
 			data = rds.getDataSlice(te,t,metric,hosts)
+			if options.average > 1:
+				s=data.shape
+				print s
+				data = data.reshape([s[0],s[1]/options.average,options.average]).mean(2)
 			desc = rds.getDescription(metric)
 			rate = rds.getRate(t,metric)
 			db[metric]=(data,desc,rate)

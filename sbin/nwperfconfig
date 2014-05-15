@@ -46,7 +46,7 @@ def main():
 			val = ""
 		if options.evaluate:
 			for k,v in nwconfig:
-				val=val.replace("%("+k+")",v)
+				val=val.replace("%("+k+")",str(v))
 		print val
 	if options.add:
 		if options.value != None:
