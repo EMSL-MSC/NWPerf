@@ -22,9 +22,10 @@ def prevmin(seconds):
 	return int(seconds/60.0)*60
 
 class RadosDataStore:
-	def __init__(self,cephconfig,cluster):
+	def __init__(self,cephconfig,cluster,myid=None):
 		self.cluster = cluster
-		self.r_cluster = rados.Rados(conffile=cephconfig)
+		self.id = myid
+		self.r_cluster = rados.Rados(conffile=cephconfig,rados_id=myid)
 		self.r_cluster.connect()
 		self.ioctx = self.r_cluster.open_ioctx(cluster+".points")
 		#host order should not change

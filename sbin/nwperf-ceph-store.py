@@ -19,7 +19,7 @@ from nwperf import nwperfceph
 
 WORK_CHUNK_SIZE=10000
 PROCESS_POOL_COUNT=16
-MINUTES_TO_MANAGE=5
+MINUTES_TO_MANAGE=10
 FLUSH_INTERVAL=30
 
 TEST='aggregation-cpu-average/cpu-user'
@@ -81,10 +81,11 @@ class Metric:
 		
 
 class DataManager:
-	def __init__(self,zmqns,cephconfig,cluster):
+	def __init__(self,zmqns,cephconfig,cluster,cephid):
 		self.zmqns = zmqns
 		self.cephconfig = cephconfig
 		self.cluster = cluster
+		self.cephid = cephid
 		self.metrics = {}
 		self.initCeph()
 		self.createMetrics()
@@ -95,7 +96,7 @@ class DataManager:
 		self.z_sock,self.z_poll = connectZMQ(self.zmqns,(self.cluster+".allpoints",))
 
 	def initCeph(self):
-		self.rds=nwperfceph.RadosDataStore(self.cephconfig,self.cluster)
+		self.rds=nwperfceph.RadosDataStore(self.cephconfig,self.cluster,self.cephid)
 		self.hostlist = self.rds.hostlist()
 		data = self.rds.getIndex()
 		self.pointlist = data.split("\n")[:-1]
@@ -197,13 +198,14 @@ if __name__ == "__main__":
 	parser.add_option("-S","--name-server",dest="nameserver",type="string",help="The ZMQ URL of the nameserver to register with",default="tcp://nwperf-ns:6967")
 	parser.add_option("-c","--cluster",dest="cluster",type="string",help="The cluster prefix to publish as",default=None)
 	parser.add_option("-f","--ceph-config",dest="cephconfig",type="string",help="Location of the ceph config file",default="/etc/ceph/ceph.conf")
+	parser.add_option("-i","--ceph-id",dest="cephid",type="string",help="Ceph client id")
 
 	options,args = nwperf.parseServerOptions()
 
 	if not options.cluster:
 		parser.error("No Cluster Specified")
 	try:
-		dm=DataManager(options.nameserver,options.cephconfig,options.cluster) 
+		dm=DataManager(options.nameserver,options.cephconfig,options.cluster,options.cephid) 
 		dm.run()
 	except KeyboardInterrupt:
 		dm.terminate()
