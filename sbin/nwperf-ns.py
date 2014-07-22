@@ -150,7 +150,7 @@ def delpid():
 def main():
 	global mypidfile
 	parser = optparse.OptionParser()
-	parser.add_option(	"-l", "--logfile", dest="logfile", type="string", help="logfile to use. default: /var/log/moab-zmq.log", default="/var/log/nwperf.log")
+	parser.add_option(	"-l", "--logfile", dest="logfile", type="string", help="logfile to use. default: /var/log/nwperf-ns.log", default="/var/log/nwperf.log")
 	parser.add_option(	"-s", "--statefile", dest="statefile", type="string",
 				help="statefile to maintain service listings between sessions. default: /var/lib/nwperf-ns/nwperf-ns", default="/var/lib/nwperf-ns/nwperf-ns")
 	parser.add_option(	"-p", "--pidfile", dest="pidfile", type="string",
