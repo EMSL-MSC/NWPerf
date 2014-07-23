@@ -2,11 +2,10 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-import rados
 import numpy
 import time
 import struct
-import nwperfceph
+from nwperf import nwperfceph
 import nwperf
 import hostlist
 import web
@@ -20,7 +19,7 @@ def getRDS(cluster):
 		return clusters[cluster]
 	except:
 		#sys.stderr.write("Connect to rados\n")
-		rds = nwperfceph.RadosDataStore("/etc/ceph/ceph.conf",cluster)
+		rds = nwperfceph.RadosDataStore("/etc/ceph/ceph.conf",cluster,"nwperf")
 		clusters[cluster]=rds
 		return rds
 
