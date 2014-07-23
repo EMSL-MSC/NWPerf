@@ -125,6 +125,7 @@ class Broken:
 urls = (
 	'/([^/]*)/job/(\d+)/(.*)','JobCView',
 	'/([^/]*)/(.*)','ClusterCView',
+	'/cluster/([^/]*)/(.*)','ClusterCView',
 	'/(.*)','Broken',
 	)
 app = web.application(urls,globals(), autoreload=False)
