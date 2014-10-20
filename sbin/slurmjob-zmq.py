@@ -143,14 +143,22 @@ class JobStatus:
 		
 
 
-def main(nsurl,cname,myip,statefile):
+def main(nsurl,cname,myip,statefile,infoport=None,notifyport=None):
 	global running
 	timeout=600
 	ctx = zmq.Context()
+
 	sock = ctx.socket(zmq.REP)
-	port = sock.bind_to_random_port("tcp://%s"%(myip))
+        if infoport:
+            port = sock.bind("tcp://%s:%d"%(myip,infoport))
+        else:
+	    port = sock.bind_to_random_port("tcp://%s"%(myip))
 	notifysock = ctx.socket(zmq.PUB)
-	notifyport = notifysock.bind_to_random_port("tcp://%s"%(myip))
+
+        if notifyport:
+	    notifyport = notifysock.bind("tcp://%s:%d"%(myip,notifyport))
+        else:
+	    notifyport = notifysock.bind_to_random_port("tcp://%s"%(myip))
 	
 	ns = nnslib.NameServer(nsurl)
 	try:
@@ -211,10 +219,12 @@ if __name__ == "__main__":
 	parser.add_option("-s","--state-file", help="File to store the current slurm state", dest="statefile", default="/tmp/slurmjobs.state")
 	parser.add_option("-c","--cluster",dest="cluster",type="string",help="The cluster prefix to publish as",default=None)
 	parser.add_option("-i", "--ip", dest="ip", type="string", help="ip address to bind to. default: %s" % myip, default=myip)
+	parser.add_option("-n", "--notifyport", dest="nport", type="int", help="port to bind to for notifications. default: random", default=None)
+	parser.add_option("-f", "--infoport", dest="fport", type="int", help="port to bind to for information. default: random", default=None)
 
 	options,args = nwperf.parseServerOptions()
 
 	if not options.cluster:
 		parser.error("No Cluster Specified")
 
-	main(options.nameserver,options.cluster,options.ip,options.statefile)
+	main(options.nameserver,options.cluster,options.ip,options.statefile,fport,nport)
