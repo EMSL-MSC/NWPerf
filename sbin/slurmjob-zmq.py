@@ -219,7 +219,7 @@ if __name__ == "__main__":
 	parser.add_option("-s","--state-file", help="File to store the current slurm state", dest="statefile", default="/tmp/slurmjobs.state")
 	parser.add_option("-c","--cluster",dest="cluster",type="string",help="The cluster prefix to publish as",default=None)
 	parser.add_option("-i", "--ip", dest="ip", type="string", help="ip address to bind to. default: %s" % myip, default=myip)
-	parser.add_option("-n", "--notifyport", dest="nport", type="int", help="port to bind to for notifications. default: random", default=None)
+	parser.add_option("-o", "--notifyport", dest="nport", type="int", help="port to bind to for notifications. default: random", default=None)
 	parser.add_option("-f", "--infoport", dest="fport", type="int", help="port to bind to for information. default: random", default=None)
 
 	options,args = nwperf.parseServerOptions()
