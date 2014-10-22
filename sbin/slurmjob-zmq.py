@@ -227,4 +227,4 @@ if __name__ == "__main__":
 	if not options.cluster:
 		parser.error("No Cluster Specified")
 
-	main(options.nameserver,options.cluster,options.ip,options.statefile,fport,nport)
+	main(options.nameserver,options.cluster,options.ip,options.statefile,options.fport,options.nport)
