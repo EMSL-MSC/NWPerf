@@ -143,33 +143,38 @@ class JobStatus:
 		
 
 
-def main(nsurl,cname,myip,statefile,infoport=None,notifyport=None):
+def main(nsurl,cname,myip,statefile,infoport=None,nport=None,eip=None):
 	global running
 	timeout=600
+	if eip==None:
+            eip=myip
+        print cname,myip,statefile,infoport,nport,eip	
 	ctx = zmq.Context()
 
 	sock = ctx.socket(zmq.REP)
         if infoport:
-            port = sock.bind("tcp://%s:%d"%(myip,infoport))
+            sock.bind("tcp://%s:%d"%(myip,infoport))
+            port=infoport
         else:
 	    port = sock.bind_to_random_port("tcp://%s"%(myip))
-	notifysock = ctx.socket(zmq.PUB)
 
-        if notifyport:
-	    notifyport = notifysock.bind("tcp://%s:%d"%(myip,notifyport))
+	notifysock = ctx.socket(zmq.PUB)
+        if nport:
+	    notifysock.bind("tcp://%s:%d"%(myip,nport))
+	    notifyport = nport
         else:
 	    notifyport = notifysock.bind_to_random_port("tcp://%s"%(myip))
-	
+        print port,notifyport	
 	ns = nnslib.NameServer(nsurl)
 	try:
 		dt = ns.getDataType("JobDictionary")
 	except nnslib.NameServerException:
 		ns.addDataType("JobDictionary","JSON",','.join(notifyfields),"")
 
-	ns.publishService(cname+".slurm.jobinfo","tcp://%s:%s"%(myip,port),600,"req/rep","JobDictionary")
-	ns.publishService(cname+".slurm.jobnotify","tcp://%s:%s"%(myip,notifyport),600,"pub/sub","JobDictionary")
+	ns.publishService(cname+".slurm.jobinfo","tcp://%s:%s"%(eip,port),600,"req/rep","JobDictionary")
+	ns.publishService(cname+".slurm.jobnotify","tcp://%s:%s"%(eip,notifyport),600,"pub/sub","JobDictionary")
 
-	z_poll = zmq.core.Poller()
+	z_poll = zmq.Poller()
 	z_poll.register(sock,zmq.POLLIN)
 	z_poll.register(notifysock,zmq.POLLIN)
 
@@ -219,6 +224,7 @@ if __name__ == "__main__":
 	parser.add_option("-s","--state-file", help="File to store the current slurm state", dest="statefile", default="/tmp/slurmjobs.state")
 	parser.add_option("-c","--cluster",dest="cluster",type="string",help="The cluster prefix to publish as",default=None)
 	parser.add_option("-i", "--ip", dest="ip", type="string", help="ip address to bind to. default: %s" % myip, default=myip)
+	parser.add_option("-e", "--eip", dest="eip", type="string", help="external ip address to publish. if Not set will default to the same as -i option", default=None)
 	parser.add_option("-o", "--notifyport", dest="nport", type="int", help="port to bind to for notifications. default: random", default=None)
 	parser.add_option("-f", "--infoport", dest="fport", type="int", help="port to bind to for information. default: random", default=None)
 
@@ -227,4 +233,4 @@ if __name__ == "__main__":
 	if not options.cluster:
 		parser.error("No Cluster Specified")
 
-	main(options.nameserver,options.cluster,options.ip,options.statefile,options.fport,options.nport)
+	main(options.nameserver,options.cluster,options.ip,options.statefile,options.fport,options.nport,options.eip)
