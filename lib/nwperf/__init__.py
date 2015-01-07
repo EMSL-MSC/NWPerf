@@ -13,6 +13,7 @@ import sys
 import nnslib
 from operator import itemgetter
 import datetime
+import calendar
 
 _parser = None
 _options = None
@@ -21,7 +22,7 @@ from Settings import *
 
 def isoToEpoch(iso):
     t = datetime.datetime.strptime(iso,'%Y-%m-%dT%H:%M:%S')
-    return int(time.mktime(t.timetuple()))
+    return int(calendar.timegm(t.timetuple()))
 
 def timeToSeconds(hms):
 	if hms[1]=='-': #hack to pull off days, double digit days hose this.. proper parsing would be better
