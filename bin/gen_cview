@@ -19,7 +19,7 @@ from operator import itemgetter
 import os
 try:
 	import parsedatetime.parsedatetime as pdt
-	import parsedatetime.parsedatetime_consts as pdc
+#	import parsedatetime.parsedatetime as pdc
 except:
 	pdt=None
 
@@ -36,6 +36,7 @@ def main():
 	parser.add_option("-j","--jobid",dest="jid",type="int",help="Slurm JobID to retrieve data on",default=0)
 	parser.add_option("-m","--metrics",dest="metrics",type="string",help="List of metrics to include",default="all")
 	parser.add_option("-a","--average",dest="average",type="int",help="Number of minutes to average over, should be a even divisor of -t argeument",default=1)
+        parser.add_option("-i","--ceph-id",dest="cephid",type="string",help="Ceph client id")
 	if pdt:
 		parser.add_option("-b","--begin",dest="begin",type="string",help="exact beginning time string as understood by the parsedatetime module",default=None)
 		parser.add_option("-e","--end",dest="end",type="string",help="exact end time string as understood by the parsedatetime module",default=None)
@@ -53,7 +54,7 @@ def main():
 	begin=0
 	end=0
 	if pdt and (options.begin or options.end ):
-		c = pdc.Constants()
+		c = pdt.Constants("en")
 		p = pdt.Calendar(c)
 		if options.begin:
 			res = p.parse(options.begin)
@@ -69,7 +70,7 @@ def main():
 			end = time.mktime(res[0])
 	#print begin,end
 
-	rds = nwperfceph.RadosDataStore(options.cephconfig,options.cluster)
+	rds = nwperfceph.RadosDataStore(options.cephconfig,options.cluster,options.cephid)
 
 	if options.jid:	
 		job = nwperf.getJobInfo(options.jid,options.cluster,options.nameserver)
