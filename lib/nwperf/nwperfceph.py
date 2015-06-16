@@ -31,6 +31,8 @@ class RadosDataStore:
 		#host order should not change
 		self.hosts = self.ioctx.read("hostorder",65535).split("\n")[:-1]
 		self.index = self.getIndex().split("\n")
+                self.hostcachetime=0
+                self.hostcount=-1
 
 	def __del__(self):
 		self.ioctx.close()
@@ -188,18 +190,21 @@ class RadosDataStore:
 
 	def getHostCount(self,t):
 		#print "getHostCount("+str(t)+")"
-		num=0
-		hosl=self.ioctx.read("hostorder.sizelog")
-		hostsizes=hosl.split("\n")
-		for line in hostsizes:
-			if len(line)<1 or line[0]=='#':
-				continue
-			date,count=line.split()
-			d=int(date)
-			c=int(count)
-			if d<=t:
-				num=c
-		return num
+                if abs(self.hostcachetime-t) > 60*60:
+                    num=0
+                    hosl=self.ioctx.read("hostorder.sizelog")
+                    hostsizes=hosl.split("\n")
+                    for line in hostsizes:
+                            if len(line)<1 or line[0]=='#':
+                                    continue
+                            date,count=line.split()
+                            d=int(date)
+                            c=int(count)
+                            if d<=t:
+                                    num=c
+                    self.hostcount=num
+                    self.hostcachetime=t
+		return self.hostcount
 			
 		
 if __name__ == "__main__":
