@@ -121,9 +121,12 @@ class JobStatus:
 		#fixme: expire old completed here
 		for jid in self.completed.keys():
 			job = self.completed[jid]
-			if isoToEpoch(job["Start"])+timeToSeconds(job["Elapsed"]) < self.lastupdate-86400:
-				print "Expiring Job:",job["JobID"]
+                        try:
+			    if isoToEpoch(job["Start"])+timeToSeconds(job["Elapsed"]) < self.lastupdate-86400:
+			    	print "Expiring Job:",job["JobID"]
 				del(self.completed[jid])
+                        except KeyError:
+                            print "Broken Job:",job 
 
 		self.saveState()
 	
