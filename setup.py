@@ -56,7 +56,7 @@ class local_build_scripts(build_scripts):
 
 
 setup(	name = "nwperf",
-		version = "0.5.1",
+		version = "0.5.2",
 		description = "A set of utilities for gathering and stroing performance information for clusters of computers",
 		author = "EMSL MSC team",
 		url = "https://github.com/EMSL-MSC/NWPerf/",

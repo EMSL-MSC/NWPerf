@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import os
+import os.path
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import numpy
@@ -12,7 +13,17 @@ import web
 import csv
 import StringIO
 import traceback
+import mimetypes
+import math
+import simplejson as json
+from calendar import timegm
 clusters = {}
+staticPath="web/webgl"
+
+def cors():
+	web.header('Access-Control-Allow-Headers','accept, content-type')
+	web.header('Access-Control-Allow-Methods','POST')
+	web.header('Access-Control-Allow-Origin','*')
 
 def getRDS(cluster):
 	try:
@@ -30,7 +41,7 @@ class ClusterCView:
 
 		msg="Request did not match"
 		hosts=[]
-		try: 
+		try:
 			if request == "index":
 				return getRDS(cluster).getIndex()
 			if request.endswith('.desc'):
@@ -68,12 +79,12 @@ class JobCView:
 		request=str(request)
 		msg="Request did not match"
 		hosts=[]
-		try: 
+		try:
 			if request == "index":
 				return getRDS(cluster).getIndex()
 			if request.endswith('.desc'):
 				return getRDS(cluster).getDescription(request[:-5])
-		
+
 			t=int(time.time())
 			if request.endswith('.rate'):
 				return getRDS(cluster).getRate(t,request[:-5])
@@ -96,13 +107,13 @@ class JobCView:
 				for i in hosts:
 					data+=struct.pack("32s",i)
 				return data
-			
+
 			if request.endswith(".csv"):
 				sio = StringIO.StringIO()
 				c = csv.writer(sio)
-				
+
 				c.writerow(["Host"]+getRDS(cluster).getYTicks(s,e))
-				points = getRDS(cluster).getDataSlice(s,e,request[:-4],hosts)	
+				points = getRDS(cluster).getDataSlice(s,e,request[:-4],hosts)
 				for x in xrange(0,points.shape[0]):
 					c.writerow([hosts[x]]+[str(i) for i in points[x]])
 
@@ -114,27 +125,104 @@ class JobCView:
 
 		return [msg,request,job,jid,cluster,hosts]
 
+class StaticFile:
+	def GET(self,arg):
+		path = os.path.normpath(staticPath+os.sep+arg)
+		if path.startswith(staticPath) and os.path.exists(path):
+			f = open(path, 'rb')
+			data = f.read()
+			f.close()
+			return data
+		else:
+			return "This is Broken:",arg,path,path.startswith(staticPath),os.path.exists(path)
 class Broken:
 	def GET(self,arg):
-		return ["This is Broken:"+arg]
+                print "Broken"
+		return web.notfound("This is Broken:"+arg)
 
+class Test:
+	def GET(self,arg):
+		try:
+			rds = getRDS(arg)
+		except IndexError,msg:
+                        print "error:",arg,"not found:",msg
+			raise web.notfound()
+		cors()
+		return "Test of The Service:"+arg
 
+class Search:
+	def OPTIONS(self,arg):
+		cors()
+		return "Search Options Called"
+	def POST(self,arg):
+		cors()
+		print web.data()
+		rds = getRDS(arg)
+		index=rds.getIndex().split('\n')
+		return json.dumps(index)
 
+class Query:
+	def OPTIONS(self,arg):
+		cors()
+		return "Query Options Called"
+	def POST(self,arg):
+		cors()
+		print web.data()
+		params = json.loads(web.data())
+		rds = getRDS(arg)
+		maxlength = params['maxDataPoints']
 
+		#figure out time ranges.
+		start = timegm(time.strptime(params['range']['from'], "%Y-%m-%dT%H:%M:%S.%fZ"))
+		end = timegm(time.strptime(params['range']['to'], "%Y-%m-%dT%H:%M:%S.%fZ"))
+		s = nwperfceph.prevmin(start)/60
+		e = nwperfceph.prevmin(end)/60
+		print s,e
+
+		series = []
+		for target in params['targets']:
+			#print "Target:",target
+			data = rds.getDataSlice(start,end,target['target'])
+			length = len(data[0])
+
+			sumlength = length/maxlength
+			leftover = length%maxlength
+			interval = 600000*sumlength
+			#print "len",length,sumlength
+			for row in rds.getXTicks():  #only do 5 for now
+				tgt = { 'target':row+":"+target['target'] }
+				index = rds.hostindex(row)
+				line = data[index]
+
+				line = numpy.mean(line[:-leftover].reshape(-1,sumlength),axis=1)
+
+				dp = zip(line.tolist(),range(e*60000,s*60000,-interval))
+
+				tgt['datapoints']=dp
+				series.append(tgt)
+		return json.dumps(series)
 
 urls = (
 	'/cluster/([^/]*)/(.*)','ClusterCView',
+	'/static/(.*)','StaticFile',
+	'/([^/]*)/search','Search',
+	'/([^/]*)/query','Query',
+	'/([^/]*)/?','Test',
 	'/([^/]*)/job/(\d+)/(.*)','JobCView',
 	'/([^/]*)/(.*)','ClusterCView',
 	'/(.*)','Broken',
 	)
+mimetypes.init()
 app = web.application(urls,globals(), autoreload=False)
 application = app.wsgifunc()
 
 
-if __name__ == "__main__":
-	from wsgiref.simple_server import make_server
 
-	httpd = make_server('', 8042, application)
-	print "Serving on port 8042..."
+if __name__ == "__main__":
+	from wsgiref.simple_server import make_server, WSGIServer
+	from SocketServer import ThreadingMixIn
+	class ThreadingWSGIServer(ThreadingMixIn, WSGIServer):
+	    pass
+	httpd = make_server('', 4050, application, ThreadingWSGIServer)
+	print "Serving on port 4050..."
 	httpd.serve_forever()
