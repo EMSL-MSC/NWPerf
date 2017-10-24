@@ -105,7 +105,7 @@ class RadosDataStore:
 		daystr = time.strftime("%Y-%m-%d",time.gmtime(thetime))
 		#print "createObject",thetime,key,daystr,daystr+"/"+key
 		daysize=1440*hostcount
-		self.ioctx.write_full(daystr+"/"+key,numpy.empty((daysize*4,)).tostring())
+		self.ioctx.write_full(daystr+"/"+key,numpy.zeros((daysize*4,)).tostring())
 		if not key in self.index:
 			print "adding to pointindex: ",key
 			self.ioctx.aio_append('pointindex',key+"\n")
