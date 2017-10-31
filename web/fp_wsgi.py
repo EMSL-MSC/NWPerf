@@ -184,18 +184,24 @@ class Query:
 			#print "Target:",target
 			data = rds.getDataSlice(start,end,target['target'])
 			length = len(data[0])
+                        print length
 
-			sumlength = length/maxlength
-			leftover = length%maxlength
-			interval = 600000*sumlength
-			#print "len",length,sumlength
-			for row in rds.getXTicks():  #only do 5 for now
+			if length > maxlength:
+				sumlength = length/maxlength
+				leftover = -(length%maxlength)
+			else:
+				sumlength = 1
+				leftover = length
+			interval = 60000*sumlength
+			print "len",length,sumlength,leftover
+			for row in rds.getXTicks():  
 				tgt = { 'target':row+":"+target['target'] }
 				index = rds.hostindex(row)
 				line = data[index]
 
-				line = numpy.mean(line[:-leftover].reshape(-1,sumlength),axis=1)
-
+				line = numpy.mean(line[:leftover].reshape(-1,sumlength),axis=1)
+                                if index == 0: print "newlen",len(line)
+                                if index == 0: print "DERP",e*60000,s*60000,-interval
 				dp = zip(line.tolist(),range(e*60000,s*60000,-interval))
 
 				tgt['datapoints']=dp
@@ -207,7 +213,7 @@ urls = (
 	'/static/(.*)','StaticFile',
 	'/([^/]*)/search','Search',
 	'/([^/]*)/query','Query',
-	'/([^/]*)/?','Test',
+	#'/([^/]*)/?','Test',
 	'/([^/]*)/job/(\d+)/(.*)','JobCView',
 	'/([^/]*)/(.*)','ClusterCView',
 	'/(.*)','Broken',
