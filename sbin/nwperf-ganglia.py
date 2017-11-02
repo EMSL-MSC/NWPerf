@@ -114,8 +114,8 @@ class GangliaParserProcess(multiprocessing.Process):
 		self.queue = queue
 		super(GangliaParserProcess, self).__init__()
 		self.daemon = True
-		
-	
+
+
 	def run(self):
 		parser = xml.sax.make_parser()
 		gparse = GangliaParser()
@@ -158,14 +158,14 @@ def daemonize():
 	except OSError, e:
 		raise Exception, "%s [%d]" % (e.strerror, e.errno)
 
-	if (pid == 0): 
+	if (pid == 0):
 		os.setsid()
 		try:
 			pid = os.fork()
 		except OSError, e:
 			raise Exception, "%s [%d]" % (e.strerror, e.errno)
 
-		if (pid == 0): 
+		if (pid == 0):
 			os.chdir("/")
 			#os.umask(0)
 		else:
@@ -194,7 +194,11 @@ def createLogfile(filename):
 		os.dup2(fdlogfile, 2)
 
 def main():
-	myip = socket.gethostbyname(socket.gethostname())
+	try:
+		myip = socket.gethostbyname(socket.gethostname())
+	except socket.gaierror,msg:
+		print "error determining IP:",msg
+		myip= "127.0.0.1"
 	optparser = optparse.OptionParser()
 	optparser.add_option("-n", "--nodaemon", dest="nodaemon", action="store_true", help="if true, will not daemonize.  this also disables the logfile.  default: False", default=False)
 	optparser.add_option("-p", "--pidfile", dest="pidfile", type="string", help="pidfile to use. default: /var/run/ganglia-zmq.pid", default="/var/run/ganglia-zmq.pid")
@@ -228,7 +232,7 @@ def main():
 		sys.exit()
 	atexit.register(joinProcesses)
 	signal.signal(signal.SIGTERM, joinProcesses)
-	
+
 	while 1:
 		try:
 			points = q.get(True, 1)
