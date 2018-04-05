@@ -122,8 +122,8 @@ def main():
 			data = rds.getDataSlice(te,t,metric,hosts)
 			if options.average > 1:
 				s=data.shape
-				print s
-				data = data.reshape([s[0],s[1]/options.average,options.average]).mean(2)
+				print s,metric
+				data = data.reshape([s[0],s[1]/options.average,options.average]).mean(2).clip(0,None)
 			desc = rds.getDescription(metric)
 			rate = rds.getRate(t,metric)
 			db[metric]=(data,desc,rate)
