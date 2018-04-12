@@ -1,0 +1,162 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
+#
+# Copyright 2013 Battelle Memorial Institute.
+# This software is licensed under the Battelle “BSD-style” open source license;
+# the full text of that license is available in the COPYING file in the root of the repository
+
+import optparse
+from nwperf import nwperfceph
+import struct
+import time
+from nwperf import nnslib
+import zmq
+import hostlist
+import sys
+import datetime
+import nwperf
+from operator import itemgetter
+import os
+import csv
+import numpy as np
+try:
+	import parsedatetime.parsedatetime as pdt
+#	import parsedatetime.parsedatetime as pdc
+except:
+	pdt=None
+
+
+def main():
+	parser = optparse.OptionParser()
+	parser.add_option("-s","--name-server",dest="nameserver",type="string",help="The ZMQ URL of the nameserver to register with" ,default="tcp://nwperf-ns:6967")
+	parser.add_option("-c","--cluster",dest="cluster",type="string",help="The cluster prefix to publish as",default=None)
+	parser.add_option("-d","--debug",action="store_true",dest="debug",help="Show Debug information",default=False)
+	parser.add_option("-o","--outputdir",dest="outputdir",help="Where to dump the output filrs",default=None)
+	parser.add_option("-f","--ceph-config",dest="cephconfig",type="string",help="Location of the ceph config file",default="/etc/ceph/ceph.conf")
+	parser.add_option("-r","--repeat",dest="repeatsecs",type="int",help="gather data in a loop, with a specified time between data pulls",default=0)
+	parser.add_option("-t","--time",dest="time",type="int",help="Time in seconds to gather for the output, default is all available data for jobs or 128",default=0)
+	parser.add_option("-j","--jobid",dest="jid",type="int",help="Slurm JobID to retrieve data on",default=0)
+	parser.add_option("-m","--metrics",dest="metrics",type="string",help="List of metrics to include",default="all")
+	parser.add_option("-a","--average",dest="average",type="int",help="Number of minutes to average over, should be a even divisor of -t argeument",default=1)
+        parser.add_option("-i","--ceph-id",dest="cephid",type="string",help="Ceph client id")
+	if pdt:
+		parser.add_option("-b","--begin",dest="begin",type="string",help="exact beginning time string as understood by the parsedatetime module",default=None)
+		parser.add_option("-e","--end",dest="end",type="string",help="exact end time string as understood by the parsedatetime module",default=None)
+
+	options,args = parser.parse_args()
+	if not options.cluster:
+		parser.error("No Cluster Specified")
+	if not options.outputdir:
+		parser.error("No Output Directory Specified")
+	if options.time==0 and options.jid == 0:
+		options.time=128
+	if options.time < 1 and options.jid == 0:
+		parser.error("You must gather a positive amount of data")
+
+	begin=0
+	end=0
+	if pdt and (options.begin or options.end ):
+		c = pdt.Constants("en")
+		p = pdt.Calendar(c)
+		if options.begin:
+			res = p.parse(options.begin)
+			if res<1:
+				print "Error parsing Begin Time: ",options.begin
+				sys.exit(1)
+			begin = time.mktime(res[0])
+		if options.end:
+			res = p.parse(options.end)
+			if res<1:
+				print "Error parsing End Time: ",options.end
+				sys.exit(1)
+			end = time.mktime(res[0])
+	#print begin,end
+
+	rds = nwperfceph.RadosDataStore(options.cephconfig,options.cluster,options.cephid)
+
+	if options.jid:	
+		job = nwperf.getJobInfo(options.jid,options.cluster,options.nameserver)
+		print job
+		start,end = nwperf.getJobTimes(job,options.time)
+		if not start and not end:
+			print "Error getting times, terminating"
+			sys.exit(1)
+		hosts = hostlist.expand_hostlist(job['NodeList'])
+		print start,end
+	else:
+		hosts=None
+	
+	running=True
+	while running:
+		index = rds.getIndex()
+		if options.metrics=="all":
+			metrics=index.split("\n")[:-1]
+		else:
+			metrics=options.metrics.split(",")
+			index="\n".join(metrics)
+		loopstart=time.time()
+		
+		if options.jid:
+			te,t=start,end
+		else:
+			if end:
+				t = int(end)
+			else:
+				t=int(time.time())
+			if begin:
+				te = int(begin)
+			else:
+				te = t-(options.time*60)
+			
+		tms=[time.time()]
+		Yticks = rds.getYTicks(te,t)[::options.average]
+		if options.jid:
+			Xticks = hosts
+		else:
+			Xticks = rds.getXTicks()
+		#download all metrics first, then dump to disk
+		tms.append(time.time())
+		db = {}
+		d=options.outputdir
+		for metric in metrics:
+			data = rds.getDataSlice(te,t,metric,hosts)
+			if options.average > 1:
+				s=data.shape
+				print s,metric
+				data = data.reshape([s[0],s[1]/options.average,options.average]).mean(2).clip(0,None)
+			desc = rds.getDescription(metric)
+			rate = rds.getRate(t,metric)
+			db[metric]=(data,desc,rate)
+
+
+		tms.append(time.time())
+		for metric,info in db.iteritems():
+			data,desc,rate=info
+			mpath=os.path.join(d,metric)
+			mpath.replace("..","")
+			mdir=os.path.dirname(mpath)
+			try:
+				csvfile = open(mpath+".csv","w")
+			except IOError:
+				print "mkdir",mdir,mpath
+				os.makedirs(mdir)
+				csvfile = open(mpath+".csv","w")
+			finally:
+				open(mpath+".rate","w").write(rate)
+				open(mpath+".desc","w").write(desc)
+			w = csv.writer(csvfile)
+			w.writerow(['Time']+Xticks)
+			for i in range(len(Yticks)):
+				#print [Yticks[i]]+data[:,i].tolist()
+				w.writerow([Yticks[i]]+data[:,i].tolist())
+		
+		tms.append(time.time())
+		print [i-tms[0] for i in tms]
+		if options.repeatsecs==0:
+			break
+		sleepyness = max(options.repeatsecs-(time.time()-loopstart),10)
+		print options.repeatsecs,time.time(),t,sleepyness
+		time.sleep(sleepyness)
+
+if __name__ == "__main__":
+	main()
