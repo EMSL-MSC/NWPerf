@@ -46,7 +46,7 @@ class GangliaParser(xml.sax.handler.ContentHandler):
 					"unit":str(attrs["UNITS"])}
 			self.points.append(point)
 		elif name == "HOST":
-			self.host = attrs["NAME"]
+			self.host = attrs["NAME"].split('.')[0]
 		elif name == "CLUSTER":
 			self.cluster = attrs["NAME"]
 			self.time = attrs["LOCALTIME"]
