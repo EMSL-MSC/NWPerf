@@ -118,7 +118,7 @@ class Jobs(object):
 			fields = {	"Start Date": "time_start", "End Date": "time_end", "Submit Date": "time_submit",
 					"Node Count": "nodes_alloc", "User": "user",
 					"Job Id": "id_job", "Account": "account"}
-			where = ["%s_job_table.id_assoc = %s_assoc_table.id_assoc" % ((SlurmClusterName,)*2), "time_end != 0" ]
+			where = ["%s_job_table.id_assoc = %s_assoc_table.id_assoc" % ((settings["SlurmClusterName"],)*2), "time_end != 0" ]
 			runonnodes = []
 			for queryItem in query:
 				try:
