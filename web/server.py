@@ -1,27 +1,51 @@
-# Copyright 2013 Battelle Memorial Institute.
-# This software is licensed under the Battelle "BSD-style" open source license;
-# the full text of that license is available in the COPYING file in the root of the repository
-CONFIG="/etc/nwperf.conf"
 
 import os
 import datetime
+import tarfile
 import web
-import pymongo
-import bson
+import urllib
+import urllib2
 try:
 	import simplejson as json
 except:
 	import json
-import calendar
+import hostlist
+
+
+
+class Settings(object):
+    settings = False
+    ftime = False
+    def __init__(self, config):
+        self.configfile = config
+        self.load_config()
+
+    def load_config(self):
+        if self.settings == False:
+            self.settings = json.load(open(self.configfile, "r"))
+            self.ftime = os.path.getmtime(self.configfile)
+
+    def __getitem__(self, key):
+        if self.ftime != os.path.getmtime(self.configfile):
+            self.load_config()
+
+        return [i for i in self.settings if i["id"] == key][0]["value"]
+
+    def __setitem__(self, key, item):
+        item = [i for i in self.settings if i["id"] == key][0]["value"] = item
+        json.dump(self.settings, open(self.configfile, "w"), indent=4)
+        self.ftime = os.path.getmtime(self.configfile)
+
+settings = Settings(CONFIG)
+
+db = web.database(dbn=settings["dbtype"], host=settings["dbhost"], 
+                  db=settings["dbname"], user=settings["dbuser"], passwd=settings["dbpass"])
 
 def is_admin(user = None):
 	if user == None:
 		user = get_user()
-	if settings["dbFormat"] == "NWPerf":
-		res = db.select("usergroups", where="nwperf_user = $user and nwperf_group = 'admin'", vars={"user": user})
-		return len(res) > 0
-	else:
-		return user in settings["admins"].split(",")
+	res = db.select("user_table", where="name = $user and admin_level > '1'", vars={"user": user})
+	return len(res) > 0
 
 def get_user():
 	try:
@@ -30,159 +54,50 @@ def get_user():
 	except:
 		return web.ctx.env["REMOTE_USER"]
 
-class Settings(object):
-	settings = False
-	ftime = False
-	def __init__(self, config):
-		self.configfile = config
-		self.load_config()
-
-	def load_config(self):
-		if self.settings == False:
-			self.settings = json.load(open(self.configfile, "r"))
-			self.ftime = os.path.getmtime(self.configfile)
-
-	def __getitem__(self, key):
-		if key == "dbFormat":
-			return "mongo"
-		if self.ftime != os.path.getmtime(self.configfile):
-			self.load_config()
-
-		return [i for i in self.settings if i["id"] == key][0]["value"]
-
-	def __setitem__(self, key, item):
-		item = [i for i in self.settings if i["id"] == key][0]["value"] = item
-		json.dump(self.settings, open(self.configfile, "w"), indent=4)
-		self.ftime = os.path.getmtime(self.configfile)
-
-class SettingsWeb(Settings):
-	def __init__(self):
-		super(SettingsWeb, self).__init__(CONFIG)
-		
-	def GET(self, setting):
-		tag = web.input(tag=0).tag
-		if setting == "":
-			return json.dumps({
-					"settings": [i for i in self.settings if i["id"] != "metrics"],
-					"tag": tag
-				}
-				,separators=(',', ':'))
-		else:
-			try:
-				return json.dumps({
-						"setting": [i for i in self.settings if i["id"] == setting][0],
-						"tag": tag
-					}
-					,separators=(',', ':'))
-			except IndexError:
-				return web.NotFound()
-
-	def PUT(self, setting):
-		if is_admin():
-			try:
-				if setting != "metrics":
-					self[setting] = web.input()["value"]
-					if setting in ("dbtype", "dbhost", "dbname", "dbuser", "dbpass", "dbport"):
-						try:
-							db = web.database(dbn=settings["dbtype"], host=settings["dbhost"], db=settings["dbname"], user=settings["dbuser"], password=settings["dbpass"], port=int(settings["dbport"]))
-						except ValueError:
-							db = web.database(dbn=settings["dbtype"], host=settings["dbhost"], db=settings["dbname"], user=settings["dbuser"], password=settings["dbpass"])
-							
-					return json.dumps({"status": "OK", "message": "Setting Updated"})
-			except KeyError:
-				pass
-		return web.Forbidden()
 
 def encode_datetime(obj):
 	if isinstance(obj, datetime.datetime):
 		return str(obj)
 	elif isinstance(obj, datetime.timedelta):
 		return str(obj)
-	elif isinstance(obj, bson.ObjectId):
-		return str(obj)
 	raise TypeError(repr(obj) + " is not JSON serializable")
-
-class Cview(object):
-	def GET(self, id):
-		id = int(id)
-		user = get_user()
-
-		jobOwner = True
-
-                file = os.path.join(settings["cviewdir"], str(id%100), str(id/100%100), "%d.tar.gz" %id)
-                cviewAvail = os.path.exists(file)
-
-		ret = ""
-		if (jobOwner or is_admin(user)) and cviewAvail:
-			web.header('Content-type', 'application/x-cviewall')
-			web.header('Content-Disposition', 'attachment; filename="%d.cviewall"' % id)
-			ret  = '{\n'
-			ret += '\turl = "http://pic-view.pnl.gov/cgi-bin/fp_ceph_job.cgi/pic/%d/";\n' % id
-			ret += '\tmetrics = ("cputotals.user", "meminfo.used");\n'
-			ret += '\tdataUpdateInterval = 0.0;\n'
-			ret += '}\n'
-		return ret
-
-def encode_datetime_to_javascript(obj):
-	if isinstance(obj, datetime.datetime):
-		return calendar.timegm(obj.utctimetuple())*1000
 
 class Graph(object):
 	def GET(self, id, metric):
-		try:
-			job = db.jobs.find_one({"_id": bson.objectid.ObjectId(id)})
-			for graph in job["Graphs"]:
-				if graph["name"] == metric:
-					return json.dumps(db.graphs.find_one({"_id": graph["graph"]}, {"_id": False, "job": False}), default=encode_datetime_to_javascript)
-		except IOError:
-			import phpserialize
-			id = int(id)
-			pointsDir = os.path.join(settings["graphsdir"], str(id%100), str(id/100%100), str(id))
-			pointsDescFile = os.path.join(pointsDir, "pointsDescriptions")
-			jobData = phpserialize.load(open(pointsDescFile))
-			for graph in jobData.values():
-				if graph["name"] == metric:
-					pointGraph = os.path.join(pointsDir, "job.%d-point.%s.png"% (id, graph["point_id"]))
-					break
-			try:
-				web.header("content-Type", "image/png")
-				return open(pointGraph).read()
-			except:
-				pass
+		res = db.select(settings["SlurmClusterName"]+"_job_table",
+				what="nodelist, time_start, time_end",
+				where="id_job = $id_job",
+				vars={ "id_job" : id })
+		job = res[0]
+		url = "%s/render" % ( settings["GraphiteURL"] )
+		target = "%s{%s}.%s" % (	settings["GraphitePrefix"],
+						",".join(hostlist.expand_hostlist(job["nodelist"])),
+						metric
+					)
+		if 'infiniband' not in metric:
+			if 'cpu-' in metric or 'swap_io' in metric or metric.endswith('tx') or metric.endswith('rx') or metric.startswith('llite-') or metric.endswith('read') or metric.endswith('write'):
+				target = "scaleToSeconds(derivative(%s),1)" % target
+		data = urllib.urlencode({
+					"target": target,
+					"from": datetime.datetime.fromtimestamp(job["time_start"]).strftime("%H:%M_%Y%m%d"),
+					"until": datetime.datetime.fromtimestamp(job["time_end"]).strftime("%H:%M_%Y%m%d"),
+					"format": "json",
+					"maxDataPoints": 200})
+		req = urllib2.Request(url, data)
+		ret = {}
+		returned = urllib2.urlopen(req).read()
+		graphiteData = json.loads(returned)
+		for metric in graphiteData:
+			node = metric["target"].split(".")[len(settings["GraphitePrefix"].split("."))-1]
+			ret[node] = [[i[1], i[0]] for i in metric["datapoints"]]
+		return json.dumps(ret)
 
 class GroupMembership(object):
 	def GET(self, user):
 		if user == "":
 			user = get_user()
-		if user in settings["admins"].split(","):
-			return json.dumps(["admin"])
-
-class Metrics(object):
-	def GET(self, name):
-		tag = web.input(tag=0).tag
-		if name != "":
-			return json.dumps({"tag": tag, "metric": ""})
-			metric = db.metrics.find_one({"name": name}, {"_id": False})
-			if metric:
-				return json.dumps({"tag": tag, "metric": metric})
-			else:
-				return web.NotFound()
-		else:
-			return json.dumps({"tag": tag, "metrics": tuple(db.metrics.find({},{"_id": False}))})
-	def PUT(self, name):
-		if not is_admin():
-			return web.Forbidden()
-
-		metric = web.input()
-		res = db.metrics.update({"name": name}, metric, True)
-		return json.dumps({"status": "OK", "message": "Metric Updated"})
-
-	def DELETE(self, name):
-		if not is_admin():
-			return web.Forbidden()
-
-		db.metrics.remove({"name": name})
-		return json.dumps({"status": "OK", "message": "Metric Deleted"})
+		res = ["admin"]
+		return json.dumps(res)
 
 class Jobs(object):
 	def GET(self, job):
@@ -195,102 +110,103 @@ class Jobs(object):
 				query.append(("User", get_user()))
 			months = {	"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
 					"Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12}
-			fields = {	"Start Date": "Start", "End Date": "End",
-					"Submit Date": "Submit", "Node Count": "numNodes",
-					"User": "User", "Job Id": "JobID", "Account": "Account"}
-			comps = {"<": "$lt", ">": "$gt", "<=": "$lte", ">=": "$gte"}
-			mongoQuery = {}
+			fields = {	"Start Date": "time_start", "End Date": "time_end", "Submit Date": "time_submit",
+					"Node Count": "nodes_alloc", "User": "user",
+					"Job Id": "id_job", "Account": "account"}
+			where = ["%s_job_table.id_assoc = %s_assoc_table.id_assoc" % ((SlurmClusterName,)*2), "time_end != 0" ]
+			runonnodes = []
 			for queryItem in query:
 				try:
 					column = fields[queryItem[0]]
 				except:
 					pass
 				if queryItem[0] in ("Start Date", "End Date", "Sumbit Date"):
-					try:
-						if queryItem[1] == "<":
-							date = datetime.datetime(queryItem[4], months[queryItem[2]], queryItem[3], 23, 59, 59)
-						elif queryItem[1] == ">":
-							date = datetime.datetime(queryItem[4], months[queryItem[2]], queryItem[3], 0, 0, 0)
-						else:
-							continue
-					except ValueError:
+					if queryItem[1] not in  ("<", ">"):
+						continue
+					if queryItem[0] == "End Date":
+						date = datetime.date(int(queryItem[4]), int(months[queryItem[2]]), int(queryItem[3])).strftime("%s")
+						date = int(date) + 86400
+					else:
+						date = datetime.date(int(queryItem[4]), int(months[queryItem[2]]), int(queryItem[3])).strftime("%s")
+					where.append(	"%s %s '%s'" % ( column, queryItem[1], date))
+				elif queryItem[0] ==  "Node Count":
+					if queryItem[1] not in  ("<", ">", "==", "<=", ">="):
 						continue
 					if queryItem[1] == "==":
-						mongoQuery[column] = date
-					else:
-						mongoQuery.setdefault(column, {})[comps[queryItem[1]]] = date
-				elif queryItem[0] ==  "Node Count":
-					if queryItem[1] in comps:
-						mongoQuery.setdefault(column, {})[comps[queryItem[1]]] = int(queryItem[2])
-					elif queryItem[1] == "==":
-						mongoQuery[column] = (queryItem[2])
-				elif queryItem[0] in ("Job Id"):
-					mongoQuery[column] = int(queryItem[1])
-				elif queryItem[0] in ("Account", "User"):
-					mongoQuery[column] = queryItem[1]
+						queryItem[1] = "="
+					where.append("%s %s %s" % (column, queryItem[1], web.db.SQLParam(queryItem[2])))
+				elif queryItem[0] in ("Job Id", "Account", "User"):
+					print queryItem, web.db.SQLParam(queryItem[1])
+					where.append("%s = '%s'" % (column, web.db.SQLParam(queryItem[1])))
 				elif queryItem[0] == "Ran On Node":
-					mongoQuery.setdefault("hosts",{"$in": []})["$in"].append(queryItem[1])
-			project = {	"Account": True,
-					"NumNodes": True,
-					"Submit": True,
-					"End": True,
-					"User": True,
-					"Start": True,
-					"RunTime": True,
-					"JobID": True}
-			if len(mongoQuery) > 0:
-				ret = tuple(db.jobs.find(mongoQuery, project))
-				for i in ret:
-					i["jobid"] = i["_id"]
-					del(i["_id"])
-				return json.dumps({"tag": tag, "jobs": ret}, default=encode_datetime)
-			else:
-				return json.dumps({"tag": tag, "jobs": []})
-	
+					runonnodes.append(queryItem[1])
+			print " and ".join(where)
+			ret = db.select([settings["SlurmClusterName"]+"_job_table", settings["SlurmClusterName"]+"_assoc_table"],
+					what="id_job as id, user as User, id_job as JobID, id_job as jobid, account as Account, nodes_alloc as NumNodes, FROM_UNIXTIME(time_submit) as Submit, FROM_UNIXTIME(time_start) as Start, FROM_UNIXTIME(time_end) as End, TIMEDIFF(FROM_UNIXTIME(time_end), FROM_UNIXTIME(time_start)) as RunTime, nodelist",
+					where=" and ".join(where))
+			print " and ".join(where)
+			for node in runonnodes:
+				ret = [i for i in ret if node in hostlist.expand_hostlist(i["nodelist"])]
+			return json.dumps({"tag": tag, "jobs": tuple(ret)}, default=encode_datetime)
 		else:
-			metrics = db.metrics.find()
-			metrics = dict([(metric["name"], metric) for metric in metrics])
-
-			job = db.jobs.find_one({"_id": bson.objectid.ObjectId(job)})
-			graphs = job["Graphs"]
-			job["Graphs"] = {}
-			for graph in graphs:
-				graphname = graph["name"]
+			job = int(job)
+			res = db.select([settings["SlurmClusterName"]+"_job_table", settings["SlurmClusterName"]+'_assoc_table'],
+					where="id_job = $id_job and %s_job_table.id_assoc = %s_assoc_table.id_assoc" % (settings["SlurmClusterName"], settings["SlurmClusterName"]),
+					vars={ "id_job" : job })
+			job = tuple(res)[0]
+			metrics = set()
+			for level in range(4):
+				url = "%s/metrics/expand?query=%s%s%s&leavesOnly=1" % (
+										settings["GraphiteURL"],
+										settings["GraphitePrefix"],
+										hostlist.expand_hostlist(job["nodelist"])[0],
+										".*"*level)
+				res = urllib.urlopen(url).read()
+				res = json.loads(res)
+				metrics.update([".".join(i.split(".")[3:]) for i in res["results"]])
+			graphs = {}
+			for metric in metrics:
 				try:
-					job["Graphs"].setdefault(metrics[graphname]["group"],[]).append({
-									"src": "graphs/%s/%s" % (str(job["_id"]),graph["name"]),
-									"name": graphname,
-									"unit": metrics[graphname]["unit"],
-									"description": metrics[graphname]["description"]})
-				except KeyError, e:
-					job["Graphs"].setdefault("other",[]).append({
-									"src": "graphs/%s" % graph["name"],
-									"name": graphname})
-			job["tag"] = tag
-			job["version"] = 2
-			job["jobid"] = str(job["_id"])
-			del(job["_id"])
-			return json.dumps(job, default=encode_datetime)
+					group = graphs[metric.split(".")[0]]
+				except KeyError:
+					group = graphs[metric.split(".")[0]] = []
+				group.append({"src": "graphs/%s/%s" % (job["id_job"], metric), "description": "", "name": metric, "unit": ""})
+			return json.dumps({	"version": 2,
+						"cview": False,
+						"Account": job["account"],
+						"CPUTime": "",
+						"Elapsed": "",
+						"End": datetime.datetime.utcfromtimestamp(job["time_end"]).isoformat(),
+						"ExitCode": job["exit_code"],
+						"Gid": job["user"],
+						"JobID": job["id_job"],
+						"JobName": job["job_name"],
+						"Graphs": graphs,
+						"NodeList": job["nodelist"],
+						"NumNodes": len(hostlist.expand_hostlist(job["nodelist"])),
+						"RunTime": job["time_end"] - job["time_start"],
+						"Start": datetime.datetime.utcfromtimestamp(job["time_start"]).isoformat(),
+						"State": job["state"],
+						"Submit": job["time_submit"],
+						"User": job["user"],
+						"cluster": settings["SlurmClusterName"],
+						"Nodes": hostlist.expand_hostlist(job["nodelist"]),
+						"tag": tag})
 
 class Users(object):
 	def GET(self):
 		if is_admin():
-			res = db.select("moab_job_details", what="distinct moab_job_details.user as user")
+			res = db.select("user_table", what="distinct name as user")
 			return json.dumps([i["user"] for i in res])
 		else:
 			return json.dumps([get_user()])
 urls = (
     '/cview/(\d+)', 'Cview',
-    '/graphs/([^/]+)/(.*)', 'Graph',
+    '/graphs/(\d+)/(.*)', 'Graph',
     '/groupMembership/(.*)', 'GroupMembership',
-    '/metrics/(.*)', 'Metrics',
-    '/settings/(.*)', 'SettingsWeb',
     '/jobs/(.*)', 'Jobs',
     '/users/', 'Users'
 )
 
-settings = Settings(CONFIG)
-#db = pymongo.Connection(settings["dbhost"], settings["dbport"])[settings["dbname"]]
-db = pymongo.Connection().nwperf
 app = web.application(urls, globals(), autoreload=False)
 application = app.wsgifunc()
