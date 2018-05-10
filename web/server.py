@@ -94,7 +94,7 @@ class Graph(object):
 		graphiteData = json.loads(returned)
 		for metric in graphiteData:
 			node = metric["target"].split(".")[len(settings["GraphitePrefix"].split("."))-1]
-			ret[node] = [[i[1], i[0]] for i in metric["datapoints"]]
+			ret[node] = [[i[1] * 1000, i[0]] for i in metric["datapoints"]]
 		return json.dumps(ret)
 
 class GroupMembership(object):
