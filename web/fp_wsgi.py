@@ -207,12 +207,32 @@ class Query:
 				tgt['datapoints']=dp
 				series.append(tgt)
 		return json.dumps(series)
+class Raw:
+	def GET(self,arg):
+		print arg
+		user_data = web.input()
+		print user_data
+		rds = getRDS(arg)
+
+		#figure out time ranges.
+		day = timegm(time.strptime(user_data.day, "%Y-%m-%d"))
+		s = nwperfceph.prevmin(day)
+		print day,s
+
+                #data = rds.getDataSlice(s,s+86400,user_data.metric)
+                data = rds.ioctx.read(user_data.day+"/"+user_data.metric,length=1000000000)
+                length = len(data[0])
+                print length
+
+		#return data.tostring()
+		return data
 
 urls = (
 	'/cluster/([^/]*)/(.*)','ClusterCView',
 	'/static/(.*)','StaticFile',
 	'/([^/]*)/search','Search',
 	'/([^/]*)/query','Query',
+	'/([^/]*)/raw','Raw',
 	#'/([^/]*)/?','Test',
 	'/([^/]*)/job/(\d+)/(.*)','JobCView',
 	'/([^/]*)/(.*)','ClusterCView',
