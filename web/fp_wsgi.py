@@ -19,6 +19,7 @@ import simplejson as json
 from calendar import timegm
 clusters = {}
 staticPath="web/webgl"
+web.config.debug=False
 
 def cors():
 	web.header('Access-Control-Allow-Headers','accept, content-type')
@@ -135,6 +136,9 @@ class StaticFile:
 			return data
 		else:
 			return "This is Broken:",arg,path,path.startswith(staticPath),os.path.exists(path)
+class Health:
+	def GET(self):
+		return "<html><h1>Running</h1></html>"
 class Broken:
 	def GET(self,arg):
                 print "Broken"
@@ -208,34 +212,26 @@ class Query:
 				series.append(tgt)
 		return json.dumps(series)
 class Raw:
-	def GET(self,arg):
-		print arg
-		user_data = web.input()
-		print user_data
-		rds = getRDS(arg)
-
-		#figure out time ranges.
-		day = timegm(time.strptime(user_data.day, "%Y-%m-%d"))
-		s = nwperfceph.prevmin(day)
-		print day,s
-
-                #data = rds.getDataSlice(s,s+86400,user_data.metric)
-                data = rds.ioctx.read(user_data.day+"/"+user_data.metric,length=1000000000)
-                length = len(data[0])
-                print length
-
-		#return data.tostring()
-		return data
+	def GET(self,cluster,obj):
+	    rds = getRDS(cluster)
+	    chunk=1024*1024
+	    stat = rds.ioctx.stat(obj)
+	    pos=0
+            while pos < stat[0]:
+		data = rds.ioctx.read(obj,length=chunk,offset=pos)
+		yield data
+		pos+=chunk
 
 urls = (
 	'/cluster/([^/]*)/(.*)','ClusterCView',
 	'/static/(.*)','StaticFile',
 	'/([^/]*)/search','Search',
 	'/([^/]*)/query','Query',
-	'/([^/]*)/raw','Raw',
+	'/([^/]*)/raw/(.*)','Raw',
 	#'/([^/]*)/?','Test',
 	'/([^/]*)/job/(\d+)/(.*)','JobCView',
 	'/([^/]*)/(.*)','ClusterCView',
+        '/health','Health',
 	'/(.*)','Broken',
 	)
 mimetypes.init()
