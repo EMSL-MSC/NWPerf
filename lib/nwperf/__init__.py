@@ -22,7 +22,7 @@ from Settings import *
 
 def isoToEpoch(iso):
     t = datetime.datetime.strptime(iso,'%Y-%m-%dT%H:%M:%S')
-    return int(calendar.timegm(t.timetuple()))
+    return int(time.mktime(t.timetuple()))
 
 def timeToSeconds(hms):
 	if hms[1]=='-': #hack to pull off days, double digit days hose this.. proper parsing would be better
