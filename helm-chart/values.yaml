@@ -1,0 +1,100 @@
+# Default values for nwperf.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+#imagePullSecretName: 
+
+nameservice:
+  replicaCount: 1
+  image:
+    repository: nginx
+    tag: stable
+    pullPolicy: Always
+
+  service:
+    type: LoadBalancer
+    port: 80
+
+  ingress:
+    enabled: false
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    path: /
+    hosts:
+      - chart-example.local
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+cviewdata:
+  timezone: PST8PDT
+  replicaCount: 3 # if this gets changed need to adjust the rolling update strategy.
+  image:
+    repository: karcaw/nwperf
+    tag: latest
+    pullPolicy: Always
+
+  service:
+    type: LoadBalancer
+    port: 80
+
+  ingress:
+    enabled: false
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    path: /
+    hosts:
+      - cviewdata.example.com
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+clusters: {}
+  #test:
+  #  jobinfo:
+  #    repository: karcaw/nwperf
+  #    tag: latest
+  #  cephstore:
+  #    repository: karcaw/nwperf
+  #    tag: latest
+
+nameserver:
+  image:
+    repository: karcaw/nwperf
+    tag: latest
+    pullPolicy: Always
+#  service:
+#    ip: <ip>
+#    type: LoadBalancer
+#    port: 6967
+
+
+web:
+  image:
+    repository: karcaw/nwperf
+    tag: latest
+    pullPolicy: Always
+#  sslSecretName: <hostname>
+#  hostname: <hostname>
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

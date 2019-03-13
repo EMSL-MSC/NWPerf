@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "nwperf.fullname" . }}-nameserver
+  labels:
+    app: {{ template "nwperf.name" . }}-nameserver
+    chart: {{ template "nwperf.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  loadBalancerIP: {{ .Values.nameserver.service.ip }}
+  type: {{ .Values.nameserver.service.type }}
+  ports:
+    - port: {{ .Values.nameserver.service.port }}
+      targetPort: {{ .Values.nameserver.service.port }}
+      protocol: TCP
+      name: {{ template "nwperf.name" . }}-nameserver
+  selector:
+    app: {{ template "nwperf.name" . }}-nameserver
+    release: {{ .Release.Name }}

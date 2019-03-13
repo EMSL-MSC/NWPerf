@@ -1,0 +1,60 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "nwperf.fullname" . }}-web
+  labels:
+    app: {{ template "nwperf.name" . }}-web
+    chart: {{ template "nwperf.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "nwperf.name" . }}-web
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "nwperf.name" . }}-web
+        release: {{ .Release.Name }}
+    spec:
+      {{- with .Values.imagePullSecretName }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{ end }}
+      containers:
+      - name: {{ template "nwperf.name" . }}-web
+        # Run this image
+        image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
+        imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+        ports:
+        - name: {{ template "nwperf.name" . }}-web
+          containerPort: 443
+        volumeMounts:
+        - name: certs
+          mountPath: "/etc/certs"
+          readOnly: true
+        - name: config
+          mountPath: "/etc/nwperf.conf"
+          subPath: nwperf.conf
+          readOnly: true
+        env:
+        - name: TZ
+          value: 'PST8PDT'
+      volumes:
+      - name: config
+        secret:
+          secretName: nwperf-config
+          items:
+          - key: nwperf.conf
+            path: nwperf.conf
+      - name: certs
+        secret:
+          secretName: emsl-wild
+          items:
+          - key: tls.crt
+            path: star_emsl_pnl_gov.crt
+          - key: tls.key
+            path: star_emsl_pnl_gov.key
+  

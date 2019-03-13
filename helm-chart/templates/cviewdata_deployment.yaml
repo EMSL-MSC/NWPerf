@@ -1,0 +1,71 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "nwperf.fullname" . }}-cviewdata
+  labels:
+    app: {{ template "nwperf.name" . }}-cviewdata
+    chart: {{ template "nwperf.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.cviewdata.replicaCount }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 34%
+      maxUnavailable: 34%
+    type: RollingUpdate
+
+  selector:
+    matchLabels:
+      app: {{ template "nwperf.name" . }}-cviewdata
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "nwperf.name" . }}-cviewdata
+        release: {{ .Release.Name }}
+    spec:
+      {{- with .Values.imagePullSecretName }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{ end }}
+      containers:
+        - name: {{ .Chart.Name }}-cviewdata
+          image: "{{ .Values.cviewdata.image.repository }}:{{ .Values.cviewdata.image.tag }}"
+          imagePullPolicy: {{ .Values.cviewdata.image.pullPolicy }}
+          env:
+          - name: TZ
+            value: {{ .Values.cviewdata.timezone }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ template "nwperf.name" . }}-cviewdata
+            topologyKey: kubernetes.io/hostname
+

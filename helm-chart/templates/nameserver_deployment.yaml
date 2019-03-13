@@ -1,0 +1,58 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "nwperf.fullname" . }}-nameserver
+  labels:
+    app: {{ template "nwperf.name" . }}-nameserver
+    chart: {{ template "nwperf.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "nwperf.name" . }}-nameserver
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "nwperf.name" . }}-nameserver
+        release: {{ .Release.Name }}
+    spec:
+      {{- with .Values.imagePullSecretName }}
+      imagePullSecrets:
+        - name: {{ . }}
+      {{ end }}
+      volumes:
+        - name: "state"
+          persistentVolumeClaim:
+            claimName: {{ template "nwperf.name" . }}-nameserver-state
+
+      containers:
+        - name: {{ .Chart.Name }}-nameserver
+          image: "{{ .Values.nameserver.image.repository }}:{{ .Values.nameserver.image.tag }}"
+          imagePullPolicy: {{ .Values.nameserver.image.pullPolicy }}
+          command:
+            - python
+            - /app/sbin/nwperf-ns.py
+            - -n
+            - -s
+            - /state/nwperf-ns.state
+          ports:
+            - name: nwperf-ns
+              containerPort: {{ .Values.nameserver.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - name: state
+              mountPath: /state
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+

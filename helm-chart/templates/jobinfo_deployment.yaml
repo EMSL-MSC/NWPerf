@@ -1,0 +1,79 @@
+{{- $v  := .Values -}}
+{{- $chart := .Chart -}}
+{{- $rel := .Release -}}
+{{- $fullName := print (include "nwperf.fullname" .) "-jobinfo" -}}
+{{- $name := print (include "nwperf.fullname" .) "-jobinfo" -}}
+{{- range $key,$val := .Values.clusters -}}
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-{{ $key }}
+  labels:
+    app: {{ $name }}-{{ $key }}
+    chart: {{ $chart.Name }}
+    release: {{ $rel.Name }}
+    heritage: {{ $rel.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $name }}-{{ $key }}
+      release: {{ $rel.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $name }}-{{ $key }}
+        release: {{ $rel.Name }}
+    spec:
+      {{- with $v.imagePullSecretName }}
+      imagePullSecrets:
+        - name: {{ $v.imagePullSecretName }}
+      {{ end }}
+      containers:
+        - name: {{ $chart.Name }}-jobinfo-{{ $key }}
+          image: "{{ $val.jobinfo.repository }}:{{ $val.jobinfo.tag }}"
+          imagePullPolicy: Always
+          ports:
+          - containerPort: {{ $val.jobinfo.service.infoport }}
+          - containerPort: {{ $val.jobinfo.service.notifyport }}
+          livenessProbe:
+            exec:
+              command:
+              - bash
+              - -c
+              - "/app/bin/nwperf-nsq.py tcp://nwperf-ns:6967  getService {{ $key }}.slurm.jobinfo | grep tcp"
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          env:
+          - name: CLUSTER
+            value: '{{ $key }}'
+          - name: EXTERNAL_IP
+            value: {{ $val.jobinfo.service.ip }}
+          - name: PORTINFO
+            value: '{{ $val.jobinfo.service.infoport }}'
+          - name: PORTNOTIFY
+            value: '{{ $val.jobinfo.service.notifyport }}'
+          - name: TZ
+            value: 'PST8PDT'
+          volumeMounts:
+            - name: msc
+              mountPath: /msc
+      volumes:
+        - name: msc
+          nfs:
+            server: mscmsc.emsl.pnl.gov
+            path: '/export/msc'
+      
+          resources:
+{{ toYaml $v.resources | indent 12 }}
+    {{- with $v.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with $v.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+{{ end }}

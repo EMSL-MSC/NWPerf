@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "nwperf.fullname" . }}-cviewdata
+  labels:
+    app: {{ template "nwperf.name" . }}-cviewdata
+    chart: {{ template "nwperf.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.cviewdata.service.type }}
+  ports:
+    - port: {{ .Values.cviewdata.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "nwperf.name" . }}-cviewdata
+    release: {{ .Release.Name }}

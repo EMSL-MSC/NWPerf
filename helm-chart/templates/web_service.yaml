@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ template "nwperf.fullname" . }}-web
+  labels:
+    app: {{ template "nwperf.name" . }}-web
+    chart: {{ template "nwperf.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: LoadBalancer
+  selector:
+    app: {{ template "nwperf.name" . }}-web
+  ports:
+  - protocol: TCP
+    port: 443
+    targetPort: 443

@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "nwperf.fullname" . }}-web
+  labels:
+    app: {{ template "nwperf.name" . }}-web
+    chart: {{ template "nwperf.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    nginx.ingress.kubernetes.io/secure-backends: "true"
+    kubernetes.io/ingress.class: pnnl
+spec:
+  rules:
+  - host: {{ .Values.web.hostname }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ template "nwperf.name" . }}-web
+          servicePort: 443
+        path: /
+  tls:
+  - hosts:
+    - {{ .Values.web.hostname }}
+    secretName: {{ .Values.web.sslSecretName }}

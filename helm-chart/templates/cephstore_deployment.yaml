@@ -1,0 +1,56 @@
+{{- $v  := .Values -}}
+{{- $chart := .Chart -}}
+{{- $rel := .Release -}}
+{{- $fullName := print (include "nwperf.fullname" .) "-cephstore" -}}
+{{- $name := print (include "nwperf.fullname" .) "-cephstore" -}}
+{{- range $key,$val := .Values.clusters -}}
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-{{ $key }}
+  labels:
+    app: {{ $name }}-{{ $key }}
+    chart: {{ $chart.Name }}
+    release: {{ $rel.Name }}
+    heritage: {{ $rel.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $name }}-{{ $key }}
+      release: {{ $rel.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $name }}-{{ $key }}
+        release: {{ $rel.name }}
+    spec:
+      {{- with $v.imagePullSecretName }}
+      imagePullSecrets:
+        - name: {{ $v.imagePullSecretName }}
+      {{ end }}
+      containers:
+        - name: {{ $chart.Name }}-cephstore-{{ $key }}
+          image: "{{ $val.cephstore.repository }}:{{ $val.cephstore.tag }}"
+          imagePullPolicy: Always
+          command:
+            - nwperf-ceph-store.py
+            - -n
+            - -c
+            - {{ $key }}
+            - -i
+            - nwperf
+      
+          resources:
+{{ toYaml $v.resources | indent 12 }}
+    {{- with $v.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with $v.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+{{ end }}

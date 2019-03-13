@@ -1,0 +1,17 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "nwperf.name" . }}-nameserver-state
+  labels:
+    app: {{ template "nwperf.name" . }}
+    chart: {{ template "nwperf.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: {{ .Values.storageclass }}
+  resources:
+    requests:
+      storage: 8Gi

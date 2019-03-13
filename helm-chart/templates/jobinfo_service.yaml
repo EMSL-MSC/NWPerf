@@ -1,0 +1,33 @@
+{{- $v  := .Values -}}
+{{- $chart := .Chart -}}
+{{- $rel := .Release -}}
+{{- $fullName := print (include "nwperf.fullname" .) "-jobinfo" -}}
+{{- $name := print (include "nwperf.fullname" .) "-jobinfo" -}}
+{{- range $key,$val := .Values.clusters -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-{{ $key }}
+  labels:
+    app: {{ $name }}-{{ $key }}
+    chart: {{ $chart.Name }}
+    release: {{ $rel.Name }}
+    heritage: {{ $rel.Service }}
+spec:
+  loadBalancerIP: {{ $val.jobinfo.service.ip }}
+  type: {{ $val.jobinfo.service.type }}
+  ports:
+    - port: {{ $val.jobinfo.service.notifyport }}
+      targetPort: http
+      protocol: TCP
+      name: {{ $name }}-{{ $key }}-notify
+    - port: {{ $val.jobinfo.service.infoport }}
+      targetPort: {{ $val.jobinfo.service.infoport }}
+      protocol: TCP
+      name: {{ $name }}-{{ $key }}-info
+  selector:
+    app: {{ $name }}-{{ $key }}
+    release: {{ $rel.Name }}
+
+{{ end }}
