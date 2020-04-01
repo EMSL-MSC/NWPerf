@@ -27,12 +27,12 @@ TESTMODE=0
 
 _log=nwperf.msclog.getLogger("root.ncs")
 nwperf.msclog.logToError();
-nwperf.msclog.setLevel(nwperf.msclog.DEBUG);
+nwperf.msclog.setLevel(nwperf.msclog.INFO);
 
 class Metric:
 	"""
 		manages a set of recent data arrays, assuming this is the only process managing
-		rados datasets, its safe to write the last few minutes without worrying about 
+		rados datasets, its safe to write the last few minutes without worrying about
 		others overwriting the data.
 	"""
 	def __init__(self,objectname,rds,queue):
@@ -64,7 +64,7 @@ class Metric:
 				#print "evict",k
 				evict = k
 		if evict:
-			del self.curdata[evict]	
+			del self.curdata[evict]
 
 	def addOne(self,data):
 		hostindex,secs,val=data
@@ -75,10 +75,10 @@ class Metric:
 		except KeyError:
 			#print "create new"
 			self.curdata[minute] = {'data':self.getDataRow(minute*60),'dirty':True}
-			#print "create new done"	
+			#print "create new done"
 		self.curdata[minute]["data"][hostindex]=val
-						
-		
+
+
 
 class DataManager:
 	def __init__(self,zmqns,cephconfig,cluster,cephid):
@@ -90,7 +90,7 @@ class DataManager:
 		self.initCeph()
 		self.createMetrics()
 		self.resetZMQ()
-		
+
 	def resetZMQ(self):
 		_log.info("reconnecting to zmq: %s %s",self.zmqns,(self.cluster+".allpoints",))
 		self.z_sock,self.z_poll = connectZMQ(self.zmqns,(self.cluster+".allpoints",))
@@ -100,7 +100,7 @@ class DataManager:
 		self.hostlist = self.rds.hostlist()
 		data = self.rds.getIndex()
 		self.pointlist = data.split("\n")[:-1]
-		
+
 	def createMetrics(self):
 		if TESTMODE:
 			self.metrics[TEST]=Metric(TEST,self.rds,self.objectqueues[TEST])
@@ -205,7 +205,7 @@ if __name__ == "__main__":
 	if not options.cluster:
 		parser.error("No Cluster Specified")
 	try:
-		dm=DataManager(options.nameserver,options.cephconfig,options.cluster,options.cephid) 
+		dm=DataManager(options.nameserver,options.cephconfig,options.cluster,options.cephid)
 		dm.run()
 	except KeyboardInterrupt:
 		dm.terminate()
