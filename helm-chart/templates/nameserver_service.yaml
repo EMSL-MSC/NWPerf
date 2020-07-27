@@ -8,7 +8,9 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
+{{- if hasKey .Values.nameserver.service "ip" }}
   loadBalancerIP: {{ .Values.nameserver.service.ip }}
+{{- end }}
   type: {{ .Values.nameserver.service.type }}
   ports:
     - port: {{ .Values.nameserver.service.port }}
