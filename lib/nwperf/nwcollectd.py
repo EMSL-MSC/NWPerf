@@ -128,7 +128,7 @@ class NWCollectd:
 			self.ns.publishService(self.cluster+".allpoints", "tcp://%s:%s" % (self.ip, port), self.publishTimeout, "pub/sub", "Point")
 			self.resettime = time.time()+300
 		except nnslib.NameServerException, e:
-			collectd.error("Error",e)
+			collectd.error(str(e))
 		self.qthread = PublishThread(self.socket,self.ns,self.q)
 		self.qthread.setDaemon(True)
 		self.qthread.start()
