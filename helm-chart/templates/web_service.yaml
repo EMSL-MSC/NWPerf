@@ -8,7 +8,7 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.web.service.type }}
   selector:
     app: {{ template "nwperf.name" . }}-web
   ports:

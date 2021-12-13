@@ -67,7 +67,7 @@ nameserver:
     repository: karcaw/nwperf
     tag: latest
     pullPolicy: Always
-#  service:
+  service: {}
 #    ip: <ip>
 #    type: LoadBalancer
 #    port: 6967
@@ -80,6 +80,8 @@ web:
     pullPolicy: Always
 #  sslSecretName: <hostname>
 #  hostname: <hostname>
+  service:
+    type: ClusterIP
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
