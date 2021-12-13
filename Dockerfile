@@ -6,7 +6,7 @@ RUN apt-get update
 RUN apt-get install -y wget apt-transport-https
 #from the ceph install page at http://docs.ceph.com/docs/master/start/quick-start-preflight/#advanced-package-tool-apt
 RUN wget -q -O- 'https://download.ceph.com/keys/release.asc' | apt-key add -
-RUN echo deb https://download.ceph.com/debian-luminous/ xenial main | tee /etc/apt/sources.list.d/ceph.list
+RUN echo deb https://download.ceph.com/debian-nautilus/ xenial main | tee /etc/apt/sources.list.d/ceph.list
 #end ceph
 
 RUN apt-get update
