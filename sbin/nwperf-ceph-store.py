@@ -8,6 +8,7 @@
 # Author: Evan J. Felix
 #
 
+import rados
 import zmq
 import time
 import sys
