@@ -205,9 +205,11 @@ if __name__ == "__main__":
 
 	if not options.cluster:
 		parser.error("No Cluster Specified")
+	dm=None
 	try:
 		dm=DataManager(options.nameserver,options.cephconfig,options.cluster,options.cephid)
 		dm.run()
 	except KeyboardInterrupt:
-		dm.terminate()
+		if dm:
+			dm.terminate()
 
