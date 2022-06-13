@@ -5,7 +5,7 @@
 {{- $name := print (include "nwperf.fullname" .) "-cephstore" -}}
 {{- range $key,$val := .Values.clusters -}}
 ---
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ $fullName }}-{{ $key }}
@@ -19,12 +19,14 @@ spec:
   selector:
     matchLabels:
       app: {{ $name }}-{{ $key }}
-      release: {{ $rel.name }}
+      #release: {{ $rel.Name }}
+      release: ''
   template:
     metadata:
       labels:
         app: {{ $name }}-{{ $key }}
-        release: {{ $rel.name }}
+        #release: {{ $rel.Name }}
+        release: ''
     spec:
       {{- with $v.imagePullSecretName }}
       imagePullSecrets:
@@ -41,7 +43,7 @@ spec:
             - {{ $key }}
             - -i
             - nwperf
-      
+
           resources:
 {{ toYaml $v.resources | indent 12 }}
     {{- with $v.nodeSelector }}
