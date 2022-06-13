@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "nwperf.fullname" . }}-web
@@ -16,9 +16,12 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: {{ template "nwperf.fullname" . }}-web
-          servicePort: 443
+          service:
+            name: {{ template "nwperf.fullname" . }}-web
+            port:
+              number: 443
         path: /
+        pathType: Prefix
   tls:
   - hosts:
     - {{ .Values.web.hostname }}
