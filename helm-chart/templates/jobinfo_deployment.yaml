@@ -5,7 +5,7 @@
 {{- $name := print (include "nwperf.fullname" .) "-jobinfo" -}}
 {{- range $key,$val := .Values.clusters -}}
 ---
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ $fullName }}-{{ $key }}
@@ -59,14 +59,14 @@ spec:
           volumeMounts:
             - name: msc
               mountPath: /msc
+          resources:
+{{ toYaml $v.resources | indent 12 }}
       volumes:
         - name: msc
           nfs:
             server: mscmsc.emsl.pnl.gov
             path: '/export/msc'
-      
-          resources:
-{{ toYaml $v.resources | indent 12 }}
+
     {{- with $v.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

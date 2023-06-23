@@ -8,6 +8,7 @@
 # Author: Evan J. Felix
 #
 
+import rados
 import zmq
 import time
 import sys
@@ -201,25 +202,21 @@ def connectZMQ(nsurl, points):
 
     return z_sock_data, z_poll
 
-
 if __name__ == "__main__":
-    parser = nwperf.defaultServerOptionParser()
-    parser.add_option("-S", "--name-server", dest="nameserver", type="string",
-                      help="The ZMQ URL of the nameserver to register with", default="tcp://nwperf-ns:6967")
-    parser.add_option("-c", "--cluster", dest="cluster", type="string",
-                      help="The cluster prefix to publish as", default=None)
-    parser.add_option("-f", "--ceph-config", dest="cephconfig", type="string",
-                      help="Location of the ceph config file", default="/etc/ceph/ceph.conf")
-    parser.add_option("-i", "--ceph-id", dest="cephid",
-                      type="string", help="Ceph client id")
+	parser = nwperf.defaultServerOptionParser()
+	parser.add_option("-S","--name-server",dest="nameserver",type="string",help="The ZMQ URL of the nameserver to register with",default="tcp://nwperf-ns:6967")
+	parser.add_option("-c","--cluster",dest="cluster",type="string",help="The cluster prefix to publish as",default=None)
+	parser.add_option("-f","--ceph-config",dest="cephconfig",type="string",help="Location of the ceph config file",default="/etc/ceph/ceph.conf")
+	parser.add_option("-i","--ceph-id",dest="cephid",type="string",help="Ceph client id")
 
-    options, args = nwperf.parseServerOptions()
+	options,args = nwperf.parseServerOptions()
 
-    if not options.cluster:
-        parser.error("No Cluster Specified")
-    try:
-        dm = DataManager(options.nameserver, options.cephconfig,
-                         options.cluster, options.cephid)
-        dm.run()
-    except KeyboardInterrupt:
-        dm.terminate()
+	if not options.cluster:
+		parser.error("No Cluster Specified")
+	dm=None
+	try:
+		dm=DataManager(options.nameserver,options.cephconfig,options.cluster,options.cephid)
+		dm.run()
+	except KeyboardInterrupt:
+		if dm:
+			dm.terminate()
