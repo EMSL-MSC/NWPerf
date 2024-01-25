@@ -56,38 +56,38 @@ class local_build_scripts(build_scripts):
             v.run()
 
 
-setup(name="nwperf",
-      version="0.5.4",
-      description="A set of utilities for gathering and stroing performance information for clusters of computers",
-      author="EMSL MSC team",
-      url="https://github.com/EMSL-MSC/NWPerf/",
-      packages=["nwperf"],
-      package_dir={'nwperf': 'lib/nwperf'},
-      scripts=[
-          # "fp_wsgi.py",# this should be in a web directory or some such... fixme
-          "sbin/nwperf-ganglia.py",
-          "bin/gen_cview",
-          # "generateFlotGraph.py",  kenny will deal with this
-          "bin/getjobinfo",
-          # "jobpacker-zmq.py", ???
-          # "moab-zmq.py", probably should keep
-          # "nwperf-mq.py",   dont need it
-          "sbin/nwperf-ns.py",
-          "bin/nwperf-nsq.py",
-          "sbin/nwperfconfig",
-          # "nwperf-zmq.py", old, probably dont need
-          "sbin/nwperf-ceph-store.py",
-          "sbin/slurmjob-zmq.py",
-      ],
-      data_files=[
-          ("/etc/", ["conf/nwperf.conf"]),
-          ("/etc/rc.d/init.d/", ["sysvinit/nwperf"]),
-          ("/etc/init", glob("upstart/*.conf"))
-      ],
-      cmdclass={
-          'install_scripts': local_install_scripts,
-          'build_scripts': local_build_scripts,
-      }
-      )
+setup(	name = "nwperf",
+		version = "0.5.5",
+		description = "A set of utilities for gathering and stroing performance information for clusters of computers",
+		author = "EMSL MSC team",
+		url = "https://github.com/EMSL-MSC/NWPerf/",
+		packages = ["nwperf"],
+		package_dir = {'nwperf':'lib/nwperf'},
+		scripts = [
+			#"fp_wsgi.py",# this should be in a web directory or some such... fixme
+			"sbin/nwperf-ganglia.py",
+			"bin/gen_cview",
+			#"generateFlotGraph.py",  kenny will deal with this
+			"bin/getjobinfo",
+			#"jobpacker-zmq.py", ???
+			#"moab-zmq.py", probably should keep
+			#"nwperf-mq.py",   dont need it
+			"sbin/nwperf-ns.py",
+			"bin/nwperf-nsq.py",
+			"sbin/nwperfconfig",
+			#"nwperf-zmq.py", old, probably dont need
+			"sbin/nwperf-ceph-store.py",
+			"sbin/slurmjob-zmq.py",
+		],
+		data_files=[
+			("/etc/",["conf/nwperf.conf"]),
+			("/etc/rc.d/init.d/", ["sysvinit/nwperf"]),
+			("/etc/init",glob("upstart/*.conf"))
+		],
+		cmdclass = {
+			'install_scripts': local_install_scripts,
+			'build_scripts': local_build_scripts,
+		}
+	)
 
 #requires: python-zmq

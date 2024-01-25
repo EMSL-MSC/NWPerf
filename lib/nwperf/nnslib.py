@@ -38,6 +38,7 @@ class NameServer(object):
         if socketType != None:
             if dataType != None:
                 self.nssock.send_multipart(
+<<<<<<< HEAD
                     ("1", "addService", service, location, str(timeout), socketType, dataType))
             else:
                 self.nssock.send_multipart(
@@ -45,6 +46,15 @@ class NameServer(object):
         else:
             self.nssock.send_multipart(
                 ("1", "addService", service, location, str(timeout)))
+=======
+                    (b"1", b"addService", service.encode(), location.encode(), str(timeout).encode(), socketType.encode(), dataType.encode()))
+            else:
+                self.nssock.send_multipart(
+                    (b"1", b"addService", service.encode(), location.encode(), str(timeout).encode(), socketType.encode()))
+        else:
+            self.nssock.send_multipart(
+                (b"1", b"addService", service.encode(), location.encode(), str(timeout).encode()))
+>>>>>>> 6cbb71c (update for new version of python running inside collectd)
         ret = self.nssock.recv_multipart()
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])

@@ -29,16 +29,18 @@ class PublishThread(threading.Thread):
 
     def run(self):
         resettime = time.time()+300
+
         while not self.die:
             try:
                 dp = self.q.get_nowait()
-                self.socket.send_multipart(["Point", dp])
+                #print(dp)
+                self.socket.send_multipart([b"Point", dp.encode()])
             except queue.Empty:
+                print("Empty")
                 if time.time() > resettime:
                     resettime = time.time()+300
                     self.ns.updateServices()
                 time.sleep(5)
-
 
 class NWCollectd:
     def __init__(self, typeinfo):
