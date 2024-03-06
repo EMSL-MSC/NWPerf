@@ -46,8 +46,10 @@ class NameServer(object):
             self.nssock.send_multipart(
                 (b"1", b"addService", service.encode(), location.encode(), str(timeout).encode()))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
+        return ret
 
     def publishService(self, service, location, timeout, socketType=None, dataType=None):
         timeout = int(timeout)
@@ -69,24 +71,25 @@ class NameServer(object):
     def removeServices(self):
         for (service, value) in self.services.items():
             self.nssock.send_multipart(
-                ("1", "removeService", service, list(value.keys())[0]))
+                (b"1", b"removeService", service, list(value.keys())[0]))
 
     def removeService(self, service, locations=None):
         if locations == None:
-            self.nssock.send_multipart(("1", "removeService", service))
+            self.nssock.send_multipart((b"1", b"removeService", service.encode()))
         else:
             self.nssock.send_multipart(
-                ("1", "removeService", service, location))
+                (b"1", b"removeService", service, locations.encode()))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
         try:
-            del self.services[service][location]
+            del self.services[service][locations]
         except:
             pass
         if service in self.services and len(self.services[service]) == 0:
             del self.services[service]
-
+        return ret
     def replaceService(self, service, location, timeout):
         timeout = int(timeout)
         try:
@@ -95,30 +98,35 @@ class NameServer(object):
             pass
         self.services[service] = {location: (timeout, time.time()+timeout/2)}
         self.nssock.send_multipart(
-            ("1", "replaceService", service, location, str(timeout)))
+            (b"1", b"replaceService", service.encode(), location.encode(), str(timeout).encode()))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
+        return ret
 
     def describeService(self, service):
-        self.nssock.send_multipart(("1", "describeService", service))
+        self.nssock.send_multipart((b"1", b"describeService", service.encode()))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
         else:
             return ret
 
     def getService(self, service):
-        self.nssock.send_multipart(("1", "getService", service))
+        self.nssock.send_multipart((b"1", b"getService", service.encode()))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
         else:
             return list(zip(ret[::2], [int(i) for i in ret[1::2]]))
 
     def listServices(self):
-        self.nssock.send_multipart(("1", "listServices"))
+        self.nssock.send_multipart((b"1", b"listServices"))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
         else:
@@ -147,29 +155,35 @@ class NameServer(object):
 
     def addDataType(self, dataType, dataFormat, requiredFields, optionalFields):
         self.nssock.send_multipart(
-            ("1", "addDataType", dataType, dataFormat, requiredFields, optionalFields))
+            (b"1", b"addDataType", dataType.encode(), dataFormat.encode(), requiredFields.encode(), optionalFields.encode()))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
+        return ret
 
     def listDataTypes(self):
-        self.nssock.send_multipart(("1", "listDataTypes"))
+        self.nssock.send_multipart((b"1", b"listDataTypes"))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
         else:
             return ret
 
     def getDataType(self, dataType):
-        self.nssock.send_multipart(("1", "getDataType", dataType))
+        self.nssock.send_multipart((b"1",b"getDataType", dataType.encode()))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
         else:
             return ret
 
     def removeDataType(self, dataType):
-        self.nssock.send_multipart(("1", "removeDataType", dataType))
+        self.nssock.send_multipart((b"1", b"removeDataType", dataType.encode()))
         ret = self.nssock.recv_multipart()
+        ret = [i.decode() for i in ret]
         if ret[0] == "ERROR":
             raise NameServerException(ret[1])
+        return ret

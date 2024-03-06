@@ -46,28 +46,28 @@ def main():
     except:
         usage()
     ns = nnslib.NameServer(server)
-    # try:
-    if sys.argv[2] not in list(options.keys()):
-        usage("Unknown service: %s" % sys.argv[2])
-    if len(sys.argv) - 3 < options[sys.argv[2]][0] or len(sys.argv) - 3 > options[sys.argv[2]][1]:
-        usage("Wrong parameter count for service %s" % sys.argv[2])
     try:
-        ret = ns.__getattribute__(sys.argv[2])(*sys.argv[3:])
-    except nnslib.NameServerException as e:
-        print("Server Error:",  e)
-        sys.exit()
-    try:
-        for i in ret:
-            if type(i) == type(""):
-                print(i)
-            else:
-                print("\t".join([str(j) for j in i]))
-    except TypeError as e:
-        print("TypeError", e)
-        pass
-    # except:
-    #	print "d"
-    #	usage()
+        if sys.argv[2] not in list(options.keys()):
+            usage("Unknown NSCommand: %s" % sys.argv[2])
+        if len(sys.argv) - 3 < options[sys.argv[2]][0] or len(sys.argv) - 3 > options[sys.argv[2]][1]:
+            usage("Wrong parameter count for service %s" % sys.argv[2])
+        try:
+            ret = ns.__getattribute__(sys.argv[2])(*sys.argv[3:])
+        except nnslib.NameServerException as e:
+            print("Server Error:",  e)
+            sys.exit()
+        try:
+            for i in ret:
+                if type(i) == type(""):
+                    print(i)
+                else:
+                    print("\t".join([str(j) for j in i]))
+        except TypeError as e:
+            print("TypeError", e)
+            pass
+    except Exception as e:
+        print(e)
+        usage()
 
 
 if __name__ == "__main__":
